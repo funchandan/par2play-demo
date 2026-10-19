@@ -656,7 +656,6 @@ export function ConfirmStep() {
       </div>
       <div className="mt-8 flex gap-3">
         <Button className={pill} onPress={flow.goHome}>Back to Par2Play</Button>
-        <Button variant="outline" className={pill} onPress={flow.openMap}>Journey map</Button>
       </div>
     </ScreenFrame>
   );

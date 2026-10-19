@@ -45,8 +45,8 @@ export function Landing() {
             <nav className="flex items-center gap-8">
               <button className={lightNav} type="button" onClick={flow.goHome}>Home</button>
               <button className={lightNav} type="button" onClick={flow.goClubhouse}>Leagues</button>
-              <button className={lightNav} type="button" onClick={() => flow.goSection("gallery")}>Gallery</button>
               <button className={lightNav} type="button" onClick={() => flow.goSection("training")}>Training</button>
+              <button className={lightNav} type="button" onClick={() => flow.goSection("gallery")}>Gallery</button>
               <button className={lightNav} type="button" onClick={() => flow.goSection("pricing")}>Pricing</button>
               <button className={lightNav} type="button" onClick={() => flow.goSection("about")}>About</button>
               <Button
@@ -66,8 +66,8 @@ export function Landing() {
         {menu && flow.layout === "mobile" && (
           <nav className="relative z-10 flex flex-col gap-3 px-5 text-[11px] font-medium uppercase tracking-[0.16em] text-white">
             <button type="button" onClick={() => { setMenu(false); flow.goClubhouse(); }}>Leagues</button>
-            <button type="button" onClick={() => { setMenu(false); flow.goSection("gallery"); }}>Gallery</button>
             <button type="button" onClick={() => { setMenu(false); flow.goSection("training"); }}>Training</button>
+            <button type="button" onClick={() => { setMenu(false); flow.goSection("gallery"); }}>Gallery</button>
             <button type="button" onClick={() => { setMenu(false); flow.goSection("pricing"); }}>Pricing</button>
             <button type="button" onClick={() => { setMenu(false); flow.goSection("about"); }}>About</button>
           </nav>
@@ -154,20 +154,6 @@ export function Landing() {
         </div>
       </section>
 
-      <section id="gallery" className="scroll-mt-6 bg-slate-50 px-6 py-20">
-        <div className="mx-auto max-w-[1400px]">
-          <h2 className="text-4xl font-semibold tracking-tighter">Captured moments</h2>
-          <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-500">
-            A look into the daily life at Par2Play, from early morning rounds to sunset finishes.
-          </p>
-          <div className={`mt-10 grid gap-4 ${flow.layout === "web" ? "grid-cols-3" : ""}`}>
-            {IMAGES.gallery.map((src) => (
-              <img key={src} src={src} alt="Par2Play" className="h-64 w-full rounded-2xl object-cover object-center" />
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section id="training" className="scroll-mt-6 bg-slate-950 px-6 py-20 text-white">
         <div className={`mx-auto grid max-w-[1400px] gap-12 ${flow.layout === "web" ? "grid-cols-2" : ""}`}>
           <div>
@@ -215,6 +201,20 @@ export function Landing() {
           </div>
           <div className="relative min-h-72 overflow-hidden rounded-2xl border border-white/10">
             <img src={IMAGES.swing} alt="A lesson in a Par2Play bay" className="h-full w-full object-cover object-top" />
+          </div>
+        </div>
+      </section>
+
+      <section id="gallery" className="scroll-mt-6 bg-slate-50 px-6 py-20">
+        <div className="mx-auto max-w-[1400px]">
+          <h2 className="text-4xl font-semibold tracking-tighter">Captured moments</h2>
+          <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-500">
+            A look into the daily life at Par2Play, from early morning rounds to sunset finishes.
+          </p>
+          <div className={`mt-10 grid gap-4 ${flow.layout === "web" ? "grid-cols-3" : ""}`}>
+            {IMAGES.gallery.map((src) => (
+              <img key={src} src={src} alt="Par2Play" className="h-64 w-full rounded-2xl object-cover object-center" />
+            ))}
           </div>
         </div>
       </section>
