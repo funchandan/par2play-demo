@@ -58,10 +58,9 @@ export function subscribeSound(listener: () => void) {
 export function registerHeroVideo(element: HTMLVideoElement | null) {
   video = element;
   if (!element) return;
-  if (!live) {
-    element.muted = true;
-    element.volume = 0;
-  }
+  // Stay muted for autoplay, but leave volume at 1. Unmuting at volume 0
+  // and raising it later is outside the user gesture, so browsers keep it silent.
+  if (!live) element.muted = true;
 }
 
 export function setHeroInView(inView: boolean) {
@@ -82,6 +81,14 @@ export function bindHeroWatch(id: string, root: Element | null) {
   );
   observer.observe(hero);
   return () => observer.disconnect();
+}
+
+function syncHeroInView() {
+  const element = video;
+  if (!element) return;
+  const rect = element.getBoundingClientRect();
+  const height = window.innerHeight || document.documentElement.clientHeight;
+  heroInView = rect.bottom > 0 && rect.top < height;
 }
 
 function heroAudible() {
@@ -160,8 +167,14 @@ function ensureLoop() {
   loading = (async () => {
     try {
       buffer = await decodeLoop(context, BG_LOOP.m4a);
-    } catch {
-      buffer = await decodeLoop(context, BG_LOOP.mp3);
+    } catch (error) {
+      console.error("Background loop failed to decode", BG_LOOP.m4a, error);
+      try {
+        buffer = await decodeLoop(context, BG_LOOP.mp3);
+      } catch (fallbackError) {
+        console.error("Background loop failed to decode", BG_LOOP.mp3, fallbackError);
+        throw fallbackError;
+      }
     }
     if (!live) return;
     startBg(buffer);
@@ -201,9 +214,19 @@ export function activateSound() {
     bgGain.connect(ctx.destination);
   }
   live = true;
-  if (video) {
-    video.muted = false;
-    video.volume = heroInView ? video.volume : 0;
+  syncHeroInView();
+  const element = video;
+  if (element) {
+    // Unmute, full volume, and play() have to happen in this gesture.
+    // A later animation frame is not a user activation, so WebKit stays silent.
+    element.muted = false;
+    element.volume = heroInView ? 1 : 0;
+    const played = element.play();
+    if (played) {
+      played.catch((error: unknown) => {
+        console.error("Hero sound failed to play", error);
+      });
+    }
   }
   remember(true);
   applyFade();
@@ -237,4 +260,32 @@ export function silenceSound() {
 export function toggleSound() {
   if (!live) activateSound();
   else silenceSound();
+}
+
+export type SoundProbe = {
+  live: boolean;
+  muted: boolean;
+  volume: number;
+  paused: boolean;
+  bgGain: number;
+};
+
+declare global {
+  interface Window {
+    __par2playSound?: () => SoundProbe;
+  }
+}
+
+function readProbe(): SoundProbe {
+  return {
+    live,
+    muted: video?.muted ?? true,
+    volume: video?.volume ?? 0,
+    paused: video?.paused ?? true,
+    bgGain: bgGain?.gain.value ?? 0,
+  };
+}
+
+if (typeof window !== "undefined") {
+  window.__par2playSound = readProbe;
 }
