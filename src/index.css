@@ -9,9 +9,67 @@
 :root,
 [data-theme="light"] {
   --accent: #14d45e;
-  --accent-foreground: #06210f;
-  --focus: var(--accent);
-  --link: #0c8f3e;
+  --accent-foreground: #0a0f0b;
+  --focus: #0a0f0b;
+  --link: #0a0f0b;
+}
+
+/* HeroUI buttons: 16px/600, 44px target, ink on brand green, border that clears 3:1. */
+.button {
+  height: auto;
+  min-height: 2.75rem;
+  font-size: 1rem;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+.button--primary {
+  background-color: #14d45e;
+  color: #0a0f0b;
+}
+
+.button--primary:hover,
+.button--primary[data-hovered="true"] {
+  background-color: #3dff7c;
+}
+
+.button--primary:active,
+.button--primary[data-pressed="true"] {
+  background-color: #0fb852;
+}
+
+.button--outline {
+  border-width: 2px;
+  border-color: #4b5563;
+  background-color: #fff;
+  color: #0a0f0b;
+}
+
+.button--ghost {
+  color: inherit;
+}
+
+.button:focus-visible:not([data-focused]),
+.button[data-focus-visible="true"],
+.aa-focus:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #0a0f0b, 0 0 0 4px #fff; /* taste-skill-ignore */
+}
+
+.aa-focus-ink:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #0a0f0b; /* taste-skill-ignore */
+}
+
+.button:disabled,
+.button[aria-disabled="true"] {
+  opacity: 1;
+}
+
+.button--primary:disabled,
+.button--primary[aria-disabled="true"] {
+  background-color: #c8f5d8;
+  color: #0a0f0b;
 }
 
 html,

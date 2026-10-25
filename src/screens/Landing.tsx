@@ -1,14 +1,29 @@
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { Fragment, useEffect, useRef, useState, type RefObject } from "react";
+import {
+  Activity,
+  Armchair,
+  CalendarDays,
+  Clock,
+  Infinity as InfinityIcon,
+  MapPin,
+  Monitor,
+  Target,
+  Trophy,
+  UserRound,
+  Users,
+} from "lucide-react";
 import { bindHeroWatch } from "../audio/soundtrack";
 import { Mark } from "../components/Chrome";
-import { BookLink, MembershipLink } from "../components/Cta";
+import { BookLink, MembershipLink, buttonFocus } from "../components/Cta";
 import { EnquiryForm } from "../components/EnquiryForm";
+import { HeroProof } from "../components/HeroProof";
 import { HeroVideo, Photo } from "../components/Media";
 import { SoundToggle } from "../components/SoundToggle";
+import { Stat, ValuePoint } from "../components/ValuePoint";
 import { NAP, golfClockBookingReady } from "../data/business";
 import type { PhotoAsset } from "../data/photos";
 import { PHOTOS } from "../data/photos";
-import { GOOGLE_RATING, REVIEW_QUOTES } from "../data/reviews";
+import { GOOGLE_RATING, GOOGLE_REVIEW_COUNT, GOOGLE_REVIEWS_URL, REVIEW_QUOTES } from "../data/reviews";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { useFlow } from "../state/flow";
 
@@ -19,61 +34,13 @@ const links = [
   ["venue", "Venue"],
 ] as const;
 
-type PanelId = "friends" | "routine" | "unlimited";
+const tracks = [
+  { id: "carry", word: "Carry", line: "Carry, on every swing.", photo: PHOTOS.launchData },
+  { id: "speed", word: "Ball speed", line: "Ball speed, on every swing.", photo: PHOTOS.range },
+  { id: "spin", word: "Spin", line: "Spin, on every swing.", photo: PHOTOS.bays },
+] as const;
 
-type Panel = {
-  id: PanelId;
-  word: string;
-  title: string;
-  line: string;
-  outcomes: readonly string[];
-  photo: PhotoAsset;
-};
-
-const panels: readonly Panel[] = [
-  {
-    id: "friends",
-    word: "Carry",
-    title: "Bring four friends",
-    line: "See carry on every swing.",
-    outcomes: ["Play with up to four friends.", "Launch-monitor shot data on every swing."],
-    photo: PHOTOS.groupWave,
-  },
-  {
-    id: "routine",
-    word: "Ball speed",
-    title: "Ten sessions, one routine",
-    line: "See ball speed on every swing.",
-    outcomes: [
-      "Ten bay sessions you can book as a monthly routine.",
-      "Compare the same numbers from session to session.",
-    ],
-    photo: PHOTOS.range,
-  },
-  {
-    id: "unlimited",
-    word: "Spin",
-    title: "No minimum term",
-    line: "See spin on every swing.",
-    outcomes: ["Practice as often as you want.", "Unlimited practice, with no minimum term."],
-    photo: PHOTOS.lounge,
-  },
-];
-
-function panelAction(id: PanelId) {
-  switch (id) {
-    case "friends":
-      return <BookLink offer="bay">Book a bay</BookLink>;
-    case "routine":
-      return <BookLink offer="ten-pack">Book ten sessions</BookLink>;
-    case "unlimited":
-      return <MembershipLink>Book unlimited practice</MembershipLink>;
-    default: {
-      const exhaustive: never = id;
-      return exhaustive;
-    }
-  }
-}
+const navButton = `inline-flex min-h-11 min-w-11 items-center text-base font-semibold text-[#0A0F0B] ${buttonFocus}`;
 
 function Headline({ text, className }: { text: string; className: string }) {
   const words = text.split(" ");
@@ -82,12 +49,15 @@ function Headline({ text, className }: { text: string; className: string }) {
       <span className="sr-only">{text}</span>
       <span aria-hidden="true">
         {words.map((word, index) => (
-          <span key={`${word}-${index}`} className="inline-block overflow-hidden align-bottom">
-            <span className="word-in inline-block" style={{ animationDelay: `${index * 70}ms` }}>
-              {word}
-              {index < words.length - 1 ? "\u00a0" : ""}
+          <Fragment key={`${word}-${index}`}>
+            <span className="inline-block overflow-hidden align-bottom">
+              <span className="word-in inline-block" style={{ animationDelay: `${index * 70}ms` }}>
+                {word}
+                {index < words.length - 1 && !word.endsWith(".") ? "\u00a0" : ""}
+              </span>
             </span>
-          </span>
+            {word.endsWith(".") && index < words.length - 1 ? <br /> : null}
+          </Fragment>
         ))}
       </span>
     </h1>
@@ -147,46 +117,109 @@ function Practice({
     document.getElementById(id)?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
   };
 
+  const wordButton = `inline-flex min-h-11 min-w-11 items-center text-left text-base font-semibold text-[#0A0F0B] ${buttonFocus}`;
+
   return (
     <section id="practice" className="scroll-mt-6 px-6 py-24 @3xl:px-12 @3xl:py-28">
-      <h2 className="font-display text-4xl font-semibold leading-none tracking-tight @4xl:text-6xl">Every swing</h2>
-      <p className="mt-6 max-w-md text-base leading-relaxed">See ball speed, carry and spin on every swing.</p>
-      <div className="mt-14 grid @3xl:grid-cols-2 @3xl:gap-16">
+      <h2 className="max-w-3xl font-display text-4xl font-semibold leading-none tracking-tight @4xl:text-6xl">
+        Add 10 yards in 90 days.
+      </h2>
+      <p className="mt-6 max-w-xl text-base leading-relaxed">
+        Unlimited practice, no minimum. Track carry, ball speed and spin on every swing and watch the trend move.
+      </p>
+      <div className="mt-12 grid gap-10 @3xl:grid-cols-2 @3xl:gap-16">
         <div className="sticky top-0 hidden h-dvh flex-col justify-center @3xl:flex">
-          <p className="font-display text-5xl font-semibold leading-none tracking-tight @4xl:text-6xl">{panels[active]?.word}</p>
-          <div className="mt-8 flex flex-col gap-3">
-            {panels.map((panel, index) => (
+          <p className="text-base font-semibold">What members track</p>
+          <p className="mt-3 font-display text-5xl font-semibold leading-none tracking-tight @4xl:text-6xl">
+            {tracks[active]?.word}
+          </p>
+          <div className="mt-6 flex flex-col items-start gap-1">
+            {tracks.map((track, index) => (
               <button
-                key={panel.id}
+                key={track.id}
                 type="button"
                 aria-current={active === index ? "true" : undefined}
-                className={`w-fit text-left font-display text-2xl tracking-tight focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#14D45E] ${
-                  active === index ? "font-semibold" : ""
-                }`}
-                onClick={() => go(panel.id)}
+                className={`${wordButton} ${active === index ? "underline decoration-2 underline-offset-4" : ""}`}
+                onClick={() => go(track.id)}
               >
-                {panel.word}
+                {track.word}
               </button>
             ))}
           </div>
+          <div className="mt-8 grid gap-5">
+            <ValuePoint
+              icon={InfinityIcon}
+              label="Unlimited bays"
+              line="Practice as often as you want, with no minimum term."
+            />
+            <ValuePoint
+              icon={Activity}
+              label="Shot data"
+              line="Carry, ball speed and spin on every swing."
+            />
+          </div>
+          <div className="mt-8">
+            <MembershipLink>Book unlimited practice</MembershipLink>
+          </div>
         </div>
-        <div className="flex flex-col gap-20">
-          {panels.map((panel, index) => (
+        <div className="flex flex-col gap-16">
+          <div className="grid gap-5 @3xl:hidden">
+            <p className="text-base font-semibold">What members track</p>
+            <ValuePoint
+              icon={InfinityIcon}
+              label="Unlimited bays"
+              line="Practice as often as you want, with no minimum term."
+            />
+            <ValuePoint icon={Activity} label="Shot data" line="Carry, ball speed and spin on every swing." />
+            <MembershipLink>Book unlimited practice</MembershipLink>
+          </div>
+          {tracks.map((track, index) => (
             <article
-              key={panel.id}
-              id={panel.id}
+              key={track.id}
+              id={track.id}
               ref={(node) => {
                 panelRefs.current[index] = node;
               }}
-              className="scroll-mt-6 @3xl:min-h-[64vh] @3xl:py-6"
+              className="scroll-mt-6 @3xl:min-h-[64vh]"
             >
-              <Frame photo={panel.photo} className="aspect-[4/3]" />
-              <h3 className="mt-6 font-display text-3xl font-semibold tracking-tight">{panel.title}</h3>
-              <p className="mt-3 text-base leading-relaxed">{panel.line}</p>
-              <Outcomes items={panel.outcomes} />
-              <div className="mt-6">{panelAction(panel.id)}</div>
+              <Frame photo={track.photo} className="aspect-[4/3]" />
+              <h3 className="mt-4 font-display text-2xl font-semibold tracking-tight">{track.word}</h3>
+              <p className="mt-2 text-base leading-relaxed">{track.line}</p>
             </article>
           ))}
+        </div>
+      </div>
+      <div className="mt-20 grid gap-10 @3xl:grid-cols-3">
+        <div>
+          <Frame photo={PHOTOS.groupWave} className="mb-4 aspect-[4/3]" />
+          <Stat value="4" label="Players in a bay" />
+          <div className="mt-4">
+            <ValuePoint icon={Users} label="Up to 4 friends" line="Play with up to four friends in one bay." />
+          </div>
+          <div className="mt-4">
+            <BookLink offer="bay">Book a bay</BookLink>
+          </div>
+        </div>
+        <div>
+          <Frame photo={PHOTOS.lounge} className="mb-4 aspect-[4/3]" />
+          <ValuePoint icon={CalendarDays} label="Ten sessions" line="Ten bay sessions as a monthly routine." />
+          <div className="mt-4">
+            <BookLink offer="ten-pack">Book ten sessions</BookLink>
+          </div>
+        </div>
+        <div>
+          <Frame photo={PHOTOS.clubRack} className="mb-4 aspect-[4/3]" />
+          <ValuePoint icon={Clock} label="Regular sessions" line="Book one bay when you want a single session." />
+          <div className="mt-4">
+            <BookLink offer="bay" tone="dark">
+              Book a session
+            </BookLink>
+          </div>
+        </div>
+      </div>
+      <div className="mt-12">
+        <ValuePoint icon={Trophy} label="Tournament spot" line="Reserve your place when you want to play." />
+        <div className="mt-4">
           <BookLink offer="tournament" tone="text">
             Reserve your tournament spot
           </BookLink>
@@ -217,24 +250,19 @@ export function Landing() {
         <Mark />
         <nav className="hidden items-center gap-7 @3xl:flex" aria-label="Page">
           {links.map(([id, label]) => (
-            <button
-              key={id}
-              className="text-base text-slate-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#14D45E]"
-              type="button"
-              onClick={() => jump(id)}
-            >
+            <button key={id} className={navButton} type="button" onClick={() => jump(id)}>
               {label}
             </button>
           ))}
         </nav>
         <div className="flex items-center gap-3">
           <SoundToggle />
-          <BookLink offer="bay" className="hidden h-10 px-4 @3xl:inline-flex">
+          <BookLink offer="bay" className="hidden @3xl:inline-flex">
             Book
           </BookLink>
           <button
             type="button"
-            className="h-10 px-2 text-base font-medium @3xl:hidden"
+            className={`inline-flex min-h-11 min-w-11 items-center px-4 text-base font-semibold text-[#0A0F0B] @3xl:hidden ${buttonFocus}`}
             aria-expanded={menu}
             onClick={() => setMenu((open) => !open)}
           >
@@ -243,9 +271,9 @@ export function Landing() {
         </div>
       </header>
       {menu && (
-        <nav className="flex flex-col gap-4 px-6 py-4 text-base @3xl:hidden" aria-label="Page">
+        <nav className="flex flex-col items-start gap-2 px-6 py-4 @3xl:hidden" aria-label="Page">
           {links.map(([id, label]) => (
-            <button key={id} type="button" className="text-left" onClick={() => jump(id)}>
+            <button key={id} type="button" className={navButton} onClick={() => jump(id)}>
               {label}
             </button>
           ))}
@@ -255,27 +283,29 @@ export function Landing() {
         </nav>
       )}
 
-      <section id="hero" className="grid px-6 @3xl:min-h-[720px] @3xl:grid-cols-2 @3xl:items-stretch @3xl:gap-12 @3xl:px-12">
-        <div className="flex flex-col justify-center py-14 @3xl:py-20">
-          <Headline
-            text="Indoor golf in Somerset"
-            className="max-w-xl font-display text-[2.6rem] font-semibold leading-[1.02] tracking-tight @4xl:text-6xl"
-          />
-          <p className="mt-6 max-w-md text-base leading-relaxed">
-            Simulator bays on Hamilton Street, year-round. Nick and Sean are the PGA pros.
-          </p>
-          <p className="mt-8 max-w-md text-base leading-relaxed">
-            {GOOGLE_RATING} on Google. {REVIEW_QUOTES[2]?.name}: {REVIEW_QUOTES[2]?.excerpt}
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <BookLink offer="bay">Book</BookLink>
-            <button
-              type="button"
-              className="inline-flex h-11 items-center text-base font-medium underline decoration-slate-300 underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#14D45E]"
-              onClick={() => jump("venue")}
-            >
-              See the venue
-            </button>
+      <section id="hero" className="grid @3xl:min-h-[760px] @3xl:grid-cols-2 @3xl:items-stretch">
+        <div className="flex flex-col">
+          <div className="flex flex-1 flex-col justify-center px-6 py-14 @3xl:px-12 @3xl:py-16">
+            <Headline
+              text="Get better at golf. All year."
+              className="max-w-xl font-display text-[2rem] font-semibold leading-[1.02] tracking-tight @3xl:text-[2.15rem] @5xl:text-5xl"
+            />
+            <p className="mt-6 max-w-md text-base leading-relaxed">
+              Unlimited bays, PGA coaching and real shot data on Hamilton Street, Somerset.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <BookLink offer="bay">Book</BookLink>
+              <button
+                type="button"
+                className={`inline-flex min-h-11 items-center text-base font-semibold text-[#0A0F0B] underline decoration-2 underline-offset-4 ${buttonFocus}`}
+                onClick={() => jump("venue")}
+              >
+                See the venue
+              </button>
+            </div>
+          </div>
+          <div className="mt-auto bg-[#06210f] px-6 py-8 text-white @3xl:px-12">
+            <HeroProof />
           </div>
         </div>
         <div className="relative min-h-[280px] @3xl:min-h-full">
@@ -289,17 +319,20 @@ export function Landing() {
         <div className="grid items-center gap-10 @3xl:grid-cols-2 @3xl:gap-16">
           <Frame photo={PHOTOS.coachAndPlayer} className="aspect-[4/3]" />
           <div>
-            <h2 className="font-display text-4xl font-semibold leading-none tracking-tight @3xl:text-6xl">See the swing</h2>
+            <h2 className="font-display text-3xl font-semibold leading-none tracking-tight @5xl:text-5xl">
+              PGA coaches to improve your game.
+            </h2>
             <p className="mt-6 max-w-md text-base leading-relaxed">
-              A 1:1 plan with a PGA pro, with progress you can track month to month.
+              Nick and Sean find the one fix that matters, then build your practice around it.
             </p>
-            <Outcomes
-              items={[
-                "Private lessons with PGA pros Nick and Sean.",
-                "Lesson packs when you want a run of sessions.",
-                "A swing evaluation, once per golfer.",
-              ]}
-            />
+            <div className="mt-8">
+              <Stat value="2" label="PGA pros" />
+            </div>
+            <div className="mt-8 grid gap-5">
+              <ValuePoint icon={UserRound} label="PGA pros" line="Nick and Sean coach here." />
+              <ValuePoint icon={Target} label="1:1 lessons" line="A plan you can track month to month." />
+              <ValuePoint icon={Activity} label="Swing evaluation" line="Once per golfer." />
+            </div>
             <div className="mt-8 flex flex-wrap gap-3">
               <BookLink offer="lesson">Book a lesson</BookLink>
               <BookLink offer="swing-evaluation" tone="dark">
@@ -311,9 +344,10 @@ export function Landing() {
         <div className="mt-24 grid items-center gap-10 @3xl:mt-32 @3xl:grid-cols-2 @3xl:gap-16">
           <div>
             <h3 className="font-display text-3xl font-semibold tracking-tight">Group lessons</h3>
-            <p className="mt-4 max-w-md text-base leading-relaxed">
-              A coach with the group, and a place held when you sign up. The weekly schedule is not published yet.
-            </p>
+            <div className="mt-6">
+              <ValuePoint icon={Users} label="Group lessons" line="A place held when you sign up." />
+            </div>
+            <p className="mt-4 max-w-md text-base leading-relaxed">The weekly schedule is not published yet.</p>
             <div className="mt-8">
               <BookLink offer="group">Sign up</BookLink>
             </div>
@@ -329,16 +363,15 @@ export function Landing() {
       <section id="juniors" className="scroll-mt-6 px-6 py-24 @3xl:px-12 @3xl:py-40">
         <div className="grid items-center gap-10 @3xl:grid-cols-2 @3xl:gap-16">
           <div className="@3xl:order-2">
-            <h2 className="font-display text-4xl font-semibold leading-none tracking-tight @3xl:text-6xl">A lesson every week</h2>
+            <h2 className="font-display text-4xl font-semibold leading-none tracking-tight @5xl:text-6xl">Junior coaching.</h2>
             <p className="mt-6 max-w-md text-base leading-relaxed">
-              Juniors build fundamentals every week with a coach who tracks their progress.
+              One or two 1:1 lessons a week with a PGA pro, plus unlimited practice between them.
             </p>
-            <Outcomes
-              items={[
-                "One weekly 1:1, plus supervised unlimited practice.",
-                "Or two lessons a week, with the same supervised access.",
-              ]}
-            />
+            <div className="mt-8 grid gap-5">
+              <ValuePoint icon={UserRound} label="One lesson a week" line="A weekly 1:1 with a PGA pro." />
+              <ValuePoint icon={Users} label="Two lessons a week" line="Two 1:1 lessons with the same coach." />
+              <ValuePoint icon={InfinityIcon} label="Unlimited practice" line="Supervised bay time between lessons." />
+            </div>
             <div className="mt-8 flex flex-wrap gap-3">
               <BookLink offer="junior">One lesson a week</BookLink>
               <BookLink offer="junior-plus" tone="dark">
@@ -356,17 +389,15 @@ export function Landing() {
 
       <section id="venue" className="scroll-mt-6 px-6 py-24 @3xl:px-12 @3xl:py-40">
         <div>
-          <h2 className="font-display text-4xl font-semibold leading-none tracking-tight @3xl:text-6xl">Hamilton Street</h2>
+          <h2 className="font-display text-4xl font-semibold leading-none tracking-tight @5xl:text-6xl">Hamilton Street</h2>
           <p className="mt-6 max-w-md text-base leading-relaxed">
             {NAP.street}, {NAP.city}, {NAP.region} {NAP.postalCode}. Simulator bays, a lounge, and clubs on the rack.
           </p>
-          <Outcomes
-            items={[
-              "Full Swing bays with launch-monitor shot data.",
-              "A lounge for the group after the session.",
-              "Play here year-round.",
-            ]}
-          />
+          <div className="mt-8 grid gap-5 @3xl:grid-cols-3">
+            <ValuePoint icon={MapPin} label="Hamilton Street" line="695 Hamilton Street, Suite G, Somerset, NJ." />
+            <ValuePoint icon={Monitor} label="Simulator bays" line="Launch-monitor data on every swing." />
+            <ValuePoint icon={Armchair} label="The lounge" line="A place to sit after the session." />
+          </div>
           <div className="mt-8">
             <BookLink offer="bay">Book a bay</BookLink>
           </div>
@@ -382,9 +413,17 @@ export function Landing() {
       <section id="proof" className="scroll-mt-6 px-6 py-24 @3xl:px-12 @3xl:py-40">
         <div className="grid items-start gap-12 @3xl:grid-cols-2 @3xl:gap-16">
           <div>
-            <h2 className="font-display text-4xl font-semibold leading-none tracking-tight @3xl:text-6xl">
+            <h2 className="font-display text-4xl font-semibold leading-none tracking-tight @5xl:text-6xl">
               {GOOGLE_RATING} on Google
             </h2>
+            <a
+              href={GOOGLE_REVIEWS_URL}
+              className={`mt-4 inline-flex min-h-11 items-center text-base font-semibold text-[#0A0F0B] underline decoration-2 underline-offset-4 ${buttonFocus}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              from {GOOGLE_REVIEW_COUNT} Google reviews
+            </a>
             <ul className="mt-10 space-y-8">
               {REVIEW_QUOTES.map((quote) => (
                 <li key={quote.id}>
@@ -396,7 +435,7 @@ export function Landing() {
                         {" "}
                         <a
                           href={quote.sourceUrl}
-                          className="underline decoration-slate-300 underline-offset-4"
+                          className={`inline-flex min-h-11 items-center font-semibold text-[#0A0F0B] underline decoration-2 underline-offset-4 ${buttonFocus}`}
                           target="_blank"
                           rel="noreferrer"
                         >
@@ -437,7 +476,10 @@ export function Landing() {
             <br />
             {NAP.city}, {NAP.region} {NAP.postalCode}
             <br />
-            <a className="mt-3 inline-block underline decoration-slate-300 underline-offset-4" href={NAP.phoneTel}>
+            <a
+              className={`mt-3 inline-flex min-h-11 items-center text-base font-semibold text-[#0A0F0B] underline decoration-2 underline-offset-4 ${buttonFocus}`}
+              href={NAP.phoneTel}
+            >
               {NAP.phoneDisplay}
             </a>
           </address>
@@ -450,18 +492,23 @@ export function Landing() {
             <p className="font-display text-3xl tracking-tight">Par2Play</p>
             <p className="mt-2 text-base">Somerset, NJ</p>
           </div>
-          <nav className="flex flex-wrap gap-x-6 gap-y-2 text-base" aria-label="Footer">
+          <nav className="flex flex-wrap items-center gap-x-6 gap-y-2" aria-label="Footer">
             {links.map(([id, label]) => (
-              <button key={id} type="button" onClick={() => jump(id)}>
+              <button key={id} type="button" className={navButton} onClick={() => jump(id)}>
                 {label}
               </button>
             ))}
-            <a href={NAP.phoneTel}>{NAP.phoneDisplay}</a>
+            <a
+              className={`inline-flex min-h-11 items-center text-base font-semibold text-[#0A0F0B] ${buttonFocus}`}
+              href={NAP.phoneTel}
+            >
+              {NAP.phoneDisplay}
+            </a>
           </nav>
         </div>
         <p className="mt-10 text-base">© 2026 Par2Play</p>
         {!golfClockBookingReady() && (
-          <p className="mt-2 text-sm text-slate-700">
+          <p className="mt-2 text-base text-slate-700">
             GolfClock booking link: TODO. Book calls {NAP.phoneDisplay}.
           </p>
         )}

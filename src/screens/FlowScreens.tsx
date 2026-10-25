@@ -41,7 +41,7 @@ import {
 import { offerDetail, offerName, receipt, resolveOffer, laterNotes } from "../data/journey";
 import { useFlow } from "../state/flow";
 
-const pill = "rounded-full uppercase tracking-[0.14em] text-[11px]";
+const pill = "min-h-11 rounded-full px-5 text-base font-semibold";
 
 function OfferCard() {
   const flow = useFlow();
@@ -51,7 +51,7 @@ function OfferCard() {
   return (
     <Card className="mt-6 rounded-3xl border border-emerald-200 bg-emerald-50" data-testid="screen-offer">
       <Card.Header>
-        <Chip color="accent" size="sm" variant="soft">
+        <Chip color="accent" variant="soft">
           <Chip.Label>One offer</Chip.Label>
         </Chip>
         <Card.Title>{offerName(offer.visible)}</Card.Title>
@@ -59,10 +59,10 @@ function OfferCard() {
       </Card.Header>
       {lessonPack && (
         <Card.Footer className="gap-2">
-          <Button size="sm" className={pill} variant={flow.acceptPack ? "primary" : "outline"} onPress={() => flow.setAcceptPack(true)}>
+          <Button className={pill} variant={flow.acceptPack ? "primary" : "outline"} onPress={() => flow.setAcceptPack(true)}>
             {`Add the 3-lesson pack for ${money(RATES.lessonPack3)}`}
           </Button>
-          <Button size="sm" className={pill} variant={flow.acceptPack ? "outline" : "primary"} onPress={() => flow.setAcceptPack(false)}>
+          <Button className={pill} variant={flow.acceptPack ? "outline" : "primary"} onPress={() => flow.setAcceptPack(false)}>
             30-minute lesson price TBD
           </Button>
         </Card.Footer>
@@ -136,7 +136,7 @@ function ChoiceQuestion({
       }
     >
       <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-700">{eyebrow}</p>
-      <ProgressBar aria-label="Questions" className="mt-4 max-w-xs" size="sm" value={progress}>
+      <ProgressBar aria-label="Questions" className="mt-4 max-w-xs" value={progress}>
         <ProgressBar.Track>
           <ProgressBar.Fill />
         </ProgressBar.Track>
@@ -371,9 +371,9 @@ export function PlanStep() {
               onClick={() => flow.setPlan(item.id)}
               className={`rounded-3xl border p-5 text-left ${selected === item.id ? "border-emerald-600" : "border-slate-200"}`}
             >
-              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">{item.name}</span>
+              <span className="text-base font-semibold text-[#0A0F0B]">{item.name}</span>
               {item.id === recommendedPlan(flow.answers) && (
-                <Chip className="ml-2" color="accent" size="sm" variant="soft">
+                <Chip className="ml-2" color="accent" variant="soft">
                   <Chip.Label>Match</Chip.Label>
                 </Chip>
               )}
@@ -418,7 +418,7 @@ export function BookStep() {
       <p className="mt-8 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Visit</p>
       <div className="mt-3 flex flex-wrap gap-2">
         {PRODUCTS.map((item) => (
-          <Button key={item.id} size="sm" className={pill} variant={flow.product === item.id ? "primary" : "outline"} onPress={() => flow.setProduct(item.id)}>
+          <Button key={item.id} className={pill} variant={flow.product === item.id ? "primary" : "outline"} onPress={() => flow.setProduct(item.id)}>
             {item.label}
           </Button>
         ))}
@@ -427,7 +427,7 @@ export function BookStep() {
       <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">People</p>
       <div className="mt-3 flex gap-2">
         {(["1", "2", "4"] as Party[]).map((size) => (
-          <Button key={size} size="sm" variant={party === size ? "primary" : "outline"} onPress={() => flow.setParty(size)}>
+          <Button key={size} className="min-h-11 min-w-11 px-5 text-base font-semibold" variant={party === size ? "primary" : "outline"} onPress={() => flow.setParty(size)}>
             {size}
           </Button>
         ))}

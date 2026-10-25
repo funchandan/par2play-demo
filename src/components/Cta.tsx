@@ -1,17 +1,20 @@
 import type { ReactNode } from "react";
 import { bookingHref, membershipHref, type BookingOffer } from "../data/business";
 
+/** Near-black inner ring (clears green and white) plus a white outer ring (clears dark grounds). */
+export const buttonFocus = "aa-focus";
+
+/** White inner ring for a near-black fill sitting on a light page. */
+export const buttonFocusOnInk = "aa-focus-ink";
+
+const base = `inline-flex min-h-11 min-w-11 items-center justify-center rounded-full px-5 text-center text-base font-semibold ${buttonFocus}`;
+
 const tones = {
-  brand:
-    "inline-flex h-11 items-center justify-center rounded-full bg-[#14D45E] px-5 text-center text-sm font-semibold uppercase tracking-[0.14em] text-[#06210f] transition hover:bg-[#3dff7c]",
-  line:
-    "inline-flex h-11 items-center justify-center rounded-full border border-white/50 bg-white/10 px-5 text-center text-sm font-semibold uppercase tracking-[0.14em] text-white",
-  dark:
-    "inline-flex h-11 items-center justify-center rounded-full border border-slate-300 bg-white px-5 text-center text-sm font-semibold uppercase tracking-[0.14em] text-slate-900",
-  solid:
-    "inline-flex h-11 items-center justify-center rounded-full bg-slate-950 px-5 text-center text-sm font-semibold uppercase tracking-[0.14em] text-white",
-  text:
-    "inline-flex h-11 items-center text-sm font-semibold uppercase tracking-[0.14em] text-slate-900 underline-offset-4 hover:underline",
+  brand: `${base} bg-[#14D45E] text-[#0A0F0B] hover:bg-[#3dff7c] active:bg-[#0fb852]`,
+  line: `${base} border-2 border-[#0A0F0B] bg-white text-[#0A0F0B] hover:bg-[#f3f6f1] active:bg-[#e6eee8]`,
+  dark: `${base} border-2 border-[#4b5563] bg-white text-[#0A0F0B] hover:bg-[#f3f6f1] active:bg-[#e6eee8]`,
+  solid: `${base.replace(buttonFocus, buttonFocusOnInk)} bg-[#0A0F0B] text-white hover:bg-[#1c2822] active:bg-[#000000]`,
+  text: `inline-flex min-h-11 items-center text-base font-semibold text-[#0A0F0B] underline decoration-2 underline-offset-4 ${buttonFocus}`,
 } as const;
 
 type Tone = keyof typeof tones;

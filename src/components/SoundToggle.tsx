@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from "react";
 import { getSoundSnapshot, subscribeSound, toggleSound } from "../audio/soundtrack";
+import { buttonFocus } from "./Cta";
 
 export function SoundToggle() {
   const enabled = useSyncExternalStore(
@@ -13,8 +14,10 @@ export function SoundToggle() {
       type="button"
       aria-pressed={enabled}
       onClick={toggleSound}
-      className={`inline-flex h-10 items-center gap-2 rounded-full px-3 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#14D45E] ${
-        enabled ? "bg-[#14D45E] text-[#06210f]" : "border border-slate-300 bg-white text-slate-950"
+      className={`inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-base font-semibold ${buttonFocus} ${
+        enabled
+          ? "bg-[#14D45E] text-[#0A0F0B] hover:bg-[#3dff7c] active:bg-[#0fb852]"
+          : "border-2 border-[#4b5563] bg-white text-[#0A0F0B] hover:bg-[#f3f6f1] active:bg-[#e6eee8]"
       }`}
     >
       <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" className="shrink-0">

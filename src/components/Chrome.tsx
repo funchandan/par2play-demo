@@ -1,6 +1,6 @@
 import { Button } from "@heroui/react";
 import { useState, type ReactNode } from "react";
-import { MembershipLink } from "./Cta";
+import { MembershipLink, buttonFocus } from "./Cta";
 import { useFlow } from "../state/flow";
 
 export function Mark({ light = false }: { light?: boolean }) {
@@ -8,7 +8,7 @@ export function Mark({ light = false }: { light?: boolean }) {
     <img
       src={`${import.meta.env.BASE_URL}brand/logo.png`}
       alt="Par2Play"
-      className={light ? "h-14 w-auto" : "h-14 w-auto rounded-xl bg-slate-950 px-2 py-1"}
+      className={light ? "h-11 w-auto @3xl:h-14" : "h-11 w-auto max-w-36 rounded-xl bg-slate-950 px-2 py-1 @3xl:h-14 @3xl:max-w-none"}
     />
   );
 }
@@ -16,20 +16,20 @@ export function Mark({ light = false }: { light?: boolean }) {
 export function ClubHeader({ light = false }: { light?: boolean }) {
   const flow = useFlow();
   const [open, setOpen] = useState(false);
-  const link = light ? "text-white/90 hover:text-emerald-300" : "text-slate-600 hover:text-slate-900";
+  const link = `inline-flex min-h-11 items-center text-base font-semibold ${buttonFocus} ${light ? "text-white" : "text-[#0A0F0B]"}`;
   const jump = (id?: string) => {
     setOpen(false);
     if (id) flow.goSection(id);
     else flow.goHome();
   };
   return (
-    <header className="relative px-5 py-4 lg:px-8">
+    <header className={`relative px-5 py-4 lg:px-8 ${light ? "bg-[#0A0F0B] text-white" : "text-[#0A0F0B]"}`}>
       <div className="flex items-center justify-between gap-4">
         <Button variant="ghost" className="h-auto min-w-0 bg-transparent px-0" onPress={flow.goHome}>
           <Mark light={light} />
         </Button>
         {flow.layout === "web" ? (
-          <nav className="flex items-center gap-6 text-[11px] font-medium uppercase tracking-[0.16em]">
+          <nav className="flex items-center gap-6">
             <button className={link} onClick={() => jump()} type="button">
               Home
             </button>
@@ -47,21 +47,21 @@ export function ClubHeader({ light = false }: { light?: boolean }) {
             </button>
           </nav>
         ) : (
-          <Button variant="ghost" className={light ? "text-white" : ""} onPress={() => setOpen((value) => !value)}>
+          <Button variant="ghost" className={`min-h-11 px-4 text-base font-semibold ${light ? "text-white" : "text-[#0A0F0B]"}`} onPress={() => setOpen((value) => !value)}>
             {open ? "Close" : "Menu"}
           </Button>
         )}
         {flow.layout === "web" && flow.step !== "landing" && (
-          <MembershipLink className="h-9 px-4 text-[10px]">Join</MembershipLink>
+          <MembershipLink>Join</MembershipLink>
         )}
       </div>
       {flow.layout === "mobile" && open && (
-        <nav className={`mt-4 flex flex-col gap-3 text-[11px] font-medium uppercase tracking-[0.16em] ${light ? "text-white" : "text-slate-700"}`}>
-          <button onClick={() => jump()} type="button">Home</button>
-          <button onClick={() => jump("practice")} type="button">Practice</button>
-          <button onClick={() => jump("coaching")} type="button">Coaching</button>
-          <button onClick={() => jump("juniors")} type="button">Juniors</button>
-          <button onClick={() => jump("venue")} type="button">Venue</button>
+        <nav className={`mt-4 flex flex-col gap-1 text-base font-semibold ${light ? "text-white" : "text-[#0A0F0B]"}`}>
+          <button className={link} onClick={() => jump()} type="button">Home</button>
+          <button className={link} onClick={() => jump("practice")} type="button">Practice</button>
+          <button className={link} onClick={() => jump("coaching")} type="button">Coaching</button>
+          <button className={link} onClick={() => jump("juniors")} type="button">Juniors</button>
+          <button className={link} onClick={() => jump("venue")} type="button">Venue</button>
         </nav>
       )}
     </header>
@@ -86,7 +86,7 @@ export function ScreenFrame({
           {photo && <img src={photo} alt="" className="h-36 w-full object-cover object-center" />}
           <div className="px-5 py-6">{children}</div>
         </div>
-        {footer && <div className="border-t border-slate-200 px-5 py-4">{footer}</div>}
+        {footer && <div className="px-5 py-4">{footer}</div>}
       </div>
     );
   }
