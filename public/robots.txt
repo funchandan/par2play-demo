@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://funchandan.github.io/par2play-demo/sitemap.xml

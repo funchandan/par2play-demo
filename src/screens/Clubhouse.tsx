@@ -1,5 +1,6 @@
 import { Button, Card, Chip } from "@heroui/react";
 import { useState, type FormEvent } from "react";
+import { BookLink } from "../components/Cta";
 import { Mark } from "../components/Chrome";
 import { IMAGES } from "../data/catalog";
 import { useFlow } from "../state/flow";
@@ -53,17 +54,13 @@ export function Clubhouse() {
             <nav className="flex items-center gap-8">
               <button className={lightNav} type="button" onClick={flow.goHome}>Home</button>
               <button className={here} type="button" aria-current="page">Leagues</button>
-              <button className={lightNav} type="button" onClick={() => flow.goSection("gallery")}>Gallery</button>
-              <button className={lightNav} type="button" onClick={() => flow.goSection("training")}>Training</button>
+              <button className={lightNav} type="button" onClick={() => flow.goSection("practice")}>Practice</button>
+              <button className={lightNav} type="button" onClick={() => flow.goSection("lessons")}>Lessons</button>
               <button className={lightNav} type="button" onClick={() => flow.goSection("pricing")}>Pricing</button>
-              <button className={lightNav} type="button" onClick={() => flow.goSection("about")}>About</button>
-              <Button
-                variant="outline"
-                className="rounded-full border-white/40 bg-transparent px-6 text-[10px] font-semibold uppercase tracking-[0.16em] text-white"
-                onPress={flow.startVisit}
-              >
+              <button className={lightNav} type="button" onClick={() => flow.goSection("visit")}>Visit</button>
+              <BookLink offer="bay" tone="line" className="h-10 px-4 text-[10px]">
                 Book a bay
-              </Button>
+              </BookLink>
             </nav>
           ) : (
             <Button variant="ghost" className="text-white" onPress={() => setMenu((open) => !open)}>
@@ -75,19 +72,19 @@ export function Clubhouse() {
           <nav className="relative z-10 flex flex-col gap-3 px-5 text-[11px] font-medium uppercase tracking-[0.16em] text-white">
             <button type="button" onClick={() => { setMenu(false); flow.goHome(); }}>Home</button>
             <button type="button" aria-current="page">Leagues</button>
-            <button type="button" onClick={() => { setMenu(false); flow.goSection("gallery"); }}>Gallery</button>
-            <button type="button" onClick={() => { setMenu(false); flow.goSection("training"); }}>Training</button>
+            <button type="button" onClick={() => { setMenu(false); flow.goSection("practice"); }}>Practice</button>
+            <button type="button" onClick={() => { setMenu(false); flow.goSection("lessons"); }}>Lessons</button>
             <button type="button" onClick={() => { setMenu(false); flow.goSection("pricing"); }}>Pricing</button>
-            <button type="button" onClick={() => { setMenu(false); flow.goSection("about"); }}>About</button>
+            <button type="button" onClick={() => { setMenu(false); flow.goSection("visit"); }}>Visit</button>
           </nav>
         )}
         <div className={`relative z-10 flex flex-1 flex-col justify-end px-6 pb-12 ${flow.layout === "web" ? "lg:px-12" : ""}`}>
           <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/80">Par2Play Clubhouse · Somerset</p>
           <h1 className="mt-4 max-w-xl font-semibold tracking-tighter text-3xl lg:text-5xl">
-            Play the season. Bring someone new.
+            February league is coming.
           </h1>
           <p className="mt-4 max-w-md text-sm leading-relaxed text-white/90">
-            Every other Tuesday at 7pm. One hole on the screen. The team score is what counts. Joining the list is free. The bay is the hour you already pay for.
+            Format, dates, and price are not set. The board below is an example of a night, not a live roster and not an open signup.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <a
@@ -96,24 +93,23 @@ export function Clubhouse() {
             >
               Claim a seat
             </a>
-            <Button
-              variant="outline"
-              className="rounded-full border-white/50 bg-white/10 text-[11px] font-semibold uppercase tracking-[0.14em] text-white"
-              onPress={flow.startVisit}
-            >
+            <BookLink offer="bay" tone="line">
               Book a bay
-            </Button>
+            </BookLink>
           </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-[1400px] px-6 py-16">
+        <p className="mb-8 max-w-2xl rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
+          The February league is not open. Format, dates, and price are TODO. The roster below is an example, not a live board.
+        </p>
         <div className="flex flex-wrap gap-2">
           <span className="rounded-full border border-slate-200 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-700">
-            Somerset · 695 Hamilton Street
+            Somerset · 695 Hamilton Street, Suite G · (732) 448-2769
           </span>
           <span className="rounded-full border border-emerald-700 bg-emerald-700 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
-            Tuesday · 7pm
+            February · coming soon
           </span>
         </div>
         <div className={`mt-8 grid items-start gap-6 ${flow.layout === "web" ? "grid-cols-[1.4fr_0.8fr]" : ""}`}>
@@ -203,8 +199,8 @@ export function Clubhouse() {
           <div className={`mt-10 grid gap-4 ${flow.layout === "web" ? "grid-cols-3" : ""}`}>
             {[
               ["Weekday guest hour", "A quiet hour for someone you bring. Saturday stays full price."],
-              ["A lesson", "$100 with a coach. The night itself stays about the hole."],
-              ["A fitting", "$125. Clubs for the way you actually swing."],
+              ["A lesson", "A 50-minute swing evaluation is $100, tax included. A 30-minute lesson price is TBD. The night itself stays about the hole."],
+              ["A fitting", "Club fitting price: TBD."],
             ].map(([title, copy]) => (
               <div key={title} className="rounded-2xl border border-white/10 p-6">
                 <p className="text-lg font-semibold">{title}</p>
@@ -220,7 +216,7 @@ export function Clubhouse() {
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Open seat</p>
             <h2 className="mt-4 text-4xl font-semibold tracking-tighter">Tell a host you are coming</h2>
-            <p className="mt-4 text-slate-500">Name and mobile. No card tonight. A host texts the hole and the time.</p>
+            <p className="mt-4 text-slate-500">This form stays in the browser and does not send. Call (732) 448-2769 about the February league.</p>
           </div>
           {seat ? (
             <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-8">

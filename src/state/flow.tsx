@@ -20,6 +20,7 @@ import {
   defaultProduct,
   recommendedPlan,
 } from "../data/catalog";
+import { saveQuizToGolfClock } from "../data/business";
 import { type OfferState, type Step } from "../data/journey";
 
 export type Layout = "mobile" | "web";
@@ -107,6 +108,7 @@ type FlowApi = FlowData & {
   reset: () => void;
   chooseJoin: () => void;
   chooseGuest: () => void;
+  finishHandoff: () => void;
   recordCard: (last4: string, name: string, mobile: string) => void;
 };
 
@@ -169,10 +171,10 @@ export function FlowProvider({ children }: { children: ReactNode }) {
           path: "join",
           buyingMembership: true,
           planHint: hint ?? null,
-          plan: hint === "junior" ? "junior" : null,
-          planTouched: hint === "junior",
+          plan: hint ?? null,
+          planTouched: hint != null,
           term: choice?.term ?? 1,
-          foursome: hint === "junior" ? false : (choice?.foursome ?? false),
+          foursome: false,
         })),
       startVisit: () =>
         setData((current) => ({
@@ -189,11 +191,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       setPlace: (place) =>
         setData((current) => ({
           ...current,
-          product: current.path === "visit" && !current.productTouched
-            ? place === "outdoor"
-              ? "round"
-              : "simulator"
-            : current.product,
+          product: current.path === "visit" && !current.productTouched ? "simulator" : current.product,
           answers: { ...current.answers, place },
         })),
       setCadence: (cadence) =>
@@ -205,7 +203,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
           ...current,
           plan,
           planTouched: true,
-          foursome: plan === "junior" ? false : current.foursome,
+          foursome: plan === "junior" || plan === "junior-plus" ? false : current.foursome,
         })),
       setTerm: (term) => patch({ term }),
       setFoursome: (foursome) =>
@@ -224,6 +222,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
           if (current.step === "place" && current.answers.place) return { ...current, step: "cadence" };
           if (current.step === "cadence" && current.answers.cadence) {
             const plan = current.planTouched ? current.plan : recommendedPlan(current.answers);
+            saveQuizToGolfClock({ answers: current.answers, plan });
             return { ...current, step: "recommend", plan };
           }
           if (current.step === "recommend") return { ...current, step: "register" };
@@ -286,6 +285,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
           step: "register",
         })),
       chooseGuest: () => patch({ buyingMembership: false, step: "pay" }),
+      finishHandoff: () => patch({ step: "confirm", cardLast4: null }),
       recordCard: (cardLast4, name, mobile) =>
         setData((current) => ({
           ...current,
