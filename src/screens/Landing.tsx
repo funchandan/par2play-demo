@@ -1,29 +1,24 @@
-import { Fragment, useEffect, useRef, useState, type RefObject } from "react";
+import { Fragment, useEffect, useRef, useState, type FormEvent, type RefObject } from "react";
 import {
   Activity,
-  Armchair,
   CalendarDays,
   Clock,
   Infinity as InfinityIcon,
-  MapPin,
-  Monitor,
   Target,
-  Trophy,
   UserRound,
   Users,
+  type LucideIcon,
 } from "lucide-react";
 import { bindHeroWatch } from "../audio/soundtrack";
 import { Mark } from "../components/Chrome";
 import { BookLink, MembershipLink, buttonFocus } from "../components/Cta";
-import { EnquiryForm } from "../components/EnquiryForm";
 import { HeroProof } from "../components/HeroProof";
 import { HeroVideo, Photo } from "../components/Media";
 import { SoundToggle } from "../components/SoundToggle";
 import { Stat, ValuePoint } from "../components/ValuePoint";
-import { NAP, golfClockBookingReady } from "../data/business";
+import { ENQUIRY, NAP, golfClockBookingReady } from "../data/business";
 import type { PhotoAsset } from "../data/photos";
 import { PHOTOS } from "../data/photos";
-import { GOOGLE_RATING, GOOGLE_REVIEW_COUNT, GOOGLE_REVIEWS_URL, REVIEW_QUOTES } from "../data/reviews";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { useFlow } from "../state/flow";
 
@@ -31,14 +26,42 @@ const links = [
   ["practice", "Practice"],
   ["coaching", "Coaching"],
   ["juniors", "Juniors"],
-  ["venue", "Venue"],
+  ["tournament", "Tournament"],
 ] as const;
 
-const tracks = [
-  { id: "carry", word: "Carry", line: "Carry, on every swing.", photo: PHOTOS.launchData },
-  { id: "speed", word: "Ball speed", line: "Ball speed, on every swing.", photo: PHOTOS.range },
-  { id: "spin", word: "Spin", line: "Spin, on every swing.", photo: PHOTOS.bays },
-] as const;
+const tracks: readonly {
+  id: string;
+  word: string;
+  label: string;
+  line: string;
+  photo: PhotoAsset;
+  icon: LucideIcon;
+}[] = [
+  {
+    id: "carry",
+    word: "Carry",
+    label: "Unlimited bays",
+    line: "Hit as often as you want. Carry shows on the screen, with no minimum term.",
+    photo: PHOTOS.range,
+    icon: InfinityIcon,
+  },
+  {
+    id: "speed",
+    word: "Ball speed",
+    label: "Shot data",
+    line: "Ball speed on the launch monitor, recorded on every swing.",
+    photo: PHOTOS.launchData,
+    icon: Activity,
+  },
+  {
+    id: "spin",
+    word: "Spin",
+    label: "Short game",
+    line: "Spin on the screen while you practice, including the short game.",
+    photo: PHOTOS.juniorScreen,
+    icon: Target,
+  },
+];
 
 const navButton = `inline-flex min-h-11 min-w-11 items-center text-base font-semibold text-[#0A0F0B] ${buttonFocus}`;
 
@@ -61,16 +84,6 @@ function Headline({ text, className }: { text: string; className: string }) {
         ))}
       </span>
     </h1>
-  );
-}
-
-function Outcomes({ items }: { items: readonly string[] }) {
-  return (
-    <ul className="mt-6 space-y-2 text-base leading-relaxed">
-      {items.map((item) => (
-        <li key={item}>{item}</li>
-      ))}
-    </ul>
   );
 }
 
@@ -121,11 +134,11 @@ function Practice({
 
   return (
     <section id="practice" className="scroll-mt-6 px-6 py-24 @3xl:px-12 @3xl:py-28">
-      <h2 className="max-w-3xl font-display text-4xl font-semibold leading-none tracking-tight @4xl:text-6xl">
-        Add 10 yards in 90 days.
+      <h2 className="max-w-3xl font-display text-4xl font-semibold leading-none tracking-tight @5xl:text-5xl">
+        Unlimited practice membership
       </h2>
       <p className="mt-6 max-w-xl text-base leading-relaxed">
-        Unlimited practice, no minimum. Track carry, ball speed and spin on every swing and watch the trend move.
+        Unlimited practice, no minimum. Track carry, ball speed and spin on every swing.
       </p>
       <div className="mt-12 grid gap-10 @3xl:grid-cols-2 @3xl:gap-16">
         <div className="sticky top-0 hidden h-dvh flex-col justify-center @3xl:flex">
@@ -146,33 +159,16 @@ function Practice({
               </button>
             ))}
           </div>
-          <div className="mt-8 grid gap-5">
-            <ValuePoint
-              icon={InfinityIcon}
-              label="Unlimited bays"
-              line="Practice as often as you want, with no minimum term."
-            />
-            <ValuePoint
-              icon={Activity}
-              label="Shot data"
-              line="Carry, ball speed and spin on every swing."
-            />
-          </div>
+          {tracks[active] && (
+            <div className="mt-8">
+              <ValuePoint icon={tracks[active].icon} label={tracks[active].label} line={tracks[active].line} />
+            </div>
+          )}
           <div className="mt-8">
             <MembershipLink>Book unlimited practice</MembershipLink>
           </div>
         </div>
         <div className="flex flex-col gap-16">
-          <div className="grid gap-5 @3xl:hidden">
-            <p className="text-base font-semibold">What members track</p>
-            <ValuePoint
-              icon={InfinityIcon}
-              label="Unlimited bays"
-              line="Practice as often as you want, with no minimum term."
-            />
-            <ValuePoint icon={Activity} label="Shot data" line="Carry, ball speed and spin on every swing." />
-            <MembershipLink>Book unlimited practice</MembershipLink>
-          </div>
           {tracks.map((track, index) => (
             <article
               key={track.id}
@@ -184,48 +180,107 @@ function Practice({
             >
               <Frame photo={track.photo} className="aspect-[4/3]" />
               <h3 className="mt-4 font-display text-2xl font-semibold tracking-tight">{track.word}</h3>
-              <p className="mt-2 text-base leading-relaxed">{track.line}</p>
+              <div className="mt-4 @3xl:hidden">
+                <ValuePoint icon={track.icon} label={track.label} line={track.line} />
+              </div>
             </article>
           ))}
         </div>
       </div>
-      <div className="mt-20 grid gap-10 @3xl:grid-cols-3">
-        <div>
-          <Frame photo={PHOTOS.groupWave} className="mb-4 aspect-[4/3]" />
-          <Stat value="4" label="Players in a bay" />
-          <div className="mt-4">
-            <ValuePoint icon={Users} label="Up to 4 friends" line="Play with up to four friends in one bay." />
-          </div>
-          <div className="mt-4">
-            <BookLink offer="bay">Book a bay</BookLink>
-          </div>
-        </div>
-        <div>
-          <Frame photo={PHOTOS.lounge} className="mb-4 aspect-[4/3]" />
-          <ValuePoint icon={CalendarDays} label="Ten sessions" line="Ten bay sessions as a monthly routine." />
-          <div className="mt-4">
-            <BookLink offer="ten-pack">Book ten sessions</BookLink>
-          </div>
-        </div>
-        <div>
-          <Frame photo={PHOTOS.clubRack} className="mb-4 aspect-[4/3]" />
-          <ValuePoint icon={Clock} label="Regular sessions" line="Book one bay when you want a single session." />
-          <div className="mt-4">
-            <BookLink offer="bay" tone="dark">
-              Book a session
-            </BookLink>
-          </div>
-        </div>
+      <div className="mt-20 grid gap-8 @3xl:grid-cols-3">
+        <ValuePoint icon={Users} label="Up to 4 friends" line="Play with up to four friends in one bay." />
+        <ValuePoint icon={CalendarDays} label="Ten sessions" line="Ten bay sessions as a monthly routine." />
+        <ValuePoint icon={Clock} label="Regular sessions" line="One bay when you want a single session." />
       </div>
-      <div className="mt-12">
-        <ValuePoint icon={Trophy} label="Tournament spot" line="Reserve your place when you want to play." />
-        <div className="mt-4">
-          <BookLink offer="tournament" tone="text">
-            Reserve your tournament spot
-          </BookLink>
-        </div>
+      <div className="mt-8">
+        <BookLink offer="bay">Book a bay</BookLink>
       </div>
     </section>
+  );
+}
+
+function TournamentForm() {
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "held" | "error">("idle");
+
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const value = email.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      setError("Add a valid email.");
+      return;
+    }
+    setError("");
+    const payload = { email: value, interest: "tournament" };
+
+    if (ENQUIRY.endpoint.trim()) {
+      setStatus("sending");
+      try {
+        const response = await fetch(ENQUIRY.endpoint.trim(), {
+          method: "POST",
+          headers: { Accept: "application/json", "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        setStatus(response.ok ? "sent" : "error");
+      } catch {
+        setStatus("error");
+      }
+      return;
+    }
+
+    if (ENQUIRY.email.trim()) {
+      const body = encodeURIComponent(`Email: ${payload.email}\nInterest: tournament\n`);
+      window.location.href = `mailto:${ENQUIRY.email.trim()}?subject=${encodeURIComponent("Par2Play tournament")}&body=${body}`;
+      setStatus("sent");
+      return;
+    }
+
+    setStatus("held");
+  }
+
+  if (status === "sent" || status === "held") {
+    return (
+      <p className="text-base text-[#0A0F0B]" role="status">
+        {status === "sent" ? "Sent. We’ll reply soon." : "Noted here. Enquiry inbox: TODO. Nothing was sent."}
+      </p>
+    );
+  }
+
+  return (
+    <form className="mx-auto grid max-w-md gap-3 text-left" onSubmit={onSubmit} noValidate>
+      <label className="block text-base font-semibold text-[#0A0F0B]" htmlFor="tournament-email">
+        Email
+        <input
+          id="tournament-email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          value={email}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? "tournament-email-error" : undefined}
+          onChange={(event) => setEmail(event.target.value)}
+          className="aa-focus mt-2 w-full border-2 border-[#4b5563] bg-white px-3 py-3 text-base font-normal text-[#0A0F0B] outline-none placeholder:text-[#4b5563] focus-visible:border-[#0A0F0B]"
+        />
+      </label>
+      {error && (
+        <p id="tournament-email-error" className="text-base text-red-700">
+          {error}
+        </p>
+      )}
+      {status === "error" && (
+        <p className="text-base text-red-700" role="alert">
+          Could not send. Call {NAP.phoneDisplay}.
+        </p>
+      )}
+      <button
+        type="submit"
+        disabled={status === "sending"}
+        className={`mt-2 inline-flex min-h-11 w-fit items-center rounded-full bg-[#14D45E] px-5 text-base font-semibold text-[#0A0F0B] hover:bg-[#3dff7c] active:bg-[#0fb852] disabled:bg-[#c8f5d8] disabled:text-[#0A0F0B] ${buttonFocus}`}
+      >
+        {status === "sending" ? "Sending" : "Reserve your tournament spot"}
+      </button>
+    </form>
   );
 }
 
@@ -283,33 +338,22 @@ export function Landing() {
         </nav>
       )}
 
-      <section id="hero" className="grid @3xl:min-h-[760px] @3xl:grid-cols-2 @3xl:items-stretch">
-        <div className="flex flex-col">
-          <div className="flex flex-1 flex-col justify-center px-6 py-14 @3xl:px-12 @3xl:py-16">
-            <Headline
-              text="Get better at golf. All year."
-              className="max-w-xl font-display text-[2rem] font-semibold leading-[1.02] tracking-tight @3xl:text-[2.15rem] @5xl:text-5xl"
-            />
-            <p className="mt-6 max-w-md text-base leading-relaxed">
-              Unlimited bays, PGA coaching and real shot data on Hamilton Street, Somerset.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <BookLink offer="bay">Book</BookLink>
-              <button
-                type="button"
-                className={`inline-flex min-h-11 items-center text-base font-semibold text-[#0A0F0B] underline decoration-2 underline-offset-4 ${buttonFocus}`}
-                onClick={() => jump("venue")}
-              >
-                See the venue
-              </button>
-            </div>
-          </div>
-          <div className="mt-auto bg-[#06210f] px-6 py-8 text-white @3xl:px-12">
-            <HeroProof />
-          </div>
+      <section id="hero" className="relative h-dvh w-full overflow-hidden bg-[#06210f]">
+        <HeroVideo />
+      </section>
+      <section id="intro" className="bg-white px-6 py-16 @3xl:px-12 @3xl:py-24">
+        <Headline
+          text="Get better at golf. All year."
+          className="max-w-xl font-display text-[2rem] font-semibold leading-[1.02] tracking-tight @3xl:text-[2.15rem] @5xl:text-5xl"
+        />
+        <p className="mt-6 max-w-md text-base leading-relaxed">
+          Unlimited bays, PGA coaching and real shot data on Hamilton Street, Somerset.
+        </p>
+        <div className="mt-8">
+          <BookLink offer="bay">Book</BookLink>
         </div>
-        <div className="relative min-h-[280px] @3xl:min-h-full">
-          <HeroVideo />
+        <div className="mt-14 bg-[#06210f] px-6 py-8 text-white">
+          <HeroProof />
         </div>
       </section>
 
@@ -341,23 +385,16 @@ export function Landing() {
             </div>
           </div>
         </div>
-        <div className="mt-24 grid items-center gap-10 @3xl:mt-32 @3xl:grid-cols-2 @3xl:gap-16">
-          <div>
-            <h3 className="font-display text-3xl font-semibold tracking-tight">Group lessons</h3>
-            <div className="mt-6">
-              <ValuePoint icon={Users} label="Group lessons" line="A place held when you sign up." />
-            </div>
-            <p className="mt-4 max-w-md text-base leading-relaxed">The weekly schedule is not published yet.</p>
-            <div className="mt-8">
-              <BookLink offer="group">Sign up</BookLink>
-            </div>
+        <div className="mt-24 max-w-xl @3xl:mt-32">
+          <h3 className="font-display text-3xl font-semibold tracking-tight">Group lessons</h3>
+          <div className="mt-6">
+            <ValuePoint icon={Users} label="Group lessons" line="A place held when you sign up." />
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <Frame photo={PHOTOS.launchData} className="aspect-[3/4]" />
-            <Frame photo={PHOTOS.gripLesson} className="aspect-[3/4]" />
+          <p className="mt-4 max-w-md text-base leading-relaxed">The weekly schedule is not published yet.</p>
+          <div className="mt-8">
+            <BookLink offer="group">Sign up</BookLink>
           </div>
         </div>
-        <Frame photo={PHOTOS.ladiesClinic} className="mt-3 aspect-[16/8]" />
       </section>
 
       <section id="juniors" className="scroll-mt-6 px-6 py-24 @3xl:px-12 @3xl:py-40">
@@ -381,109 +418,32 @@ export function Landing() {
           </div>
           <Frame photo={PHOTOS.juniorGroup} className="aspect-[4/3] @3xl:order-1" />
         </div>
-        <div className="mt-3 grid grid-cols-2 gap-3">
-          <Frame photo={PHOTOS.juniorSetup} className="aspect-[4/3]" />
-          <Frame photo={PHOTOS.juniorScreen} className="aspect-[4/3]" />
+      </section>
+
+      <section id="tournament" className="scroll-mt-6 px-6 py-24 text-center @3xl:px-12 @3xl:py-32">
+        <h2 className="mx-auto max-w-xl font-display text-4xl font-semibold leading-none tracking-tight @5xl:text-5xl">
+          Reserve your tournament spot
+        </h2>
+        <div className="mt-10">
+          <TournamentForm />
         </div>
       </section>
 
-      <section id="venue" className="scroll-mt-6 px-6 py-24 @3xl:px-12 @3xl:py-40">
-        <div>
-          <h2 className="font-display text-4xl font-semibold leading-none tracking-tight @5xl:text-6xl">Hamilton Street</h2>
-          <p className="mt-6 max-w-md text-base leading-relaxed">
-            {NAP.street}, {NAP.city}, {NAP.region} {NAP.postalCode}. Simulator bays, a lounge, and clubs on the rack.
-          </p>
-          <div className="mt-8 grid gap-5 @3xl:grid-cols-3">
-            <ValuePoint icon={MapPin} label="Hamilton Street" line="695 Hamilton Street, Suite G, Somerset, NJ." />
-            <ValuePoint icon={Monitor} label="Simulator bays" line="Launch-monitor data on every swing." />
-            <ValuePoint icon={Armchair} label="The lounge" line="A place to sit after the session." />
-          </div>
-          <div className="mt-8">
-            <BookLink offer="bay">Book a bay</BookLink>
-          </div>
-          <Frame photo={PHOTOS.storefront} className="mt-12 aspect-[16/8]" />
-          <div className="mt-3 grid grid-cols-2 gap-3 @3xl:grid-cols-4">
-            {[PHOTOS.bays, PHOTOS.lounge, PHOTOS.clubRack, PHOTOS.logoWall].map((photo) => (
-              <Frame key={photo.id} photo={photo} className="aspect-[4/3]" />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="proof" className="scroll-mt-6 px-6 py-24 @3xl:px-12 @3xl:py-40">
-        <div className="grid items-start gap-12 @3xl:grid-cols-2 @3xl:gap-16">
-          <div>
-            <h2 className="font-display text-4xl font-semibold leading-none tracking-tight @5xl:text-6xl">
-              {GOOGLE_RATING} on Google
-            </h2>
-            <a
-              href={GOOGLE_REVIEWS_URL}
-              className={`mt-4 inline-flex min-h-11 items-center text-base font-semibold text-[#0A0F0B] underline decoration-2 underline-offset-4 ${buttonFocus}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              from {GOOGLE_REVIEW_COUNT} Google reviews
-            </a>
-            <ul className="mt-10 space-y-8">
-              {REVIEW_QUOTES.map((quote) => (
-                <li key={quote.id}>
-                  <p className="text-lg leading-relaxed">{quote.excerpt}</p>
-                  <p className="mt-2 text-base">
-                    {quote.name}
-                    {quote.sourceUrl && (
-                      <>
-                        {" "}
-                        <a
-                          href={quote.sourceUrl}
-                          className={`inline-flex min-h-11 items-center font-semibold text-[#0A0F0B] underline decoration-2 underline-offset-4 ${buttonFocus}`}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          Source
-                        </a>
-                      </>
-                    )}
-                  </p>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-10">
-              <BookLink offer="bay">Book a bay</BookLink>
-            </div>
-          </div>
-          <Frame photo={PHOTOS.birthdayGroup} className="aspect-[4/5]" />
-        </div>
-      </section>
-
-      <section id="book" className="scroll-mt-6 px-6 py-24 @3xl:px-12 @3xl:py-40">
-        <div className="grid gap-16 @3xl:grid-cols-[minmax(0,1fr)_18rem]">
-          <div>
-            <h2 className="font-display text-5xl font-semibold leading-none tracking-tight @3xl:text-7xl">Book a bay</h2>
-            <p className="mt-6 max-w-md text-base leading-relaxed">Tell us what you want to play, or book a bay now.</p>
-            <Outcomes items={["A bay for up to four friends.", "A note here if you would rather we call you."]} />
-            <div className="mt-8">
-              <BookLink offer="bay">Book</BookLink>
-            </div>
-            <Frame photo={PHOTOS.holidayLounge} className="mt-12 aspect-[16/9]" />
-            <div className="mt-12">
-              <EnquiryForm />
-            </div>
-          </div>
-          <address className="not-italic text-base leading-relaxed">
-            <span className="font-display text-2xl tracking-tight">Par2Play</span>
-            <br />
-            {NAP.street}
-            <br />
-            {NAP.city}, {NAP.region} {NAP.postalCode}
-            <br />
-            <a
-              className={`mt-3 inline-flex min-h-11 items-center text-base font-semibold text-[#0A0F0B] underline decoration-2 underline-offset-4 ${buttonFocus}`}
-              href={NAP.phoneTel}
-            >
-              {NAP.phoneDisplay}
-            </a>
-          </address>
-        </div>
+      <section className="px-6 py-16 @3xl:px-12">
+        <address className="not-italic text-base leading-relaxed">
+          <span className="font-display text-2xl tracking-tight">Par2Play</span>
+          <br />
+          {NAP.street}
+          <br />
+          {NAP.city}, {NAP.region} {NAP.postalCode}
+          <br />
+          <a
+            className={`mt-3 inline-flex min-h-11 items-center text-base font-semibold text-[#0A0F0B] underline decoration-2 underline-offset-4 ${buttonFocus}`}
+            href={NAP.phoneTel}
+          >
+            {NAP.phoneDisplay}
+          </a>
+        </address>
       </section>
 
       <footer className="px-6 py-16 @3xl:px-12">
