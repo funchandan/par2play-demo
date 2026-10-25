@@ -94,15 +94,45 @@ body {
   background-size: 28px 28px;
 }
 
-/* taste-skill-ignore: owner asked for a bottom scrim so hero type stays readable on the film */
-.hero-scrim {
-  background-image: linear-gradient(
-    to top,
-    rgb(0 0 0 / 0.62) 0%,
-    rgb(0 0 0 / 0.62) 34%,
-    rgb(0 0 0 / 0.22) 48%,
-    transparent 62%
-  ); /* taste-skill-ignore */
+/* taste-skill-ignore: a short top shade so white nav type stays AA on the film */
+.hero-top-shade {
+  height: 9rem;
+  background-image: linear-gradient(to bottom, rgb(0 0 0 / 0.62), rgb(0 0 0 / 0) 100%); /* taste-skill-ignore */
+}
+
+/* taste-skill-ignore: local panel so the offer never sits on a bright frame */
+.hero-panel {
+  background-color: rgb(6 16 12 / 0.78);
+}
+
+.header-bar {
+  background-color: rgb(246 246 244 / 0.92);
+  backdrop-filter: blur(14px);
+}
+
+.nav-link {
+  position: relative;
+  border: 0;
+  background: none;
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  right: 0.25rem;
+  bottom: 0.45rem;
+  left: 0.25rem;
+  height: 2px;
+  background: #14d45e;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.nav-link:hover::after,
+.nav-link.is-active::after {
+  transform: scaleX(1);
 }
 
 h1,
@@ -128,6 +158,10 @@ h3,
 
   .quote-fade {
     animation: quote-fade 0.55s ease;
+  }
+
+  .nav-link::after {
+    transition: transform 0.2s ease; /* taste-skill-ignore */
   }
 }
 
