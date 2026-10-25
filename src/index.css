@@ -85,6 +85,26 @@ body {
   color: #0f172a;
 }
 
+/* taste-skill-ignore: owner asked for a muted page grid, like a working canvas */
+.page-grid {
+  background-color: #f6f6f4;
+  background-image:
+    linear-gradient(to right, rgb(10 15 11 / 0.05) 1px, transparent 1px), /* taste-skill-ignore */
+    linear-gradient(to bottom, rgb(10 15 11 / 0.05) 1px, transparent 1px); /* taste-skill-ignore */
+  background-size: 28px 28px;
+}
+
+/* taste-skill-ignore: owner asked for a bottom scrim so hero type stays readable on the film */
+.hero-scrim {
+  background-image: linear-gradient(
+    to top,
+    rgb(0 0 0 / 0.62) 0%,
+    rgb(0 0 0 / 0.62) 34%,
+    rgb(0 0 0 / 0.22) 48%,
+    transparent 62%
+  ); /* taste-skill-ignore */
+}
+
 h1,
 h2,
 h3,
@@ -105,6 +125,10 @@ h3,
   .frame-in {
     animation: frame-in 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
+
+  .quote-fade {
+    animation: quote-fade 0.55s ease;
+  }
 }
 
 @keyframes word-in {
@@ -124,5 +148,15 @@ h3,
 
   to {
     transform: none;
+  }
+}
+
+@keyframes quote-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }
