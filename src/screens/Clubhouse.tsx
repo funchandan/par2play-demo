@@ -55,9 +55,9 @@ export function Clubhouse() {
               <button className={lightNav} type="button" onClick={flow.goHome}>Home</button>
               <button className={here} type="button" aria-current="page">Leagues</button>
               <button className={lightNav} type="button" onClick={() => flow.goSection("practice")}>Practice</button>
-              <button className={lightNav} type="button" onClick={() => flow.goSection("lessons")}>Lessons</button>
-              <button className={lightNav} type="button" onClick={() => flow.goSection("pricing")}>Pricing</button>
-              <button className={lightNav} type="button" onClick={() => flow.goSection("visit")}>Visit</button>
+              <button className={lightNav} type="button" onClick={() => flow.goSection("coaching")}>Coaching</button>
+              <button className={lightNav} type="button" onClick={() => flow.goSection("venue")}>Venue</button>
+              <button className={lightNav} type="button" onClick={() => flow.goSection("enquire")}>Enquire</button>
               <BookLink offer="bay" tone="line" className="h-10 px-4 text-[10px]">
                 Book a bay
               </BookLink>
@@ -73,9 +73,9 @@ export function Clubhouse() {
             <button type="button" onClick={() => { setMenu(false); flow.goHome(); }}>Home</button>
             <button type="button" aria-current="page">Leagues</button>
             <button type="button" onClick={() => { setMenu(false); flow.goSection("practice"); }}>Practice</button>
-            <button type="button" onClick={() => { setMenu(false); flow.goSection("lessons"); }}>Lessons</button>
-            <button type="button" onClick={() => { setMenu(false); flow.goSection("pricing"); }}>Pricing</button>
-            <button type="button" onClick={() => { setMenu(false); flow.goSection("visit"); }}>Visit</button>
+            <button type="button" onClick={() => { setMenu(false); flow.goSection("coaching"); }}>Coaching</button>
+            <button type="button" onClick={() => { setMenu(false); flow.goSection("venue"); }}>Venue</button>
+            <button type="button" onClick={() => { setMenu(false); flow.goSection("enquire"); }}>Enquire</button>
           </nav>
         )}
         <div className={`relative z-10 flex flex-1 flex-col justify-end px-6 pb-12 ${flow.layout === "web" ? "lg:px-12" : ""}`}>

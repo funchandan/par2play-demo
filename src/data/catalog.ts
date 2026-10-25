@@ -1,7 +1,7 @@
 import { PRICES } from "./business";
 import { PHOTOS } from "./photos";
 
-export type PlanId = "unlimited" | "junior";
+export type PlanId = "unlimited" | "junior" | "junior-plus";
 export type Term = 1 | 3 | 6 | 12;
 export type Billing = "monthly" | "annual";
 export type Intent = "play" | "learn" | "socialize" | "compete";
@@ -51,6 +51,19 @@ export const PLANS: Plan[] = [
     includes: [
       "One 1:1 lesson each week",
       "Supervised unlimited facility access",
+      "No age range",
+      "Price includes tax",
+    ],
+  },
+  {
+    id: "junior-plus",
+    name: "Junior twice a week",
+    monthly: PRICES.juniorTwoLessonsWeekly,
+    popular: false,
+    cta: "Enrol a junior",
+    includes: [
+      "Two lessons each week",
+      "Unlimited facility access",
       "No age range",
       "Price includes tax",
     ],
@@ -243,7 +256,11 @@ export function recommendReason(answers: Answers, plan: PlanId, hint: PlanId | n
   switch (plan) {
     case "junior":
       reason =
-        "Junior is $249 a month, tax included: one 1:1 lesson a week and supervised unlimited access. There is no age range.";
+        "Junior is $249 a month, tax included: one 1:1 lesson a week and unlimited facility access. There is no age range.";
+      break;
+    case "junior-plus":
+      reason =
+        "Junior twice a week is $399 a month, tax included: two lessons a week and unlimited facility access. There is no age range.";
       break;
     case "unlimited":
       if (answers.intent === "learn") {

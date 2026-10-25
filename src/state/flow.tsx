@@ -203,13 +203,13 @@ export function FlowProvider({ children }: { children: ReactNode }) {
           ...current,
           plan,
           planTouched: true,
-          foursome: plan === "junior" ? false : current.foursome,
+          foursome: plan === "junior" || plan === "junior-plus" ? false : current.foursome,
         })),
       setTerm: (term) => patch({ term }),
       setFoursome: (foursome) =>
         setData((current) => ({
           ...current,
-          foursome: current.plan === "junior" ? false : foursome,
+          foursome: current.plan === "junior" || current.plan === "junior-plus" ? false : foursome,
         })),
       setProduct: (product) => patch({ product, productTouched: true, acceptPack: false }),
       setSlot: (slotId) => patch({ slotId }),

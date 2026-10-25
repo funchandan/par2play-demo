@@ -47,11 +47,12 @@ export const BAY_WINDOWS = {
 
 export const PRICES = {
   taxIncluded: true,
-  /**
-   * No multi-session bay pack. Checked https://par2play.com/bay-rental/
-   * on 2026-10-25: it does not list 10 sessions for $400.
-   */
   baySession: 70,
+  /**
+   * TODO(pricing): Atul confirmed a 10-pack exists. No confirmed price is in
+   * the repo. Do not publish a dollar amount for it.
+   */
+  tenPack: null as number | null,
   unlimitedMonthly: 200,
   swingEvaluationMinutes: 50,
   swingEvaluation: 100,
@@ -64,8 +65,10 @@ export const PRICES = {
   lessonPack5: null as number | null,
   lessonPack10: null as number | null,
   lessonPack20: null as number | null,
-  /** One weekly 1:1 lesson plus supervised unlimited access. The only junior tier. */
+  /** Once-a-week 1:1 lesson plus unlimited facility access. */
   juniorOneLessonWeekly: 249,
+  /** Twice-a-week lessons plus unlimited facility access. */
+  juniorTwoLessonsWeekly: 399,
   swingLabMember: 40,
   /**
    * TODO(pricing): confirm the non-member swing lab price.
@@ -76,17 +79,22 @@ export const PRICES = {
 
 export type BookingOffer =
   | "bay"
+  | "ten-pack"
   | "lesson"
   | "swing-evaluation"
   | "swing-lab"
-  | "junior";
+  | "group"
+  | "junior"
+  | "junior-plus"
+  | "tournament";
 
 /**
  * TODO(golfclock): Paste the live URLs. They are not in this repo — the
  * strategy sheet still says "[GolfClock … link]".
  *
  * Booking is one GolfClock calendar. `bookingHref` adds `offer` so bay,
- * lesson, swing evaluation, swing lab, and junior share it.
+ * 10-pack, lesson, swing evaluation, swing lab, group, junior, and
+ * tournament share it.
  * Confirm GolfClock's real filter parameter name before relying on `offer`.
  * Membership checkout is a separate GolfClock URL.
  */
@@ -116,6 +124,26 @@ export function membershipHref(): string {
   if (!base) return NAP.phoneTel;
   return base;
 }
+
+/**
+ * TODO(enquiry): Paste a Formspree-style POST URL. Empty sends nothing.
+ * TODO(enquiry): Paste the mailto inbox. Empty has no mail fallback.
+ */
+export const ENQUIRY = {
+  endpoint: "",
+  email: "",
+} as const;
+
+export type EnquiryInterest = "bays" | "membership" | "lessons" | "junior" | "events" | "tournament";
+
+export const ENQUIRY_INTERESTS: { id: EnquiryInterest; label: string }[] = [
+  { id: "bays", label: "Bays" },
+  { id: "membership", label: "Membership" },
+  { id: "lessons", label: "Lessons" },
+  { id: "junior", label: "Junior" },
+  { id: "events", label: "Events" },
+  { id: "tournament", label: "Tournament" },
+];
 
 export type GolfClockProfileNote = {
   answers: Answers;
