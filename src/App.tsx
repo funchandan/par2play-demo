@@ -62,7 +62,7 @@ function Shell() {
   const flow = useFlow();
   return (
     <div className="min-h-screen bg-slate-100">
-      <div className="sticky top-0 z-40 flex items-center justify-center gap-2 border-b border-slate-200 bg-white px-4 py-3">
+      <div className="sticky top-0 z-40 flex items-center justify-center gap-2 bg-white px-4 py-3">
         <Button size="sm" variant={flow.layout === "mobile" ? "primary" : "outline"} onPress={() => flow.setLayout("mobile")}>
           Mobile
         </Button>
