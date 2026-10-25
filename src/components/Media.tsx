@@ -81,7 +81,15 @@ export function HeroVideo() {
   );
 }
 
-export function ClipTile({ clip }: { clip: ClipAsset }) {
+export function ClipTile({
+  clip,
+  className = "",
+  caption,
+}: {
+  clip: ClipAsset;
+  className?: string;
+  caption?: string;
+}) {
   const reduce = usePrefersReducedMotion();
   const ref = useRef<HTMLVideoElement>(null);
 
@@ -101,7 +109,7 @@ export function ClipTile({ clip }: { clip: ClipAsset }) {
   }, [reduce]);
 
   return (
-    <figure className="min-w-[240px] flex-1 overflow-hidden rounded-2xl bg-slate-950">
+    <figure className={`overflow-hidden rounded-2xl bg-slate-950 ${className}`}>
       {reduce ? (
         <img src={clip.poster} alt={clip.label} className="aspect-video w-full object-cover" />
       ) : (
@@ -120,7 +128,7 @@ export function ClipTile({ clip }: { clip: ClipAsset }) {
         </video>
       )}
       <figcaption className="px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/80">
-        {clip.caption}
+        {caption ?? clip.caption}
       </figcaption>
     </figure>
   );
