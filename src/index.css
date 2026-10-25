@@ -38,3 +38,11 @@ h3,
   width: 390px;
   height: min(844px, calc(100vh - 88px));
 }
+
+.yardage {
+  background-color: #f3f6f1;
+  background-image:
+    linear-gradient(to bottom, transparent 31px, rgba(20, 212, 94, 0.28) 32px),
+    linear-gradient(to right, transparent 79px, rgba(6, 33, 15, 0.045) 80px);
+  background-size: 100% 32px, 80px 100%;
+}

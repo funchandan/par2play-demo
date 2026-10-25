@@ -1,43 +1,42 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Mark } from "../components/Chrome";
 import { BookLink, MembershipLink } from "../components/Cta";
 import { EnquiryForm } from "../components/EnquiryForm";
-import { ClipTile, HeroVideo, Photo } from "../components/Media";
-import { ReviewCarousel } from "../components/ReviewCarousel";
-import {
-  ADDRESS_LINE,
-  COACH_LINE,
-  NAP,
-  PRICES,
-  golfClockBookingReady,
-} from "../data/business";
+import { HeroVideo, Photo } from "../components/Media";
+import { NAP, PRICES, golfClockBookingReady } from "../data/business";
 import { money } from "../data/catalog";
 import { GROUP_LESSONS } from "../data/groupLessons";
-import { CLIPS } from "../data/media";
 import { PHOTOS } from "../data/photos";
+import { GOOGLE_RATING, REVIEW_QUOTES } from "../data/reviews";
 import { useFlow } from "../state/flow";
-
-const navButton =
-  "text-[11px] font-medium uppercase tracking-[0.18em] text-white/90 hover:text-[#14D45E]";
 
 const links = [
   ["practice", "Practice"],
-  ["coaching", "Coaching"],
+  ["lessons", "Lessons"],
+  ["juniors", "Juniors"],
   ["venue", "Venue"],
-  ["enquire", "Enquire"],
 ] as const;
 
-function priceOrTodo(amount: number | null): string {
-  return amount === null ? "TODO" : money(amount);
+const navButton = "text-[11px] font-medium uppercase tracking-[0.16em] text-slate-600 hover:text-slate-950";
+
+const review = REVIEW_QUOTES.find((item) => item.id === "tristan");
+
+function Readout({ kicker, value, action }: { kicker: string; value: string; action: ReactNode }) {
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 py-6">
+      <div>
+        <p className="font-display text-2xl tracking-tight text-slate-950 @3xl:text-3xl">{value}</p>
+        <p className="mt-1 text-sm text-slate-600">{kicker}</p>
+      </div>
+      {action}
+    </div>
+  );
 }
 
 export function Landing() {
   const flow = useFlow();
   const [menu, setMenu] = useState(false);
   const scroll = flow.layout === "mobile" ? "h-full overflow-y-auto" : "";
-  const venueClip = CLIPS.find((clip) => clip.id === "venue");
-  const coachingClip = CLIPS.find((clip) => clip.id === "coaching");
-  const juniorClip = CLIPS.find((clip) => clip.id === "junior");
 
   const jump = (id: string) => {
     setMenu(false);
@@ -46,188 +45,152 @@ export function Landing() {
 
   return (
     <div className={`@container bg-white text-slate-950 ${scroll}`}>
-      <section className="relative flex min-h-[720px] flex-col overflow-hidden bg-slate-950 text-white @3xl:min-h-[860px]">
-        <HeroVideo />
-        <div className="absolute inset-0 bg-black/50" />
-        <div className="absolute inset-x-0 bottom-0 h-72 bg-gradient-to-t from-black/80 to-transparent" />
-        <div className="relative z-10 flex items-center justify-between gap-4 px-6 py-6 @3xl:px-14">
-          <Mark light />
-          <nav className="hidden items-center gap-8 @3xl:flex" aria-label="Page">
-            {links.map(([id, label]) => (
-              <button key={id} className={navButton} type="button" onClick={() => jump(id)}>
-                {label}
-              </button>
-            ))}
-            <BookLink offer="bay" className="h-10 px-4 text-[10px]">
-              Book
-            </BookLink>
-          </nav>
-          <button
-            type="button"
-            className="h-11 rounded-full px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-white @3xl:hidden"
-            aria-expanded={menu}
-            onClick={() => setMenu((open) => !open)}
-          >
-            {menu ? "Close" : "Menu"}
-          </button>
-        </div>
-        {menu && (
-          <nav
-            className="relative z-10 flex flex-col gap-4 px-6 pb-4 text-[12px] font-medium uppercase tracking-[0.16em] text-white @3xl:hidden"
-            aria-label="Page"
-          >
-            {links.map(([id, label]) => (
-              <button key={id} type="button" className="text-left" onClick={() => jump(id)}>
-                {label}
-              </button>
-            ))}
-            <BookLink offer="bay" className="w-fit">
-              Book
-            </BookLink>
-          </nav>
-        )}
-        <div className="relative z-10 mt-auto flex flex-col gap-8 px-6 pb-16 @3xl:px-14 @3xl:pb-20">
-          <h1 className="max-w-3xl font-display text-5xl font-semibold tracking-tight @3xl:text-7xl">
-            Your range never closes.
-          </h1>
-          <ReviewCarousel />
-          <BookLink offer="bay" className="w-fit">
-            Book a bay
+      <header className="flex items-center justify-between gap-4 border-b border-slate-200 px-6 py-4 @3xl:px-12">
+        <Mark />
+        <nav className="hidden items-center gap-7 @3xl:flex" aria-label="Page">
+          {links.map(([id, label]) => (
+            <button key={id} className={navButton} type="button" onClick={() => jump(id)}>
+              {label}
+            </button>
+          ))}
+          <BookLink offer="bay" className="h-10 px-4 text-[10px]">
+            Book
           </BookLink>
+        </nav>
+        <button
+          type="button"
+          className="h-11 px-2 text-[11px] font-semibold uppercase tracking-[0.16em] @3xl:hidden"
+          aria-expanded={menu}
+          onClick={() => setMenu((open) => !open)}
+        >
+          {menu ? "Close" : "Menu"}
+        </button>
+      </header>
+      {menu && (
+        <nav className="flex flex-col gap-4 border-b border-slate-200 px-6 py-4 text-[12px] font-medium uppercase tracking-[0.16em] @3xl:hidden" aria-label="Page">
+          {links.map(([id, label]) => (
+            <button key={id} type="button" className="text-left" onClick={() => jump(id)}>
+              {label}
+            </button>
+          ))}
+          <BookLink offer="bay" className="w-fit">
+            Book
+          </BookLink>
+        </nav>
+      )}
+
+      <section className="grid @3xl:grid-cols-2">
+        <div className="order-2 yardage px-6 py-16 @3xl:order-1 @3xl:px-12 @3xl:py-24">
+          <p className="font-display text-sm tracking-[0.2em] text-[#0c8f3e]">SOMERSET, NJ</p>
+          <h1 className="mt-4 max-w-md font-display text-5xl font-semibold leading-[0.95] tracking-tight @3xl:text-6xl">
+            Indoor golf on Hamilton Street.
+          </h1>
+          <p className="mt-6 max-w-md text-base leading-relaxed text-slate-700">
+            An indoor golf club in Somerset, NJ. Simulator bays, year-round. PGA pros Nick and Sean. Juniors. Unlimited practice is {money(PRICES.unlimitedMonthly)} a month. Book online.
+          </p>
+          <p className="mt-8 font-display text-sm tracking-[0.14em]">
+            {GOOGLE_RATING} ★ GOOGLE
+          </p>
+          {review && (
+            <p className="mt-2 max-w-md text-sm text-slate-500">
+              {review.name} · {review.excerpt}
+            </p>
+          )}
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <BookLink offer="bay">Book</BookLink>
+            <button
+              type="button"
+              className="inline-flex h-11 items-center rounded-full border border-slate-300 px-5 text-[12px] font-semibold uppercase tracking-[0.14em]"
+              onClick={() => jump("venue")}
+            >
+              See the venue
+            </button>
+          </div>
+        </div>
+        <div className="relative order-1 min-h-[280px] @3xl:order-2 @3xl:min-h-[680px]">
+          <HeroVideo />
         </div>
       </section>
 
-      <section id="practice" className="scroll-mt-8 px-6 py-24 @3xl:px-14 @3xl:py-32">
-        <div className="mx-auto max-w-6xl">
-          <h2 className="font-display text-5xl font-semibold tracking-tight @3xl:text-6xl">Practice.</h2>
-          <div className="mt-16 grid gap-6 @3xl:grid-cols-3">
-            <article className="flex flex-col rounded-3xl border border-slate-200 p-8">
-              <h3 className="font-display text-3xl font-semibold">Play with friends</h3>
-              <p className="mt-4 text-slate-600">Bring up to four friends. Book a bay.</p>
-              <p className="mt-10 font-display text-5xl font-semibold">{money(PRICES.baySession)}</p>
-              <p className="mt-1 text-sm text-slate-500">per session</p>
-              <BookLink offer="bay" tone="solid" className="mt-8 w-fit">
-                Book
-              </BookLink>
-            </article>
-            <article className="flex flex-col rounded-3xl border border-slate-200 p-8">
-              <h3 className="font-display text-3xl font-semibold">Monthly routine</h3>
-              <p className="mt-4 text-slate-600">Commit monthly. Save with a 10-pack.</p>
-              <p className="mt-10 font-display text-5xl font-semibold">{priceOrTodo(PRICES.tenPack)}</p>
-              <p className="mt-1 text-sm text-slate-500">10-pack price</p>
-              <BookLink offer="ten-pack" tone="solid" className="mt-8 w-fit">
-                Book
-              </BookLink>
-            </article>
-            <article className="flex flex-col rounded-3xl border border-slate-200 p-8">
-              <h3 className="font-display text-3xl font-semibold">Regular sessions</h3>
-              <p className="mt-4 text-slate-600">Book bays as you go. Unlimited practice when it sticks.</p>
-              <p className="mt-10 font-display text-5xl font-semibold">{money(PRICES.unlimitedMonthly)}</p>
-              <p className="mt-1 text-sm text-slate-500">per month · no minimum term</p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <BookLink offer="bay" tone="solid">
-                  Book
-                </BookLink>
-                <MembershipLink tone="dark">Join</MembershipLink>
-              </div>
-            </article>
-          </div>
-          <div className="mt-12 flex flex-wrap gap-3">
-            <BookLink offer="bay">Book a bay</BookLink>
-            <BookLink offer="tournament" tone="dark">
-              Reserve your tournament spot
-            </BookLink>
-          </div>
+      <nav className="mx-auto max-w-5xl px-6 py-8 @3xl:px-12" aria-label="Offers">
+        {(
+          [
+            ["practice", "Practice", "Up to four friends. $70 a session."],
+            ["lessons", "Lessons", "Nick and Sean, PGA. 3-pack $240."],
+            ["juniors", "Juniors", "$249 or $399 a month. Unlimited access."],
+          ] as const
+        ).map(([id, label, line]) => (
+          <button
+            key={id}
+            type="button"
+            className="flex w-full items-baseline justify-between gap-6 border-b border-slate-200 py-7 text-left"
+            onClick={() => jump(id)}
+          >
+            <span>
+              <span className="block font-display text-2xl tracking-tight">{label}</span>
+              <span className="mt-1 block text-sm text-slate-600">{line}</span>
+            </span>
+            <span className="font-display text-sm tracking-[0.16em] text-[#0c8f3e]" aria-hidden="true">
+              →
+            </span>
+          </button>
+        ))}
+      </nav>
+
+      <section id="practice" className="scroll-mt-6 mx-auto max-w-5xl px-6 py-20 @3xl:px-12 @3xl:py-28">
+        <h2 className="font-display text-4xl font-semibold tracking-tight">Practice</h2>
+        <div className="mt-8">
+          <Readout
+            value={`${money(PRICES.baySession)} / SESSION`}
+            kicker="Up to 4 friends."
+            action={<BookLink offer="bay">Book</BookLink>}
+          />
+          <Readout
+            value="10-PACK"
+            kicker="Price TODO."
+            action={<BookLink offer="ten-pack">Book</BookLink>}
+          />
+          <Readout
+            value={`${money(PRICES.unlimitedMonthly)} / MO · UNLIMITED`}
+            kicker="No minimum."
+            action={<MembershipLink>Book</MembershipLink>}
+          />
         </div>
+        <BookLink offer="tournament" tone="text" className="mt-6">
+          Reserve your tournament spot
+        </BookLink>
       </section>
 
-      <section id="coaching" className="scroll-mt-8 bg-[#f6f7f4] px-6 py-24 @3xl:px-14 @3xl:py-32">
-        <div className="mx-auto max-w-6xl">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#0c8f3e]">Coaching</p>
-          <h2 className="mt-4 max-w-3xl font-display text-5xl font-semibold tracking-tight @3xl:text-6xl">
-            {COACH_LINE}.
-          </h2>
-          <div className="mt-14 grid gap-10 @3xl:grid-cols-[1.1fr_0.9fr] @3xl:items-center">
-            <ul className="grid gap-4 @3xl:grid-cols-3">
-              <li className="rounded-3xl bg-white p-6">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Evaluation</p>
-                <p className="mt-4 font-display text-4xl font-semibold">{money(PRICES.swingEvaluation)}</p>
-                <p className="mt-2 text-sm text-slate-600">{PRICES.swingEvaluationMinutes} min · once</p>
-              </li>
-              <li className="rounded-3xl bg-white p-6">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">3-pack</p>
-                <p className="mt-4 font-display text-4xl font-semibold">{money(PRICES.lessonPack3)}</p>
-                <p className="mt-2 text-sm text-slate-600">30 min lessons</p>
-              </li>
-              <li className="rounded-3xl bg-white p-6">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Swing lab</p>
-                <p className="mt-4 font-display text-4xl font-semibold">{money(PRICES.swingLabMember)}</p>
-                <p className="mt-2 text-sm text-slate-600">Members · group</p>
-              </li>
-            </ul>
-            <div className="grid gap-4">
-              <div className="aspect-[16/10] overflow-hidden rounded-3xl">
-                <Photo photo={PHOTOS.gripLesson} />
-              </div>
-              {coachingClip && <ClipTile clip={coachingClip} caption="Illustration" />}
-            </div>
+      <section id="lessons" className="scroll-mt-6 border-t border-slate-200">
+        <div className="mx-auto max-w-5xl px-6 py-20 @3xl:px-12 @3xl:py-28">
+          <h2 className="font-display text-4xl font-semibold tracking-tight">Lessons</h2>
+          <p className="mt-4 font-display text-sm tracking-[0.16em] text-[#0c8f3e]">PGA PROS · NICK & SEAN</p>
+          <div className="mt-8">
+            <Readout
+              value={`${money(PRICES.lessonPack3)} / 3-PACK`}
+              kicker="30-minute lessons."
+              action={<BookLink offer="lesson">Book</BookLink>}
+            />
+            <Readout
+              value={`${money(PRICES.swingEvaluation)} / EVAL`}
+              kicker={`${PRICES.swingEvaluationMinutes} minutes. Once per golfer.`}
+              action={<BookLink offer="swing-evaluation">Book</BookLink>}
+            />
           </div>
-
-          <div className="mt-20 grid gap-8 @3xl:grid-cols-[0.8fr_1.2fr] @3xl:items-end">
-            <div>
-              <h3 className="font-display text-4xl font-semibold">Juniors.</h3>
-              <p className="mt-3 text-slate-600">Unlimited access. No age range.</p>
-            </div>
-            <div className="grid gap-4 @3xl:grid-cols-2">
-              <article className="rounded-3xl bg-white p-7">
-                <p className="font-display text-4xl font-semibold">
-                  {money(PRICES.juniorOneLessonWeekly)}
-                  <span className="text-lg text-slate-500">/mo</span>
-                </p>
-                <p className="mt-3 text-slate-600">Once a week. 1:1 lesson. Unlimited access.</p>
-                <BookLink offer="junior" tone="solid" className="mt-6 w-fit">
-                  Book
-                </BookLink>
-              </article>
-              <article className="rounded-3xl bg-white p-7">
-                <p className="font-display text-4xl font-semibold">
-                  {money(PRICES.juniorTwoLessonsWeekly)}
-                  <span className="text-lg text-slate-500">/mo</span>
-                </p>
-                <p className="mt-3 text-slate-600">Twice a week. Lessons. Unlimited access.</p>
-                <BookLink offer="junior-plus" tone="solid" className="mt-6 w-fit">
-                  Book
-                </BookLink>
-              </article>
-            </div>
-          </div>
-
-          <div className="mt-16 grid gap-6 @3xl:grid-cols-[1fr_1fr]">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="aspect-[4/5] overflow-hidden rounded-3xl">
-                <Photo photo={PHOTOS.juniorGroup} />
-              </div>
-              <div className="aspect-[4/5] overflow-hidden rounded-3xl">
-                <Photo photo={PHOTOS.juniorSetup} />
-              </div>
-            </div>
-            {juniorClip && <ClipTile clip={juniorClip} caption="Illustration" className="self-stretch" />}
-          </div>
-
-          <div className="mt-20">
-            <h3 className="font-display text-4xl font-semibold">Group lessons.</h3>
-            <p className="mt-3 text-sm uppercase tracking-[0.16em] text-[#0c8f3e]">TODO · schedule not confirmed</p>
-            <ul className="mt-8 divide-y divide-slate-200 border-y border-slate-200">
+          <div className="mt-14">
+            <h3 className="font-display text-2xl tracking-tight">Group lessons</h3>
+            <p className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#0c8f3e]">TODO · sample rows, not a live schedule</p>
+            <ul className="mt-4">
               {GROUP_LESSONS.map((lesson) => (
-                <li key={lesson.id} className="flex flex-wrap items-center justify-between gap-4 py-5">
-                  <p className="text-lg">
-                    <span className="font-semibold">{lesson.day}</span>
-                    <span className="mx-3 text-slate-300">/</span>
+                <li key={lesson.id} className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 py-4 text-sm">
+                  <p>
+                    <span className="font-display tracking-wide">{lesson.day}</span>
+                    <span className="mx-2 text-slate-300">·</span>
                     {lesson.time}
-                    <span className="mx-3 text-slate-300">/</span>
-                    <span className="text-slate-600">Spots {lesson.spotsLeft}</span>
+                    <span className="mx-2 text-slate-300">·</span>
+                    Spots {lesson.spotsLeft}
                   </p>
-                  <BookLink offer="group" tone="solid">
+                  <BookLink offer="group" tone="solid" className="h-10 px-4 text-[10px]">
                     Sign up
                   </BookLink>
                 </li>
@@ -237,75 +200,79 @@ export function Landing() {
         </div>
       </section>
 
-      <section id="venue" className="scroll-mt-8 px-6 py-24 @3xl:px-14 @3xl:py-32">
-        <div className="mx-auto max-w-6xl">
-          <h2 className="max-w-3xl font-display text-5xl font-semibold tracking-tight @3xl:text-6xl">
-            The range is indoors.
+      <section id="juniors" className="scroll-mt-6 border-t border-slate-200">
+        <div className="mx-auto max-w-5xl px-6 py-20 @3xl:px-12 @3xl:py-28">
+          <h2 className="font-display text-4xl font-semibold tracking-tight">Juniors</h2>
+          <div className="mt-8">
+            <Readout
+              value={`${money(PRICES.juniorOneLessonWeekly)} / MO`}
+              kicker="1 weekly 1:1. Unlimited access."
+              action={<BookLink offer="junior">Book</BookLink>}
+            />
+            <Readout
+              value={`${money(PRICES.juniorTwoLessonsWeekly)} / MO`}
+              kicker="2 weekly lessons. Unlimited access."
+              action={<BookLink offer="junior-plus">Book</BookLink>}
+            />
+          </div>
+        </div>
+      </section>
+
+      <section id="venue" className="scroll-mt-6 border-t border-slate-200">
+        <div className="mx-auto max-w-5xl px-6 py-20 @3xl:px-12 @3xl:py-28">
+          <h2 className="font-display text-4xl font-semibold tracking-tight">
+            {NAP.street}, {NAP.city}.
           </h2>
-          <ul className="mt-10 grid gap-6 text-lg @3xl:grid-cols-3">
-            <li>{ADDRESS_LINE}</li>
-            <li>Full Swing bays</li>
-            <li>Lounge and club rack</li>
-          </ul>
-          <div className="mt-12 grid gap-4 @3xl:grid-cols-4">
-            <div className="aspect-[16/10] overflow-hidden rounded-3xl @3xl:col-span-2 @3xl:aspect-auto @3xl:min-h-[420px]">
-              <Photo photo={PHOTOS.bays} priority />
-            </div>
-            {venueClip && (
-              <div className="@3xl:col-span-2">
-                <ClipTile clip={venueClip} caption="Illustration" />
+          <div className="mt-8 grid grid-cols-2 gap-1 @3xl:grid-cols-4">
+            {[PHOTOS.bays, PHOTOS.storefront, PHOTOS.lounge, PHOTOS.range].map((photo) => (
+              <div key={photo.id} className="aspect-[4/3] overflow-hidden bg-slate-100">
+                <Photo photo={photo} />
               </div>
-            )}
-            <div className="aspect-[4/3] overflow-hidden rounded-3xl @3xl:col-span-1">
-              <Photo photo={PHOTOS.lounge} />
-            </div>
-            <div className="aspect-[4/3] overflow-hidden rounded-3xl @3xl:col-span-1">
-              <Photo photo={PHOTOS.storefront} />
-            </div>
-            <div className="aspect-[4/3] overflow-hidden rounded-3xl @3xl:col-span-2">
-              <Photo photo={PHOTOS.groupWave} />
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      <section id="enquire" className="scroll-mt-8 border-t border-slate-200 px-6 py-24 @3xl:px-14 @3xl:py-32">
-        <div className="mx-auto grid max-w-6xl gap-16 @3xl:grid-cols-2">
-          <div>
-            <h2 className="font-display text-5xl font-semibold tracking-tight @3xl:text-6xl">Say hello.</h2>
-            <p className="mt-4 max-w-sm text-slate-600">Bays, membership, lessons, juniors, events, tournaments.</p>
+      <section id="book" className="scroll-mt-6 border-t border-slate-200">
+        <div className="mx-auto max-w-5xl px-6 py-20 @3xl:px-12 @3xl:py-28">
+          <h2 className="font-display text-5xl font-semibold tracking-tight">Book a bay.</h2>
+          <div className="mt-8">
+            <BookLink offer="bay">Book</BookLink>
           </div>
-          <EnquiryForm />
-        </div>
-      </section>
-
-      <footer className="bg-slate-950 px-6 py-16 text-white @3xl:px-14">
-        <div className="mx-auto flex max-w-6xl flex-col gap-10 @3xl:flex-row @3xl:items-end @3xl:justify-between">
-          <div>
-            <p className="font-display text-3xl font-semibold">Par2Play</p>
-            <p className="mt-4 text-white/80">{NAP.street}</p>
-            <p className="text-white/80">
+          <div className="mt-20 grid gap-16 @3xl:grid-cols-[minmax(0,1fr)_16rem]">
+            <EnquiryForm />
+            <address className="not-italic text-sm leading-relaxed text-slate-700">
+              <span className="font-display text-lg tracking-tight text-slate-950">Par2Play</span>
+              <br />
+              {NAP.street}
+              <br />
               {NAP.city}, {NAP.region} {NAP.postalCode}
-            </p>
-            <a className="mt-3 inline-block text-white underline-offset-4 hover:underline" href={NAP.phoneTel}>
-              {NAP.phoneDisplay}
-            </a>
-            <p className="mt-3 text-sm text-white/60">{NAP.founder}</p>
+              <br />
+              <a className="mt-2 inline-block text-slate-950 underline-offset-4 hover:underline" href={NAP.phoneTel}>
+                {NAP.phoneDisplay}
+              </a>
+            </address>
           </div>
-          <nav className="flex flex-wrap gap-x-6 gap-y-3 text-[11px] font-semibold uppercase tracking-[0.16em]" aria-label="Footer">
+        </div>
+      </section>
+
+      <footer className="border-t border-slate-200 px-6 py-10 @3xl:px-12">
+        <div className="mx-auto flex max-w-5xl flex-col gap-6 @3xl:flex-row @3xl:items-center @3xl:justify-between">
+          <p className="font-display tracking-[0.14em]">PAR2PLAY · SOMERSET, NJ</p>
+          <nav className="flex flex-wrap gap-x-5 gap-y-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500" aria-label="Footer">
             {links.map(([id, label]) => (
-              <button key={id} type="button" className="text-white/80 hover:text-white" onClick={() => jump(id)}>
+              <button key={id} type="button" className="hover:text-slate-950" onClick={() => jump(id)}>
                 {label}
               </button>
             ))}
           </nav>
         </div>
+        <p className="mx-auto mt-6 max-w-5xl text-xs text-slate-400">© 2026 Par2Play</p>
         {!golfClockBookingReady() && (
-          <p className="mx-auto mt-10 max-w-6xl text-xs text-white/50">
-            GolfClock booking link: TODO. Buttons call {NAP.phoneDisplay}.
+          <p className="mx-auto mt-2 max-w-5xl text-xs text-slate-400">
+            GolfClock booking link: TODO. Book calls {NAP.phoneDisplay}.
           </p>
         )}
-        <p className="mx-auto mt-6 max-w-6xl text-xs text-white/40">© 2026 Par2Play</p>
       </footer>
     </div>
   );
