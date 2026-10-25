@@ -52,7 +52,6 @@ export type OfferId =
   | "first-swing"
   | "social-credit"
   | "annual"
-  | "play-pack"
   | "lesson-series"
   | "guest-round";
 
@@ -74,7 +73,6 @@ const OFFER_NAMES: Record<OfferId, string> = {
   "first-swing": "First swing",
   "social-credit": "Simulator credit",
   annual: "Annual",
-  "play-pack": "Play pack",
   "lesson-series": "Lesson series",
   "guest-round": "Guest round",
 };
@@ -92,8 +90,6 @@ export function offerDetail(id: OfferId, plan: PlanId | null): string {
       return "There is no separate social credit. A bay is $70 a session, tax included.";
     case "annual":
       return `${chosen.name} has no minimum term and no prepaid discount. Twelve months would be ${money(annualPrice(chosen))}, the same as ${money(annualRack(chosen))} at the monthly rate.`;
-    case "play-pack":
-      return "Ten bay sessions are $400, tax included, against $700 booked one at a time.";
     case "lesson-series":
       return "A pack of three 30-minute lessons is $240, tax included. The single-lesson price and the 5, 10, and 20 packs are still TBD.";
     case "guest-round":
@@ -115,7 +111,7 @@ export function resolveOffer(state: OfferState): {
   const none = { visible: null, suppressed: null };
 
   if (state.step === "recommend" || state.step === "register") {
-    return { visible: "first-swing", suppressed: "play-pack" };
+    return { visible: "first-swing", suppressed: null };
   }
 
   if (state.step === "plan") {
@@ -126,8 +122,7 @@ export function resolveOffer(state: OfferState): {
     if (product === "coaching") {
       return { visible: "lesson-series", suppressed: buying ? "first-swing" : null };
     }
-    if (buying) return { visible: "first-swing", suppressed: "play-pack" };
-    return { visible: "play-pack", suppressed: "first-swing" };
+    return { visible: "first-swing", suppressed: null };
   };
 
   if (
@@ -338,16 +333,10 @@ function morningAfter(
   product: Product,
   party: number,
 ): { email: string; sms: string } {
-  if (state.acceptPack && product === "simulator" && !state.buyingMembership) {
-    return {
-      email: "Yesterday at Par2Play. You used 1 of 10 bay sessions. Nine are still on the 10-pack.",
-      sms: "Par2Play: 9 bay sessions left on the 10-pack.",
-    };
-  }
   if (!state.buyingMembership && product === "simulator") {
     return {
-      email: "Yesterday at Par2Play. A bay is $70, tax included. Ten sessions are $400, against $700 one at a time.",
-      sms: "Par2Play: ten bay sessions are $400, tax included.",
+      email: "Yesterday at Par2Play. A bay is $70, tax included. Unlimited practice is $200 a month if the bay becomes the habit. No minimum term.",
+      sms: "Par2Play: unlimited practice is $200 a month, tax included.",
     };
   }
   if (state.buyingMembership && planName) {
@@ -367,12 +356,6 @@ function unusedCredit(
   planName: string | null,
   product: Product,
 ): { email: string; sms: string } {
-  if (state.acceptPack && product === "simulator" && !state.buyingMembership) {
-    return {
-      email: "You have 9 bay sessions left on the 10-pack. They come off the next bay booking.",
-      sms: "Par2Play: 9 sessions left on the 10-pack.",
-    };
-  }
   if (state.acceptPack && product === "coaching") {
     return {
       email: "You have lessons left on the 3-pack. They come off the next lesson. A single 30-minute price is still TBD.",
@@ -385,14 +368,14 @@ function unusedCredit(
       sms: "Par2Play: unlimited practice stays at $200 a month.",
     };
   }
-  if (planName === "Junior" || planName === "Junior plus") {
+  if (planName === "Junior") {
     return {
-      email: `${planName} includes supervised unlimited access. There is no age range.`,
-      sms: `Par2Play: ${planName} includes supervised unlimited access.`,
+      email: "Junior is $249 a month: one weekly 1:1 lesson and supervised unlimited access. There is no age range.",
+      sms: "Par2Play: Junior includes supervised unlimited access.",
     };
   }
   return {
-    email: "No credit is on the profile. A play pack or a membership is how a balance gets left behind.",
+    email: "No credit is on the profile. A lesson pack or a membership is how a balance gets left behind.",
     sms: "Par2Play: no credit on the profile yet.",
   };
 }
@@ -425,7 +408,7 @@ export const JOURNEY_MAP: MapRow[] = [
     stage: "Arrive",
     title: "Home",
     objective: "Choose a door.",
-    screen: "Hero, facilities, training, and the three monthly prices.",
+    screen: "Hero, facilities, training, and the monthly prices.",
     message: "No email or SMS.",
     offer: "Monthly prices only. Annual waits until the plan step.",
   },
@@ -436,7 +419,7 @@ export const JOURNEY_MAP: MapRow[] = [
     objective: "Intent, experience, place, then how often.",
     screen: "One question a screen. No price.",
     message: "No email or SMS.",
-    offer: "The quiz matches unlimited practice at $200 a month. Junior plans are chosen on the pricing section, not by these questions.",
+    offer: "The quiz matches unlimited practice at $200 a month. The junior membership is chosen on the pricing section, not by these questions.",
   },
   {
     path: "Join",
@@ -445,7 +428,7 @@ export const JOURNEY_MAP: MapRow[] = [
     objective: "Say one plan out loud.",
     screen: "The match, what it includes, and the hour that stays attached.",
     message: "On screen only.",
-    offer: "Unlimited practice at $200 a month. The 10-pack is held until a guest bay booking.",
+    offer: "Unlimited practice at $200 a month.",
   },
   {
     path: "Join",
@@ -461,7 +444,7 @@ export const JOURNEY_MAP: MapRow[] = [
     stage: "Commit",
     title: "Plan and billing",
     objective: "Monthly or the year.",
-    screen: "Three plans. The matched one is selected.",
+    screen: "Unlimited practice and the junior membership. The matched one is selected.",
     message: "On screen only.",
     offer: "Annual: two months included. The hour credit is held for the visit.",
   },
@@ -472,7 +455,7 @@ export const JOURNEY_MAP: MapRow[] = [
     objective: "A Saturday time and one offer.",
     screen: "Product, party, time, total, and the 24-hour rule.",
     message: "On screen only.",
-    offer: "A 3-lesson pack, or a bay included with membership. A 10-pack does not stack on an included session.",
+    offer: "A 3-lesson pack, or a bay included with membership.",
   },
   {
     path: "Visit",
@@ -490,7 +473,7 @@ export const JOURNEY_MAP: MapRow[] = [
     objective: "Hold a time on the screen.",
     screen: "Three times. The total updates before a name.",
     message: "On screen only.",
-    offer: "10-pack on a guest bay session. Membership is the other door.",
+    offer: "A guest bay is $70. Unlimited practice at $200 a month is the other door.",
   },
   {
     path: "Visit",
@@ -499,7 +482,7 @@ export const JOURNEY_MAP: MapRow[] = [
     objective: "Pay the guest total, or join and reprice.",
     screen: "Two totals. One offer.",
     message: "On screen only.",
-    offer: "Bay included with membership, or the 10-pack if they stay a guest. The other offer is named as held back.",
+    offer: "Bay included with membership if they join. A guest bay stays at $70.",
   },
   {
     path: "Both",
@@ -535,7 +518,7 @@ export const JOURNEY_MAP: MapRow[] = [
     objective: "One next step, chosen from the visit.",
     screen: "Listed under what happens next.",
     message: "Email and SMS.",
-    offer: "10-pack if they were a guest on a bay and did not buy it. Otherwise the plan they already hold, or unlimited practice after a guest session.",
+    offer: "Unlimited practice if they were a guest on a bay. Otherwise the plan they already hold.",
   },
   {
     path: "After",
@@ -544,6 +527,6 @@ export const JOURNEY_MAP: MapRow[] = [
     objective: "Say what is still on the profile.",
     screen: "Listed under what happens next.",
     message: "Email and SMS.",
-    offer: "The leftover credit only: sessions on a 10-pack, or lessons on a 3-pack.",
+    offer: "Lessons left on a 3-pack. A single bay does not leave a session balance.",
   },
 ];

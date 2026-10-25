@@ -187,14 +187,10 @@ export function Landing() {
               <li>A single bay is {money(PRICES.baySession)} a session, tax included. Three sessions is {money(PRICES.baySession * 3)}, so the membership covers itself from the third visit.</li>
               <li>{BAY_WINDOWS.offPeak}</li>
               <li>{BAY_WINDOWS.onPeak} The session price is the same.</li>
-              <li>
-                Ten sessions are {money(PRICES.tenPack)}, tax included, against {money(PRICES.tenPackRack)} booked one at a time.
-              </li>
             </ul>
             <div className="mt-8 flex flex-wrap gap-3">
               <MembershipLink>Join unlimited</MembershipLink>
               <BookLink offer="bay" tone="line">Book a bay · {money(PRICES.baySession)}</BookLink>
-              <BookLink offer="ten-pack" tone="line">10 sessions · {money(PRICES.tenPack)}</BookLink>
             </div>
           </div>
           <div className="grid gap-4">
@@ -318,18 +314,11 @@ export function Landing() {
               </div>
             </div>
           </div>
-          <div className="mt-8 grid gap-4 @3xl:grid-cols-2">
-            <article className="rounded-3xl border border-slate-200 p-6">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#0c8f3e]">One lesson a week</p>
-              <p className="mt-3 font-display text-4xl font-semibold">{money(PRICES.juniorOneLessonWeekly)}<span className="text-lg text-slate-500">/mo</span></p>
-              <p className="mt-3 text-sm leading-relaxed text-slate-600">One 1:1 lesson a week and supervised unlimited facility access. Tax included.</p>
-            </article>
-            <article className="rounded-3xl border border-slate-200 p-6">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#0c8f3e]">Two lessons a week</p>
-              <p className="mt-3 font-display text-4xl font-semibold">{money(PRICES.juniorTwoLessonsWeekly)}<span className="text-lg text-slate-500">/mo</span></p>
-              <p className="mt-3 text-sm leading-relaxed text-slate-600">Two 1:1 lessons a week and supervised unlimited facility access. Tax included.</p>
-            </article>
-          </div>
+          <article className="mt-8 max-w-xl rounded-3xl border border-slate-200 p-6">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#0c8f3e]">Junior membership</p>
+            <p className="mt-3 font-display text-4xl font-semibold">{money(PRICES.juniorOneLessonWeekly)}<span className="text-lg text-slate-500">/mo</span></p>
+            <p className="mt-3 text-sm leading-relaxed text-slate-600">One 1:1 lesson a week and supervised unlimited facility access. Tax included. No age range.</p>
+          </article>
           <div className="mt-6">
             <BookLink offer="junior" tone="solid">Enrol a junior</BookLink>
           </div>
@@ -427,7 +416,7 @@ export function Landing() {
           <SectionHeading
             eyebrow="Pricing"
             title="Tax included. What we know, and what is still TBD."
-            copy="Bay time, membership, the 10-pack, swing analysis, the 3-lesson pack, and junior memberships are set. A single 30-minute lesson and the larger lesson packs are not."
+            copy="Bay time, membership, swing analysis, the 3-lesson pack, and the junior membership are set. A single 30-minute lesson and the larger lesson packs are not."
           />
           <div className="mt-10 grid gap-4 @3xl:grid-cols-2 @5xl:grid-cols-3">
             <PriceCard
@@ -435,12 +424,6 @@ export function Landing() {
               price={money(PRICES.baySession)}
               detail={`${BAY_WINDOWS.offPeak} ${BAY_WINDOWS.onPeak}`}
               action={<BookLink offer="bay" tone="solid" className="w-full">Book a bay</BookLink>}
-            />
-            <PriceCard
-              name="10 sessions"
-              price={money(PRICES.tenPack)}
-              detail={`${PRICES.tenPackSessions} sessions, tax included, against ${money(PRICES.tenPackRack)} one at a time.`}
-              action={<BookLink offer="ten-pack" tone="solid" className="w-full">Get the 10-pack</BookLink>}
             />
             <PriceCard
               name="Unlimited practice"
@@ -463,8 +446,8 @@ export function Landing() {
             />
             <PriceCard
               name="Juniors"
-              price={`${money(PRICES.juniorOneLessonWeekly)} / ${money(PRICES.juniorTwoLessonsWeekly)}`}
-              detail="Per month, tax included. One or two weekly 1:1 lessons, plus supervised unlimited access. No age range."
+              price={`${money(PRICES.juniorOneLessonWeekly)}/mo`}
+              detail="One weekly 1:1 lesson and supervised unlimited access. Tax included. No age range."
               action={<BookLink offer="junior" tone="solid" className="w-full">Enrol a junior</BookLink>}
             />
             <PriceCard

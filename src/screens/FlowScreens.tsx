@@ -47,7 +47,7 @@ function OfferCard() {
   const flow = useFlow();
   const offer = resolveOffer(flow.offerState);
   if (!offer.visible) return null;
-  const packOffer = offer.visible === "play-pack" || offer.visible === "lesson-series";
+  const lessonPack = offer.visible === "lesson-series";
   return (
     <Card className="mt-6 rounded-3xl border border-emerald-200 bg-emerald-50" data-testid="screen-offer">
       <Card.Header>
@@ -57,13 +57,13 @@ function OfferCard() {
         <Card.Title>{offerName(offer.visible)}</Card.Title>
         <Card.Description>{offerDetail(offer.visible, flow.plan)}</Card.Description>
       </Card.Header>
-      {packOffer && (
+      {lessonPack && (
         <Card.Footer className="gap-2">
           <Button size="sm" className={pill} variant={flow.acceptPack ? "primary" : "outline"} onPress={() => flow.setAcceptPack(true)}>
-            {offer.visible === "play-pack" ? `Add 10 sessions for ${money(RATES.tenPack)}` : `Add the 3-lesson pack for ${money(RATES.lessonPack3)}`}
+            {`Add the 3-lesson pack for ${money(RATES.lessonPack3)}`}
           </Button>
           <Button size="sm" className={pill} variant={flow.acceptPack ? "outline" : "primary"} onPress={() => flow.setAcceptPack(false)}>
-            {offer.visible === "play-pack" ? `Keep one session at ${money(RATES.baySession)}` : "30-minute lesson price TBD"}
+            30-minute lesson price TBD
           </Button>
         </Card.Footer>
       )}
@@ -395,7 +395,7 @@ export function PlanStep() {
 }
 
 const PRODUCTS: { id: Product; label: string; detail: string }[] = [
-  { id: "simulator", label: "Bay session", detail: `${money(RATES.baySession)} tax included. Ten sessions are ${money(RATES.tenPack)}.` },
+  { id: "simulator", label: "Bay session", detail: `${money(RATES.baySession)} tax included.` },
   { id: "coaching", label: "Lesson", detail: `30 minutes with Nick or Sean. Single price TBD. A 3-pack is ${money(RATES.lessonPack3)}.` },
 ];
 

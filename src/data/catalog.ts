@@ -1,7 +1,7 @@
 import { PRICES } from "./business";
 import { PHOTOS } from "./photos";
 
-export type PlanId = "unlimited" | "junior" | "junior-plus";
+export type PlanId = "unlimited" | "junior";
 export type Term = 1 | 3 | 6 | 12;
 export type Billing = "monthly" | "annual";
 export type Intent = "play" | "learn" | "socialize" | "compete";
@@ -55,28 +55,12 @@ export const PLANS: Plan[] = [
       "Price includes tax",
     ],
   },
-  {
-    id: "junior-plus",
-    name: "Junior plus",
-    monthly: PRICES.juniorTwoLessonsWeekly,
-    popular: false,
-    cta: "Enrol a junior",
-    includes: [
-      "Two 1:1 lessons each week",
-      "Supervised unlimited facility access",
-      "No age range",
-      "Price includes tax",
-    ],
-  },
 ];
 
 export const TERMS: Term[] = [1, 3, 6, 12];
 
 export const RATES = {
   baySession: PRICES.baySession,
-  tenPack: PRICES.tenPack,
-  tenPackRack: PRICES.tenPackRack,
-  tenPackSessions: PRICES.tenPackSessions,
   lessonPack3: PRICES.lessonPack3,
   swingEvaluation: PRICES.swingEvaluation,
   swingLabMember: PRICES.swingLabMember,
@@ -162,8 +146,8 @@ export function recommendedPlan(answers: Answers): PlanId {
 }
 
 export function defaultProduct(answers: Answers, plan: PlanId | null): Product {
+  void plan;
   if (answers.intent === "learn") return "coaching";
-  if (plan === "junior" || plan === "junior-plus") return "simulator";
   return "simulator";
 }
 
@@ -226,13 +210,6 @@ function visitLine(input: QuoteInput): Line {
     };
   }
 
-  if (!plan && input.acceptPack) {
-    return {
-      label: "10 bay sessions",
-      amount: RATES.tenPack,
-      against: RATES.tenPackRack,
-    };
-  }
   if (plan) {
     return {
       label: "Bay session · included with membership",
@@ -267,10 +244,6 @@ export function recommendReason(answers: Answers, plan: PlanId, hint: PlanId | n
     case "junior":
       reason =
         "Junior is $249 a month, tax included: one 1:1 lesson a week and supervised unlimited access. There is no age range.";
-      break;
-    case "junior-plus":
-      reason =
-        "Junior plus is $399 a month, tax included: two 1:1 lessons a week and supervised unlimited access. There is no age range.";
       break;
     case "unlimited":
       if (answers.intent === "learn") {

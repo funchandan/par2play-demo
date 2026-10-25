@@ -47,10 +47,11 @@ export const BAY_WINDOWS = {
 
 export const PRICES = {
   taxIncluded: true,
+  /**
+   * No multi-session bay pack. Checked https://par2play.com/bay-rental/
+   * on 2026-10-25: it does not list 10 sessions for $400.
+   */
   baySession: 70,
-  tenPackSessions: 10,
-  tenPack: 400,
-  tenPackRack: 700,
   unlimitedMonthly: 200,
   swingEvaluationMinutes: 50,
   swingEvaluation: 100,
@@ -63,8 +64,8 @@ export const PRICES = {
   lessonPack5: null as number | null,
   lessonPack10: null as number | null,
   lessonPack20: null as number | null,
+  /** One weekly 1:1 lesson plus supervised unlimited access. The only junior tier. */
   juniorOneLessonWeekly: 249,
-  juniorTwoLessonsWeekly: 399,
   swingLabMember: 40,
   /**
    * TODO(pricing): confirm the non-member swing lab price.
@@ -75,7 +76,6 @@ export const PRICES = {
 
 export type BookingOffer =
   | "bay"
-  | "ten-pack"
   | "lesson"
   | "swing-evaluation"
   | "swing-lab"
@@ -86,7 +86,7 @@ export type BookingOffer =
  * strategy sheet still says "[GolfClock … link]".
  *
  * Booking is one GolfClock calendar. `bookingHref` adds `offer` so bay,
- * 10-pack, lesson, swing evaluation, swing lab, and junior share it.
+ * lesson, swing evaluation, swing lab, and junior share it.
  * Confirm GolfClock's real filter parameter name before relying on `offer`.
  * Membership checkout is a separate GolfClock URL.
  */

@@ -203,7 +203,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
           ...current,
           plan,
           planTouched: true,
-          foursome: plan === "junior" || plan === "junior-plus" ? false : current.foursome,
+          foursome: plan === "junior" ? false : current.foursome,
         })),
       setTerm: (term) => patch({ term }),
       setFoursome: (foursome) =>
