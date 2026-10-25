@@ -11,11 +11,12 @@ import {
   Radio,
   RadioGroup,
   Separator,
-  Tabs,
   TextField,
 } from "@heroui/react";
 import { useState } from "react";
+import { BookLink, MembershipLink } from "../components/Cta";
 import { ScreenFrame } from "../components/Chrome";
+import { NAP } from "../data/business";
 import {
   CANCEL_RULE,
   IMAGES,
@@ -24,7 +25,6 @@ import {
   RATES,
   SATURDAY,
   SLOTS,
-  isTerm,
   membershipCharge,
   membershipLabel,
   money,
@@ -35,7 +35,6 @@ import {
   recommendReason,
   recommendedPlan,
   slotById,
-  TERMS,
   type Party,
   type Product,
 } from "../data/catalog";
@@ -48,7 +47,7 @@ function OfferCard() {
   const flow = useFlow();
   const offer = resolveOffer(flow.offerState);
   if (!offer.visible) return null;
-  const packOffer = offer.visible === "play-pack" || offer.visible === "lesson-series";
+  const lessonPack = offer.visible === "lesson-series";
   return (
     <Card className="mt-6 rounded-3xl border border-emerald-200 bg-emerald-50" data-testid="screen-offer">
       <Card.Header>
@@ -58,13 +57,13 @@ function OfferCard() {
         <Card.Title>{offerName(offer.visible)}</Card.Title>
         <Card.Description>{offerDetail(offer.visible, flow.plan)}</Card.Description>
       </Card.Header>
-      {packOffer && (
+      {lessonPack && (
         <Card.Footer className="gap-2">
           <Button size="sm" className={pill} variant={flow.acceptPack ? "primary" : "outline"} onPress={() => flow.setAcceptPack(true)}>
-            {offer.visible === "play-pack" ? "Add four hours for $180" : "Add four hours for $400"}
+            {`Add the 3-lesson pack for ${money(RATES.lessonPack3)}`}
           </Button>
           <Button size="sm" className={pill} variant={flow.acceptPack ? "outline" : "primary"} onPress={() => flow.setAcceptPack(false)}>
-            {offer.visible === "play-pack" ? "Keep one hour at $60" : "One hour at $120"}
+            30-minute lesson price TBD
           </Button>
         </Card.Footer>
       )}
@@ -91,7 +90,7 @@ function QuoteList({ includeVisit, buying = undefined }: { includeVisit: boolean
           <li key={line.label} className="flex items-start justify-between gap-4">
             <span>{line.label}</span>
             <span className="text-right font-semibold">
-              {line.against ? `${money(line.amount)} against ${money(line.against)}` : money(line.amount)}
+              {line.pending ? "TBD" : line.against ? `${money(line.amount)} against ${money(line.against)}` : money(line.amount)}
             </span>
           </li>
         ))}
@@ -214,9 +213,8 @@ export function PlaceStep() {
       onChange={(value) => flow.setPlace(value as "outdoor")}
       photo={IMAGES.green}
       options={[
-        { id: "outdoor", label: "Outdoor course", detail: "A round on the greens." },
-        { id: "simulator", label: "Simulator", detail: "An hour indoors, Trackman on." },
-        { id: "both", label: "Both", detail: "Course and simulator." },
+        { id: "simulator", label: "A simulator bay", detail: "One session. $70, tax included. Midday is off-peak." },
+        { id: "both", label: "Bay and a lesson", detail: "Practice, and time with Nick or Sean." },
       ]}
     />
   );
@@ -256,7 +254,7 @@ export function PartyStep() {
       options={[
         { id: "1", label: "Just me", detail: "One player." },
         { id: "2", label: "Two of us", detail: "A member and a guest, if you join." },
-        { id: "4", label: "Four of us", detail: "A group. Guest rounds price per person." },
+        { id: "4", label: "Four of us", detail: "A group in one bay. The session price is not per person." },
       ]}
     />
   );
@@ -284,7 +282,10 @@ export function RecommendStep() {
           <li key={item}>{item}</li>
         ))}
       </ul>
-      <p className="mt-4 text-sm text-slate-500">{money(plan.monthly)} a month. Annual is the next offer, not this one.</p>
+      <p className="mt-4 text-sm text-slate-500">{money(plan.monthly)} a month, tax included. No minimum term.</p>
+      <p className="mt-3 max-w-md text-sm text-slate-500">
+        These answers are held in this browser for a GolfClock profile. Saving them there is TODO. Nothing is sent.
+      </p>
       <OfferCard />
     </ScreenFrame>
   );
@@ -356,42 +357,10 @@ export function PlanStep() {
       }
     >
       <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-700">Commit · billing</p>
-      <h1 className="mt-4 text-4xl font-semibold tracking-tighter">How long, and for how many.</h1>
+      <h1 className="mt-4 text-4xl font-semibold tracking-tighter">Month to month.</h1>
       <p className="mt-3 max-w-xl text-slate-600" data-testid="annual-price">
-        {membershipLabel(plan, flow.term, flow.foursome)} is {money(membershipCharge(plan, flow.term, flow.foursome).amount)}
-        {membershipCharge(plan, flow.term, flow.foursome).against
-          ? ` against ${money(membershipCharge(plan, flow.term, flow.foursome).against ?? 0)}.`
-          : "."}
+        {membershipLabel(plan, flow.term, flow.foursome)} is {money(membershipCharge(plan, flow.term, flow.foursome).amount)}, tax included. No minimum term.
       </p>
-      <Tabs
-        className="mt-6"
-        selectedKey={String(flow.term)}
-        onSelectionChange={(key) => {
-          const next = Number(key);
-          if (isTerm(next)) flow.setTerm(next);
-        }}
-      >
-        <Tabs.ListContainer>
-          <Tabs.List aria-label="Months">
-            {TERMS.map((term) => (
-              <Tabs.Tab key={term} id={String(term)}>
-                {term === 1 ? "1 month" : term === 12 ? "12 months" : `${term} months`}
-                <Tabs.Indicator />
-              </Tabs.Tab>
-            ))}
-          </Tabs.List>
-        </Tabs.ListContainer>
-      </Tabs>
-      {selected !== "junior" && (
-        <button
-          type="button"
-          aria-pressed={flow.foursome}
-          className={`mt-4 rounded-full border px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] ${flow.foursome ? "border-emerald-600 bg-emerald-600 text-white" : "border-slate-300 text-slate-700"}`}
-          onClick={() => flow.setFoursome(!flow.foursome)}
-        >
-          Foursome · fourth free
-        </button>
-      )}
       <div className={`mt-6 grid gap-4 ${flow.layout === "web" ? "grid-cols-2" : ""}`}>
         {PLANS.map((item) => {
           const charge = membershipCharge(item, flow.term, flow.foursome);
@@ -403,7 +372,7 @@ export function PlanStep() {
               className={`rounded-3xl border p-5 text-left ${selected === item.id ? "border-emerald-600" : "border-slate-200"}`}
             >
               <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">{item.name}</span>
-              {item.id === recommendedPlan(flow.answers) && item.id !== "junior" && (
+              {item.id === recommendedPlan(flow.answers) && (
                 <Chip className="ml-2" color="accent" size="sm" variant="soft">
                   <Chip.Label>Match</Chip.Label>
                 </Chip>
@@ -426,9 +395,8 @@ export function PlanStep() {
 }
 
 const PRODUCTS: { id: Product; label: string; detail: string }[] = [
-  { id: "round", label: "Round", detail: `Guest ${money(RATES.guestRound)}. Members' own round is included.` },
-  { id: "simulator", label: "Simulator hour", detail: `${money(RATES.simulatorHour)} guest. Included on a new Golfer or Elite plan.` },
-  { id: "coaching", label: "Coaching hour", detail: `${money(RATES.coachingHour)}. Elite includes one a week.` },
+  { id: "simulator", label: "Bay session", detail: `${money(RATES.baySession)} tax included.` },
+  { id: "coaching", label: "Lesson", detail: `30 minutes with Nick or Sean. Single price TBD. A 3-pack is ${money(RATES.lessonPack3)}.` },
 ];
 
 export function BookStep() {
@@ -550,62 +518,27 @@ export function GuestChoiceStep() {
 
 export function PayStep() {
   const flow = useFlow();
-  const [name, setName] = useState(
-    [flow.profile.firstName, flow.profile.lastName].filter(Boolean).join(" "),
-  );
-  const [mobile, setMobile] = useState(flow.profile.mobile);
-  const [card, setCard] = useState("");
   return (
     <ScreenFrame
       footer={<Button variant="ghost" onPress={flow.goBack}>Back</Button>}
     >
       <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-700">Pay</p>
-      <h1 className="mt-4 text-4xl font-semibold tracking-tighter">The card records the step.</h1>
-      <p className="mt-3 max-w-md text-slate-600">Nothing is charged. The number stays in this browser until you submit, then only the last four digits remain.</p>
+      <h1 className="mt-4 text-4xl font-semibold tracking-tighter">Checkout is on GolfClock.</h1>
+      <p className="mt-3 max-w-md text-slate-600">
+        This page does not take a card. If the GolfClock link is still TODO, the button calls {NAP.phoneDisplay}.
+      </p>
       <QuoteList includeVisit />
       <OfferCard />
-      <Form
-        className="mt-8 flex max-w-md flex-col gap-4"
-        onSubmit={(event) => {
-          event.preventDefault();
-          const digits = card.replace(/\D/g, "");
-          flow.recordCard(digits.slice(-4), name, mobile);
-          setCard("");
-        }}
-      >
-        <TextField isRequired name="name" value={name} onChange={setName}>
-          <Label>Name</Label>
-          <Input />
-          <FieldError />
-        </TextField>
-        <TextField
-          isRequired
-          name="mobile"
-          value={mobile}
-          validate={(value) => (value.replace(/\D/g, "").length >= 7 ? null : "Enter a mobile number.")}
-          onChange={setMobile}
-        >
-          <Label>Mobile</Label>
-          <Input />
-          <FieldError />
-        </TextField>
-        <TextField
-          isRequired
-          name="card"
-          value={card}
-          validate={(value) => {
-            const length = value.replace(/\D/g, "").length;
-            return length >= 12 && length <= 19 ? null : "Enter the card number. It is not charged.";
-          }}
-          onChange={setCard}
-        >
-          <Label>Card</Label>
-          <Input inputMode="numeric" autoComplete="off" />
-          <Description>Stored in memory for this session only.</Description>
-          <FieldError />
-        </TextField>
-        <Button type="submit" className={pill}>Record this card</Button>
-      </Form>
+      <div className="mt-8 flex flex-wrap gap-3">
+        {flow.buyingMembership ? (
+          <MembershipLink>Continue to membership</MembershipLink>
+        ) : (
+          <BookLink offer={flow.product === "coaching" ? "lesson" : "bay"}>Continue to booking</BookLink>
+        )}
+        <Button className={pill} variant="outline" onPress={flow.finishHandoff}>
+          Show the confirmation copy
+        </Button>
+      </div>
     </ScreenFrame>
   );
 }
@@ -629,6 +562,9 @@ export function ConfirmStep() {
     <ScreenFrame photo={IMAGES.hero}>
       <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-700">Confirm</p>
       <h1 className="mt-4 text-4xl font-semibold tracking-tighter">You're booked at Par2Play.</h1>
+      <p className="mt-3 max-w-md text-sm text-slate-500">
+        Payment is completed on GolfClock. This screen is the receipt copy only. Nothing is sent from here.
+      </p>
       <p className="mt-3 text-slate-600">
         {flow.profile.firstName || "Guest"} · {SATURDAY} at {slot.time} · {productLabel(flow.product ?? "round")} · {money(priced.total)}
         {flow.cardLast4 ? ` · card ending ${flow.cardLast4}` : ""}

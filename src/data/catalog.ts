@@ -1,4 +1,7 @@
-export type PlanId = "social" | "golfer" | "elite" | "junior";
+import { PRICES } from "./business";
+import { PHOTOS } from "./photos";
+
+export type PlanId = "unlimited" | "junior";
 export type Term = 1 | 3 | 6 | 12;
 export type Billing = "monthly" | "annual";
 export type Intent = "play" | "learn" | "socialize" | "compete";
@@ -27,109 +30,65 @@ export type Plan = {
 
 export const PLANS: Plan[] = [
   {
-    id: "social",
-    name: "Social",
-    monthly: 99,
-    popular: false,
-    cta: "Get started",
-    includes: ["Access to the clubhouse", "2 rounds a month", "Social events"],
-  },
-  {
-    id: "golfer",
-    name: "Golfer",
-    monthly: 199,
+    id: "unlimited",
+    name: "Unlimited practice",
+    monthly: PRICES.unlimitedMonthly,
     popular: true,
-    cta: "Join now",
-    includes: ["Unlimited course access", "Priority tee times", "Simulator access"],
-  },
-  {
-    id: "elite",
-    name: "Elite",
-    monthly: 349,
-    popular: false,
-    cta: "Join Elite",
-    includes: ["All Golfer benefits", "Personal locker", "1 coaching hour a week"],
+    cta: "Join",
+    includes: [
+      "Unlimited simulator practice",
+      "Putting green and lounge",
+      "No minimum term",
+      "Price includes tax",
+    ],
   },
   {
     id: "junior",
     name: "Junior",
-    monthly: 49,
+    monthly: PRICES.juniorOneLessonWeekly,
     popular: false,
-    cta: "Join Junior",
-    includes: ["Junior class included", "A bay with an adult", "Simulator access"],
+    cta: "Enrol a junior",
+    includes: [
+      "One 1:1 lesson each week",
+      "Supervised unlimited facility access",
+      "No age range",
+      "Price includes tax",
+    ],
   },
 ];
 
 export const TERMS: Term[] = [1, 3, 6, 12];
 
-export const CLASSES = [
-  {
-    id: "swing-lab",
-    when: "Sat, Oct 24",
-    time: "10:00",
-    name: "Swing lab",
-    instructor: "Nick Schiavo",
-    filled: 6,
-    spots: 8,
-  },
-  {
-    id: "junior-hour",
-    when: "Sat, Oct 24",
-    time: "2:00",
-    name: "Junior hour",
-    instructor: "Nick Monticello",
-    filled: 8,
-    spots: 8,
-  },
-  {
-    id: "playing",
-    when: "Sun, Oct 25",
-    time: "11:00",
-    name: "Playing lesson",
-    instructor: "Nick Schiavo",
-    filled: 3,
-    spots: 6,
-  },
-] as const;
-
 export const RATES = {
-  guestRound: 85,
-  memberGuestRound: 45,
-  simulatorHour: 60,
-  coachingHour: 120,
-  socialCredit: 30,
-  playPack: 180,
-  playPackHours: 4,
-  playPackRack: 240,
-  lessonSeries: 400,
-  lessonSeriesHours: 4,
-  lessonSeriesRack: 480,
-};
+  baySession: PRICES.baySession,
+  lessonPack3: PRICES.lessonPack3,
+  swingEvaluation: PRICES.swingEvaluation,
+  swingLabMember: PRICES.swingLabMember,
+  swingLabGuest: PRICES.swingLabGuest,
+} as const;
 
 export const SATURDAY = "Saturday, October 24";
 
 export const SLOTS = [
-  { id: "0800", time: "8:00", note: "First tee" },
-  { id: "1000", time: "10:00", note: "Mid morning" },
+  { id: "0800", time: "8:00", note: "Morning" },
+  { id: "1000", time: "10:00", note: "Midday · off-peak" },
   { id: "1400", time: "2:00", note: "Afternoon" },
 ] as const;
 
 export const CANCEL_RULE =
-  "Cancel free until 24 hours before the start. Inside 24 hours a member inclusion is spent, or the guest fee is kept.";
+  "Cancel free until 24 hours before the start. Inside 24 hours the visit fee is kept.";
 
-export const MEMBER_CANCEL = "Membership cancels anytime. The paid month stays.";
-
-const media = (path: string) => `${import.meta.env.BASE_URL}${path}`;
+export const MEMBER_CANCEL = "Unlimited practice has no minimum term. The paid month stays.";
 
 export const IMAGES = {
-  hero: media("photos/course.jpg"),
-  fairway: media("photos/course.jpg"),
-  green: media("photos/bay.jpg"),
-  swing: media("photos/lesson-live.jpg"),
-  clubhouse: media("photos/group.jpg"),
-  outdoor: media("photos/events.jpg"),
-  simulator: media("photos/lesson.jpg"),
-  gallery: [media("photos/bay-live.jpg"), media("photos/group.jpg"), media("photos/course.jpg")],
+  hero: PHOTOS.bays.jpg,
+  fairway: PHOTOS.range.jpg,
+  green: PHOTOS.bays.jpg,
+  swing: PHOTOS.gripLesson.jpg,
+  clubhouse: PHOTOS.groupWave.jpg,
+  outdoor: PHOTOS.storefront.jpg,
+  simulator: PHOTOS.launchData.jpg,
+  gallery: [PHOTOS.bays.jpg, PHOTOS.groupWave.jpg, PHOTOS.lounge.jpg],
 };
 
 export function money(amount: number): string {
@@ -137,11 +96,11 @@ export function money(amount: number): string {
 }
 
 export function planById(id: PlanId): Plan {
-  return PLANS.find((plan) => plan.id === id) ?? PLANS[1];
+  return PLANS.find((plan) => plan.id === id) ?? PLANS[0];
 }
 
 export function annualPrice(plan: Plan): number {
-  return plan.monthly * 10;
+  return plan.monthly * 12;
 }
 
 export function annualRack(plan: Plan): number {
@@ -153,40 +112,42 @@ export function isTerm(value: number): value is Term {
 }
 
 export function termPrice(plan: Plan, term: Term): number {
-  return term === 12 ? annualPrice(plan) : plan.monthly * term;
+  return plan.monthly * term;
 }
 
+/** Month-to-month. `foursome` is ignored: that discount was demo pricing. */
 export function membershipCharge(plan: Plan, term: Term, foursome: boolean): {
   amount: number;
   against?: number;
 } {
-  const unit = termPrice(plan, term);
-  if (foursome && plan.id !== "junior") {
-    return { amount: unit * 3, against: unit * 4 };
-  }
-  if (term === 12) return { amount: unit, against: annualRack(plan) };
-  return { amount: unit };
+  void foursome;
+  return { amount: termPrice(plan, term) };
 }
 
 export function membershipLabel(plan: Plan, term: Term, foursome: boolean): string {
+  void foursome;
   const span = term === 1 ? "month" : term === 12 ? "year" : `${term} months`;
-  const group = foursome && plan.id !== "junior" ? " · foursome" : "";
-  return `${plan.name} · ${span}${group}`;
+  return `${plan.name} · ${span}`;
 }
 
 export function recommendedPlan(answers: Answers): PlanId {
-  if (answers.intent === "compete" || answers.intent === "learn" || answers.cadence === "live") {
-    return "elite";
+  switch (answers.intent) {
+    case "play":
+    case "learn":
+    case "socialize":
+    case "compete":
+    case null:
+      return "unlimited";
+    default: {
+      const exhaustive: never = answers.intent;
+      return exhaustive;
+    }
   }
-  if (answers.cadence === "weekly" || answers.place === "both" || answers.place === "simulator") {
-    return "golfer";
-  }
-  return "social";
 }
 
 export function defaultProduct(answers: Answers, plan: PlanId | null): Product {
-  if (answers.intent === "learn" && plan !== "elite") return "coaching";
-  if (answers.place === "outdoor") return "round";
+  void plan;
+  if (answers.intent === "learn") return "coaching";
   return "simulator";
 }
 
@@ -200,6 +161,8 @@ export type Line = {
   label: string;
   amount: number;
   against?: number;
+  /** Price is not confirmed. Excluded from the total. */
+  pending?: boolean;
 };
 
 export type QuoteInput = {
@@ -229,73 +192,32 @@ export function quote(input: QuoteInput): { lines: Line[]; total: number } {
   }
   return {
     lines,
-    total: lines.reduce((sum, line) => sum + line.amount, 0),
+    total: lines.reduce((sum, line) => sum + (line.pending ? 0 : line.amount), 0),
   };
 }
 
 function visitLine(input: QuoteInput): Line {
   const plan = input.buyingMembership && input.plan ? input.plan : null;
-  const party = partyCount(input.answers);
-  const guests = Math.max(0, party - 1);
-
-  if (input.product === "simulator") {
-    if (!plan && input.acceptPack) {
-      return {
-        label: "Play pack · 4 simulator hours",
-        amount: RATES.playPack,
-        against: RATES.playPackRack,
-      };
-    }
-    if (plan === "golfer" || plan === "elite") {
-      return {
-        label: "First simulator hour · included",
-        amount: 0,
-        against: RATES.simulatorHour,
-      };
-    }
-    if (plan === "social") {
-      return {
-        label: "Simulator hour · $30 credit",
-        amount: RATES.simulatorHour - RATES.socialCredit,
-        against: RATES.simulatorHour,
-      };
-    }
-    return { label: "Simulator hour", amount: RATES.simulatorHour };
-  }
 
   if (input.product === "coaching") {
-    if (plan === "elite") {
-      return {
-        label: "Coaching hour · included this week",
-        amount: 0,
-        against: RATES.coachingHour,
-      };
+    if (input.acceptPack) {
+      return { label: "3-lesson pack · 30 minutes each", amount: RATES.lessonPack3 };
     }
-    if (input.acceptPack && input.answers.intent === "learn") {
-      return {
-        label: "Lesson series · 4 hours",
-        amount: RATES.lessonSeries,
-        against: RATES.lessonSeriesRack,
-      };
-    }
-    return { label: "Coaching hour", amount: RATES.coachingHour };
+    return {
+      label: "30-minute lesson · price to be confirmed",
+      amount: 0,
+      pending: true,
+    };
   }
 
   if (plan) {
     return {
-      label:
-        guests > 0
-          ? `Round · yours included, ${guests} guest${guests > 1 ? "s" : ""} at $45`
-          : "Round · included",
-      amount: guests * RATES.memberGuestRound,
-      against: guests > 0 ? guests * RATES.guestRound : undefined,
+      label: "Bay session · included with membership",
+      amount: 0,
+      against: RATES.baySession,
     };
   }
-
-  return {
-    label: party === 1 ? "Guest round" : `Guest rounds · ${party}`,
-    amount: party * RATES.guestRound,
-  };
+  return { label: "Bay session", amount: RATES.baySession };
 }
 
 export function slotById(id: string | null) {
@@ -303,36 +225,45 @@ export function slotById(id: string | null) {
 }
 
 export function productLabel(product: Product): string {
-  if (product === "simulator") return "Simulator hour";
-  if (product === "coaching") return "Coaching hour";
-  return "Round";
+  switch (product) {
+    case "simulator":
+    case "round":
+      return "Bay session";
+    case "coaching":
+      return "Lesson";
+    default: {
+      const exhaustive: never = product;
+      return exhaustive;
+    }
+  }
 }
 
 export function recommendReason(answers: Answers, plan: PlanId, hint: PlanId | null): string {
   let reason: string;
-  if (plan === "junior") {
-    reason = "Junior is $49 a month. The junior class is included, and a foursome does not apply.";
-  } else if (plan === "elite") {
-    if (answers.intent === "compete") {
-      reason = "Compete maps to Elite. Tournament prep, and a coaching hour every week.";
-    } else if (answers.intent === "learn") {
-      reason = "Coaching maps to Elite. A coaching hour is included every week.";
-    } else {
-      reason = "Living here maps to Elite. Locker, course, simulator, and a coaching hour every week.";
+  switch (plan) {
+    case "junior":
+      reason =
+        "Junior is $249 a month, tax included: one 1:1 lesson a week and supervised unlimited access. There is no age range.";
+      break;
+    case "unlimited":
+      if (answers.intent === "learn") {
+        reason =
+          "Start with a 50-minute swing evaluation, $100 tax included, once per golfer. Unlimited practice is $200 a month if the bay becomes the habit. No minimum term.";
+      } else if (answers.cadence === "occasional") {
+        reason =
+          "A bay is $70 a session, tax included. Unlimited practice is $200 a month and covers itself from the third session. No minimum term.";
+      } else {
+        reason =
+          "Unlimited practice is $200 a month, tax included, with no minimum term. Full Swing bays, the putting green, and the lounge.";
+      }
+      break;
+    default: {
+      const exhaustive: never = plan;
+      return exhaustive;
     }
-  } else if (plan === "golfer") {
-    if (answers.place === "simulator") {
-      reason = "Simulator play maps to Golfer. The first hour is included.";
-    } else if (answers.place === "both") {
-      reason = "Course and simulator map to Golfer.";
-    } else {
-      reason = "Weekly play maps to Golfer. Unlimited course, and priority tee times.";
-    }
-  } else {
-    reason = "Occasional play maps to Social. Two rounds a month, the clubhouse, and a $30 simulator credit.";
   }
   if (hint && hint !== plan) {
-    reason += ` You looked at ${planById(hint).name}. The answers match ${planById(plan).name}.`;
+    reason += ` You looked at ${planById(hint).name}.`;
   }
   return reason;
 }

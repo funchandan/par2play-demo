@@ -1,5 +1,6 @@
 import { Button } from "@heroui/react";
 import { useState, type ReactNode } from "react";
+import { MembershipLink } from "./Cta";
 import { useFlow } from "../state/flow";
 
 export function Mark({ light = false }: { light?: boolean }) {
@@ -32,20 +33,23 @@ export function ClubHeader({ light = false }: { light?: boolean }) {
             <button className={link} onClick={() => jump()} type="button">
               Home
             </button>
-            <button className={link} onClick={() => { setOpen(false); flow.goClubhouse(); }} type="button">
-              Leagues
+            <button className={link} onClick={() => jump("practice")} type="button">
+              Practice
             </button>
-            <button className={link} onClick={() => jump("gallery")} type="button">
-              Gallery
+            <button className={link} onClick={() => jump("swing-lab")} type="button">
+              Swing lab
             </button>
-            <button className={link} onClick={() => jump("training")} type="button">
-              Training
+            <button className={link} onClick={() => jump("lessons")} type="button">
+              Lessons
+            </button>
+            <button className={link} onClick={() => jump("juniors")} type="button">
+              Juniors
             </button>
             <button className={link} onClick={() => jump("pricing")} type="button">
               Pricing
             </button>
-            <button className={link} onClick={() => jump("about")} type="button">
-              About
+            <button className={link} onClick={() => jump("visit")} type="button">
+              Visit
             </button>
           </nav>
         ) : (
@@ -54,19 +58,18 @@ export function ClubHeader({ light = false }: { light?: boolean }) {
           </Button>
         )}
         {flow.layout === "web" && flow.step !== "landing" && (
-          <Button className="rounded-full uppercase tracking-[0.14em] text-[10px]" onPress={() => flow.startJoin()}>
-            Join membership
-          </Button>
+          <MembershipLink className="h-9 px-4 text-[10px]">Join</MembershipLink>
         )}
       </div>
       {flow.layout === "mobile" && open && (
         <nav className={`mt-4 flex flex-col gap-3 text-[11px] font-medium uppercase tracking-[0.16em] ${light ? "text-white" : "text-slate-700"}`}>
           <button onClick={() => jump()} type="button">Home</button>
-          <button onClick={() => { setOpen(false); flow.goClubhouse(); }} type="button">Leagues</button>
-          <button onClick={() => jump("gallery")} type="button">Gallery</button>
-          <button onClick={() => jump("training")} type="button">Training</button>
+          <button onClick={() => jump("practice")} type="button">Practice</button>
+          <button onClick={() => jump("swing-lab")} type="button">Swing lab</button>
+          <button onClick={() => jump("lessons")} type="button">Lessons</button>
+          <button onClick={() => jump("juniors")} type="button">Juniors</button>
           <button onClick={() => jump("pricing")} type="button">Pricing</button>
-          <button onClick={() => jump("about")} type="button">About</button>
+          <button onClick={() => jump("visit")} type="button">Visit</button>
         </nav>
       )}
     </header>

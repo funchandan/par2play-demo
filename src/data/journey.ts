@@ -52,7 +52,6 @@ export type OfferId =
   | "first-swing"
   | "social-credit"
   | "annual"
-  | "play-pack"
   | "lesson-series"
   | "guest-round";
 
@@ -74,7 +73,6 @@ const OFFER_NAMES: Record<OfferId, string> = {
   "first-swing": "First swing",
   "social-credit": "Simulator credit",
   annual: "Annual",
-  "play-pack": "Play pack",
   "lesson-series": "Lesson series",
   "guest-round": "Guest round",
 };
@@ -84,20 +82,22 @@ export function offerName(id: OfferId): string {
 }
 
 export function offerDetail(id: OfferId, plan: PlanId | null): string {
-  const chosen = planById(plan ?? "golfer");
+  const chosen = planById(plan ?? "unlimited");
   switch (id) {
     case "first-swing":
-      return "The first simulator hour is included with Golfer or Elite in this session.";
+      return `${chosen.name} is ${money(chosen.monthly)} a month, tax included. A bay session is included while the membership is active.`;
     case "social-credit":
-      return "Social includes $30 off the first simulator hour. The hour is $30 against $60.";
+      return "There is no separate social credit. A bay is $70 a session, tax included.";
     case "annual":
-      return `Two months included. ${chosen.name} is ${money(annualPrice(chosen))} for the year, against ${money(annualRack(chosen))}.`;
-    case "play-pack":
-      return "Four simulator hours for $180. That is $45 an hour against $60.";
+      return `${chosen.name} has no minimum term and no prepaid discount. Twelve months would be ${money(annualPrice(chosen))}, the same as ${money(annualRack(chosen))} at the monthly rate.`;
     case "lesson-series":
-      return "Four coaching hours for $400, against $480.";
+      return "A pack of three 30-minute lessons is $240, tax included. The single-lesson price and the 5, 10, and 20 packs are still TBD.";
     case "guest-round":
-      return "Each guest is $45, against the $85 guest round.";
+      return "A bay is $70 a session, tax included, for the group in that bay.";
+    default: {
+      const exhaustive: never = id;
+      return exhaustive;
+    }
   }
 }
 
@@ -108,75 +108,30 @@ export function resolveOffer(state: OfferState): {
   const plan = state.plan ?? recommendedPlan(state.answers);
   const buying = state.buyingMembership;
   const product = state.product ?? defaultProduct(state.answers, buying ? plan : null);
-  const party = partyCount(state.answers);
-  const learn = state.answers.intent === "learn";
   const none = { visible: null, suppressed: null };
 
   if (state.step === "recommend" || state.step === "register") {
-    return plan === "social"
-      ? { visible: "social-credit", suppressed: "annual" }
-      : { visible: "first-swing", suppressed: "annual" };
+    return { visible: "first-swing", suppressed: null };
   }
 
   if (state.step === "plan") {
-    if (state.term === 12) {
-      return {
-        visible: null,
-        suppressed: plan === "social" ? "social-credit" : "first-swing",
-      };
-    }
-    return {
-      visible: "annual",
-      suppressed: plan === "social" ? "social-credit" : "first-swing",
-    };
+    return { visible: null, suppressed: "annual" };
   }
 
-  const visitOffer = () => {
-    if (product === "coaching" && plan === "elite" && buying) {
-      return { visible: null, suppressed: "lesson-series" as OfferId };
+  const visitOffer = (): { visible: OfferId | null; suppressed: OfferId | null } => {
+    if (product === "coaching") {
+      return { visible: "lesson-series", suppressed: buying ? "first-swing" : null };
     }
-    if (product === "coaching" && learn && plan !== "elite") {
-      return { visible: "lesson-series" as OfferId, suppressed: buying ? ("first-swing" as const) : null };
-    }
-    if (product === "simulator" && buying && (plan === "golfer" || plan === "elite")) {
-      return { visible: "first-swing" as const, suppressed: "play-pack" as const };
-    }
-    if (product === "simulator" && buying && plan === "social") {
-      return { visible: "social-credit" as const, suppressed: "play-pack" as const };
-    }
-    if (product === "simulator" && !buying) {
-      return { visible: "play-pack" as const, suppressed: "first-swing" as const };
-    }
-    if (product === "round" && party > 1 && buying) {
-      return { visible: "guest-round" as const, suppressed: "annual" as const };
-    }
-    if (product === "round" && party > 1 && !buying) {
-      return { visible: null, suppressed: "guest-round" as const };
-    }
-    if (product === "round" && plan === "social" && buying) {
-      return { visible: null, suppressed: "social-credit" as const };
-    }
-    if (!buying && product === "round") {
-      return { visible: null, suppressed: "annual" as const };
-    }
-    if (buying && state.billing === "monthly") {
-      return { visible: null, suppressed: "annual" as const };
-    }
-    return none;
+    return { visible: "first-swing", suppressed: null };
   };
 
-  if (state.step === "book" || state.step === "pay") return visitOffer();
-
-  if (state.step === "visit-time") {
-    if (product === "simulator") return { visible: "play-pack", suppressed: "first-swing" };
-    if (party > 1) return { visible: "guest-round", suppressed: "annual" };
-    return { visible: "annual", suppressed: null };
-  }
-
-  if (state.step === "guest-choice") {
-    if (product === "simulator") return { visible: "first-swing", suppressed: "play-pack" };
-    if (party > 1) return { visible: "guest-round", suppressed: "annual" };
-    return { visible: "annual", suppressed: "guest-round" };
+  if (
+    state.step === "book" ||
+    state.step === "pay" ||
+    state.step === "visit-time" ||
+    state.step === "guest-choice"
+  ) {
+    return visitOffer();
   }
 
   return none;
@@ -224,7 +179,7 @@ export function objectiveFor(step: Step): string {
     case "place":
       return "Course, simulator, or both. This picks the first visit.";
     case "cadence":
-      return "How often decides Social, Golfer, or Elite.";
+      return "How often decides a bay session or unlimited practice.";
     case "recommend":
       return "Name one plan. Hold the annual price for the next commit.";
     case "register":
@@ -295,7 +250,7 @@ export function screenLine(state: OfferState): string {
   const slot = slotById(state.slotId);
   switch (state.step) {
     case "landing":
-      return "Five Full Swing bays at 695 Hamilton Street. Lessons with Nick Schiavo and Nick Monticello, PGA.";
+      return "Indoor golf at 695 Hamilton Street, Suite G, Somerset. Lessons with Nick and Sean, PGA professionals.";
     case "clubhouse":
       return "Every other Tuesday. One hole on the screen. Points when someone you bring comes back.";
     case "intent":
@@ -378,16 +333,10 @@ function morningAfter(
   product: Product,
   party: number,
 ): { email: string; sms: string } {
-  if (state.acceptPack && product === "simulator" && !state.buyingMembership) {
-    return {
-      email: "Yesterday at Par2Play. You used 1 of 4 simulator hours. Three are still on the play pack.",
-      sms: "Par2Play: 3 simulator hours left on the play pack.",
-    };
-  }
   if (!state.buyingMembership && product === "simulator") {
     return {
-      email: "Yesterday at Par2Play. The simulator hour is $60. Four hours are $180, which is $45 an hour.",
-      sms: "Par2Play: four simulator hours are $180, $45 an hour against $60.",
+      email: "Yesterday at Par2Play. A bay is $70, tax included. Unlimited practice is $200 a month if the bay becomes the habit. No minimum term.",
+      sms: "Par2Play: unlimited practice is $200 a month, tax included.",
     };
   }
   if (state.buyingMembership && planName) {
@@ -397,8 +346,8 @@ function morningAfter(
     };
   }
   return {
-    email: `Yesterday at Par2Play. A round for ${party} is ${money(85 * party)}. Golfer is $199 a month if this becomes a habit.`,
-    sms: "Par2Play: Golfer is $199 a month when you want the course without the guest rate.",
+    email: `Yesterday at Par2Play. A bay for the group is $70, tax included. Unlimited practice is $200 a month if this becomes a habit. Party size on the booking was ${party}.`,
+    sms: "Par2Play: unlimited practice is $200 a month, tax included, with no minimum term.",
   };
 }
 
@@ -407,44 +356,26 @@ function unusedCredit(
   planName: string | null,
   product: Product,
 ): { email: string; sms: string } {
-  if (state.acceptPack && product === "simulator" && !state.buyingMembership) {
-    return {
-      email: "You have 3 simulator hours left on the play pack. They come off the next simulator booking.",
-      sms: "Par2Play: 3 hours left on the play pack.",
-    };
-  }
   if (state.acceptPack && product === "coaching") {
     return {
-      email: "You have 3 coaching hours left on the lesson series. They come off the next lesson.",
-      sms: "Par2Play: 3 coaching hours left.",
+      email: "You have lessons left on the 3-pack. They come off the next lesson. A single 30-minute price is still TBD.",
+      sms: "Par2Play: lessons left on the 3-pack.",
     };
   }
-  if (planName === "Social" && product !== "simulator") {
+  if (planName === "Unlimited practice") {
     return {
-      email: "The $30 simulator credit is still on your profile. The next simulator hour is $30 against $60.",
-      sms: "Par2Play: $30 simulator credit is still on your profile.",
+      email: "Bay time stays on unlimited practice. The membership is $200 a month, tax included, with no minimum term.",
+      sms: "Par2Play: unlimited practice stays at $200 a month.",
     };
   }
-  if (planName === "Social" && product === "simulator") {
+  if (planName === "Junior") {
     return {
-      email: "The $30 credit was used on this hour. 2 rounds are still included this month.",
-      sms: "Par2Play: 2 rounds still included this month.",
-    };
-  }
-  if (planName === "Elite") {
-    return {
-      email: "A coaching hour is included every week on Elite. It does not roll into a pack.",
-      sms: "Par2Play: your Elite coaching hour resets each week.",
-    };
-  }
-  if (planName === "Golfer") {
-    return {
-      email: "Simulator access stays on Golfer. The first hour in this session is already included.",
-      sms: "Par2Play: simulator access stays on Golfer.",
+      email: "Junior is $249 a month: one weekly 1:1 lesson and supervised unlimited access. There is no age range.",
+      sms: "Par2Play: Junior includes supervised unlimited access.",
     };
   }
   return {
-    email: "No credit is on the profile. A play pack or a membership is how a balance gets left behind.",
+    email: "No credit is on the profile. A lesson pack or a membership is how a balance gets left behind.",
     sms: "Par2Play: no credit on the profile yet.",
   };
 }
@@ -477,7 +408,7 @@ export const JOURNEY_MAP: MapRow[] = [
     stage: "Arrive",
     title: "Home",
     objective: "Choose a door.",
-    screen: "Hero, facilities, training, and the three monthly prices.",
+    screen: "Hero, facilities, training, and the monthly prices.",
     message: "No email or SMS.",
     offer: "Monthly prices only. Annual waits until the plan step.",
   },
@@ -488,7 +419,7 @@ export const JOURNEY_MAP: MapRow[] = [
     objective: "Intent, experience, place, then how often.",
     screen: "One question a screen. No price.",
     message: "No email or SMS.",
-    offer: "None. Compete, coaching, or living here will match Elite. Weekly, both places, or the simulator matches Golfer. The rest matches Social.",
+    offer: "The quiz matches unlimited practice at $200 a month. The junior membership is chosen on the pricing section, not by these questions.",
   },
   {
     path: "Join",
@@ -497,7 +428,7 @@ export const JOURNEY_MAP: MapRow[] = [
     objective: "Say one plan out loud.",
     screen: "The match, what it includes, and the hour that stays attached.",
     message: "On screen only.",
-    offer: "First swing, or the $30 Social credit. Annual is held back.",
+    offer: "Unlimited practice at $200 a month.",
   },
   {
     path: "Join",
@@ -513,7 +444,7 @@ export const JOURNEY_MAP: MapRow[] = [
     stage: "Commit",
     title: "Plan and billing",
     objective: "Monthly or the year.",
-    screen: "Three plans. The matched one is selected.",
+    screen: "Unlimited practice and the junior membership. The matched one is selected.",
     message: "On screen only.",
     offer: "Annual: two months included. The hour credit is held for the visit.",
   },
@@ -524,7 +455,7 @@ export const JOURNEY_MAP: MapRow[] = [
     objective: "A Saturday time and one offer.",
     screen: "Product, party, time, total, and the 24-hour rule.",
     message: "On screen only.",
-    offer: "One of lesson series, first swing, the $30 credit, or the guest round. A pack does not stack on an included hour.",
+    offer: "A 3-lesson pack, or a bay included with membership.",
   },
   {
     path: "Visit",
@@ -542,7 +473,7 @@ export const JOURNEY_MAP: MapRow[] = [
     objective: "Hold a time on the screen.",
     screen: "Three times. The total updates before a name.",
     message: "On screen only.",
-    offer: "Play pack on a guest simulator hour. A guest round or annual is the join pitch on a course visit. First swing is held until they join.",
+    offer: "A guest bay is $70. Unlimited practice at $200 a month is the other door.",
   },
   {
     path: "Visit",
@@ -551,7 +482,7 @@ export const JOURNEY_MAP: MapRow[] = [
     objective: "Pay the guest total, or join and reprice.",
     screen: "Two totals. One offer.",
     message: "On screen only.",
-    offer: "First swing if the visit is a simulator hour. Guest round if friends are on a round. Annual if they are alone on the course. The other offer is named as held back.",
+    offer: "Bay included with membership if they join. A guest bay stays at $70.",
   },
   {
     path: "Both",
@@ -587,7 +518,7 @@ export const JOURNEY_MAP: MapRow[] = [
     objective: "One next step, chosen from the visit.",
     screen: "Listed under what happens next.",
     message: "Email and SMS.",
-    offer: "Play pack if they were a guest on the simulator and did not buy it. Otherwise the plan they already hold, or Golfer after a guest round.",
+    offer: "Unlimited practice if they were a guest on a bay. Otherwise the plan they already hold.",
   },
   {
     path: "After",
@@ -596,6 +527,6 @@ export const JOURNEY_MAP: MapRow[] = [
     objective: "Say what is still on the profile.",
     screen: "Listed under what happens next.",
     message: "Email and SMS.",
-    offer: "The leftover credit only: simulator credit, rounds, pack hours, or the weekly Elite hour.",
+    offer: "Lessons left on a 3-pack. A single bay does not leave a session balance.",
   },
 ];
