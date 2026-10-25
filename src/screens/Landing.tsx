@@ -32,38 +32,37 @@ const links = [
 const tracks: readonly {
   id: string;
   word: string;
-  label: string;
   line: string;
   photo: PhotoAsset;
   icon: LucideIcon;
 }[] = [
   {
-    id: "carry",
-    word: "Carry",
-    label: "Unlimited bays",
-    line: "Hit as often as you want. Carry shows on the screen, with no minimum term.",
+    id: "often",
+    word: "Practice as often as you want",
+    line: "Unlimited bay time, with no minimum commitment.",
     photo: PHOTOS.range,
     icon: InfinityIcon,
   },
   {
-    id: "speed",
-    word: "Ball speed",
-    label: "Shot data",
-    line: "Ball speed on the launch monitor, recorded on every swing.",
+    id: "progress",
+    word: "Track your progress",
+    line: "Carry, ball speed and spin on every swing, so the change shows from session to session.",
     photo: PHOTOS.launchData,
     icon: Activity,
   },
   {
-    id: "spin",
-    word: "Spin",
-    label: "Short game",
-    line: "Spin on the screen while you practice, including the short game.",
-    photo: PHOTOS.juniorScreen,
-    icon: Target,
+    id: "day",
+    word: "Fit it around your day",
+    line: "Book any open bay through GolfClock. Midday is the quieter off-peak.",
+    photo: PHOTOS.bays,
+    icon: Clock,
   },
 ];
 
+const sectionSpace = "scroll-mt-6 px-6 py-20 @3xl:px-12 @3xl:py-24";
+
 const navButton = `inline-flex min-h-11 min-w-11 items-center text-base font-semibold text-[#0A0F0B] ${buttonFocus}`;
+const heroNav = `inline-flex min-h-11 items-center rounded-full bg-[#0A0F0B] px-3 text-base font-semibold text-white ${buttonFocus}`;
 
 function Headline({ text, className }: { text: string; className: string }) {
   const words = text.split(" ");
@@ -133,17 +132,18 @@ function Practice({
   const wordButton = `inline-flex min-h-11 min-w-11 items-center text-left text-base font-semibold text-[#0A0F0B] ${buttonFocus}`;
 
   return (
-    <section id="practice" className="scroll-mt-6 px-6 py-24 @3xl:px-12 @3xl:py-28">
+    <section id="practice" className={sectionSpace}>
       <h2 className="max-w-3xl font-display text-4xl font-semibold leading-none tracking-tight @5xl:text-5xl">
         Unlimited practice membership
       </h2>
       <p className="mt-6 max-w-xl text-base leading-relaxed">
-        Unlimited practice, no minimum. Track carry, ball speed and spin on every swing.
+        Unlimited practice, no minimum. The bay is yours when you want it.
       </p>
+      <p className="mt-3 max-w-xl text-base leading-relaxed">Members get the member rate on swing lab sessions.</p>
       <div className="mt-12 grid gap-10 @3xl:grid-cols-2 @3xl:gap-16">
         <div className="sticky top-0 hidden h-dvh flex-col justify-center @3xl:flex">
-          <p className="text-base font-semibold">What members track</p>
-          <p className="mt-3 font-display text-5xl font-semibold leading-none tracking-tight @4xl:text-6xl">
+          <p className="text-base font-semibold">Membership</p>
+          <p className="mt-3 max-w-md font-display text-3xl font-semibold leading-tight tracking-tight @4xl:text-4xl">
             {tracks[active]?.word}
           </p>
           <div className="mt-6 flex flex-col items-start gap-1">
@@ -160,9 +160,7 @@ function Practice({
             ))}
           </div>
           {tracks[active] && (
-            <div className="mt-8">
-              <ValuePoint icon={tracks[active].icon} label={tracks[active].label} line={tracks[active].line} />
-            </div>
+            <p className="mt-4 max-w-md text-base leading-relaxed">{tracks[active].line}</p>
           )}
           <div className="mt-8">
             <MembershipLink>Book unlimited practice</MembershipLink>
@@ -179,21 +177,17 @@ function Practice({
               className="scroll-mt-6 @3xl:min-h-[64vh]"
             >
               <Frame photo={track.photo} className="aspect-[4/3]" />
-              <h3 className="mt-4 font-display text-2xl font-semibold tracking-tight">{track.word}</h3>
-              <div className="mt-4 @3xl:hidden">
-                <ValuePoint icon={track.icon} label={track.label} line={track.line} />
+              <div className="mt-4">
+                <ValuePoint icon={track.icon} label={track.word} line={track.line} />
               </div>
             </article>
           ))}
         </div>
       </div>
-      <div className="mt-20 grid gap-8 @3xl:grid-cols-3">
+      <div className="mt-16 grid gap-8 @3xl:grid-cols-3">
         <ValuePoint icon={Users} label="Up to 4 friends" line="Play with up to four friends in one bay." />
         <ValuePoint icon={CalendarDays} label="Ten sessions" line="Ten bay sessions as a monthly routine." />
         <ValuePoint icon={Clock} label="Regular sessions" line="One bay when you want a single session." />
-      </div>
-      <div className="mt-8">
-        <BookLink offer="bay">Book a bay</BookLink>
       </div>
     </section>
   );
@@ -300,67 +294,70 @@ export function Landing() {
   };
 
   return (
-    <div ref={scrollRef} className={`@container bg-white text-base text-slate-950 ${scroll}`}>
-      <header className="flex items-center justify-between gap-4 px-6 py-4 @3xl:px-12">
-        <Mark />
-        <nav className="hidden items-center gap-7 @3xl:flex" aria-label="Page">
-          {links.map(([id, label]) => (
-            <button key={id} className={navButton} type="button" onClick={() => jump(id)}>
-              {label}
-            </button>
-          ))}
-        </nav>
-        <div className="flex items-center gap-3">
-          <SoundToggle />
-          <BookLink offer="bay" className="hidden @3xl:inline-flex">
-            Book
-          </BookLink>
-          <button
-            type="button"
-            className={`inline-flex min-h-11 min-w-11 items-center px-4 text-base font-semibold text-[#0A0F0B] @3xl:hidden ${buttonFocus}`}
-            aria-expanded={menu}
-            onClick={() => setMenu((open) => !open)}
-          >
-            {menu ? "Close" : "Menu"}
-          </button>
-        </div>
-      </header>
-      {menu && (
-        <nav className="flex flex-col items-start gap-2 px-6 py-4 @3xl:hidden" aria-label="Page">
-          {links.map(([id, label]) => (
-            <button key={id} type="button" className={navButton} onClick={() => jump(id)}>
-              {label}
-            </button>
-          ))}
-          <BookLink offer="bay" className="w-fit">
-            Book
-          </BookLink>
-        </nav>
-      )}
-
-      <section id="hero" className="relative h-dvh w-full overflow-hidden bg-[#06210f]">
+    <div ref={scrollRef} className={`@container page-grid text-base text-[#0A0F0B] ${scroll}`}>
+      <section
+        id="hero"
+        className={`relative overflow-hidden bg-[#06210f] ${mobile ? "h-full" : "h-[calc(100svh-4.25rem)]"}`}
+      >
         <HeroVideo />
-      </section>
-      <section id="intro" className="bg-white px-6 py-16 @3xl:px-12 @3xl:py-24">
-        <Headline
-          text="Get better at golf. All year."
-          className="max-w-xl font-display text-[2rem] font-semibold leading-[1.02] tracking-tight @3xl:text-[2.15rem] @5xl:text-5xl"
-        />
-        <p className="mt-6 max-w-md text-base leading-relaxed">
-          Unlimited bays, PGA coaching and real shot data on Hamilton Street, Somerset.
-        </p>
-        <div className="mt-8">
-          <BookLink offer="bay">Book</BookLink>
-        </div>
-        <div className="mt-14 bg-[#06210f] px-6 py-8 text-white">
-          <HeroProof />
+        <div className="hero-scrim pointer-events-none absolute inset-0" aria-hidden="true" />
+        <header className="relative z-10 flex items-center justify-between gap-4 px-6 py-4 @3xl:px-12 @3xl:py-3">
+          <Mark light />
+          <nav className="hidden items-center gap-2 @3xl:flex" aria-label="Page">
+            {links.map(([id, label]) => (
+              <button key={id} className={heroNav} type="button" onClick={() => jump(id)}>
+                {label}
+              </button>
+            ))}
+          </nav>
+          <div className="flex items-center gap-3">
+            <SoundToggle />
+            <BookLink offer="bay" className="hidden @3xl:inline-flex">
+              Book
+            </BookLink>
+            <button
+              type="button"
+              className={`${heroNav} @3xl:hidden`}
+              aria-expanded={menu}
+              onClick={() => setMenu((open) => !open)}
+            >
+              {menu ? "Close" : "Menu"}
+            </button>
+          </div>
+        </header>
+        {menu && (
+          <nav className="relative z-10 flex flex-col items-start gap-2 px-6 py-2 @3xl:hidden" aria-label="Page">
+            {links.map(([id, label]) => (
+              <button key={id} type="button" className={heroNav} onClick={() => jump(id)}>
+                {label}
+              </button>
+            ))}
+            <BookLink offer="bay" className="w-fit">
+              Book
+            </BookLink>
+          </nav>
+        )}
+        <div className="absolute inset-x-0 bottom-0 z-10 px-6 pb-6 @3xl:px-12 @3xl:pb-8">
+          <div className="max-w-[560px]">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3">
+              <Headline
+                text="Get better at golf. All year."
+                className="font-display text-[1.35rem] font-semibold leading-[1.05] tracking-tight text-white @3xl:text-[2rem]"
+              />
+              <BookLink offer="bay">Book</BookLink>
+            </div>
+            <p className="mt-2 max-w-md text-sm leading-snug text-white @3xl:text-base">
+              Unlimited bays, PGA coaching and real shot data on Hamilton Street, Somerset.
+            </p>
+            <HeroProof />
+          </div>
         </div>
       </section>
 
       <Practice scrollRef={scrollRef} mobile={mobile} reduce={reduce} />
 
-      <section id="coaching" className="scroll-mt-6 px-6 py-24 @3xl:px-12 @3xl:py-40">
-        <div className="grid items-center gap-10 @3xl:grid-cols-2 @3xl:gap-16">
+      <section id="coaching" className={sectionSpace}>
+        <div className="grid items-start gap-10 @3xl:grid-cols-2 @3xl:gap-16">
           <Frame photo={PHOTOS.coachAndPlayer} className="aspect-[4/3]" />
           <div>
             <h2 className="font-display text-3xl font-semibold leading-none tracking-tight @5xl:text-5xl">
@@ -383,21 +380,19 @@ export function Landing() {
                 Book a swing evaluation
               </BookLink>
             </div>
-          </div>
-        </div>
-        <div className="mt-24 max-w-xl @3xl:mt-32">
-          <h3 className="font-display text-3xl font-semibold tracking-tight">Group lessons</h3>
-          <div className="mt-6">
-            <ValuePoint icon={Users} label="Group lessons" line="A place held when you sign up." />
-          </div>
-          <p className="mt-4 max-w-md text-base leading-relaxed">The weekly schedule is not published yet.</p>
-          <div className="mt-8">
-            <BookLink offer="group">Sign up</BookLink>
+            <div className="mt-8 flex flex-wrap items-end justify-between gap-4">
+              <ValuePoint
+                icon={Users}
+                label="Group lessons"
+                line="A place held when you sign up. The weekly schedule is not published yet."
+              />
+              <BookLink offer="group">Sign up</BookLink>
+            </div>
           </div>
         </div>
       </section>
 
-      <section id="juniors" className="scroll-mt-6 px-6 py-24 @3xl:px-12 @3xl:py-40">
+      <section id="juniors" className={sectionSpace}>
         <div className="grid items-center gap-10 @3xl:grid-cols-2 @3xl:gap-16">
           <div className="@3xl:order-2">
             <h2 className="font-display text-4xl font-semibold leading-none tracking-tight @5xl:text-6xl">Junior coaching.</h2>
@@ -420,7 +415,7 @@ export function Landing() {
         </div>
       </section>
 
-      <section id="tournament" className="scroll-mt-6 px-6 py-24 text-center @3xl:px-12 @3xl:py-32">
+      <section id="tournament" className={`${sectionSpace} text-center`}>
         <h2 className="mx-auto max-w-xl font-display text-4xl font-semibold leading-none tracking-tight @5xl:text-5xl">
           Reserve your tournament spot
         </h2>
@@ -429,7 +424,7 @@ export function Landing() {
         </div>
       </section>
 
-      <section className="px-6 py-16 @3xl:px-12">
+      <section className="px-6 py-20 @3xl:px-12 @3xl:py-24">
         <address className="not-italic text-base leading-relaxed">
           <span className="font-display text-2xl tracking-tight">Par2Play</span>
           <br />
@@ -446,7 +441,7 @@ export function Landing() {
         </address>
       </section>
 
-      <footer className="px-6 py-16 @3xl:px-12">
+      <footer className="px-6 py-20 @3xl:px-12 @3xl:py-24">
         <div className="flex flex-col gap-8 @3xl:flex-row @3xl:items-end @3xl:justify-between">
           <div>
             <p className="font-display text-3xl tracking-tight">Par2Play</p>
