@@ -1,5 +1,5 @@
-import { useEffect, useRef, useSyncExternalStore } from "react";
-import { getSoundSnapshot, registerHeroVideo, subscribeSound } from "../audio/soundtrack";
+import { useEffect, useRef } from "react";
+import { bootAmbient, registerHeroVideo } from "../audio/soundtrack";
 import { HERO_MEDIA, type ClipAsset } from "../data/media";
 import type { PhotoAsset } from "../data/photos";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
@@ -30,34 +30,22 @@ export function Photo({
   );
 }
 
-function useSoundLive() {
-  return useSyncExternalStore(
-    subscribeSound,
-    () => getSoundSnapshot().live,
-    () => false,
-  );
-}
-
 export function HeroVideo() {
   const reduce = usePrefersReducedMotion();
-  const live = useSoundLive();
   const ref = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     if (reduce) {
       registerHeroVideo(null);
+      bootAmbient();
       return;
     }
     const video = ref.current;
     registerHeroVideo(video);
     if (!video) return;
-    const play = () => {
-      video.play().catch(() => undefined);
-    };
-    play();
     const onVis = () => {
       if (document.hidden) video.pause();
-      else play();
+      else void video.play().catch(() => undefined);
     };
     document.addEventListener("visibilitychange", onVis);
     return () => {
@@ -84,8 +72,6 @@ export function HeroVideo() {
       ref={ref}
       className="absolute inset-0 h-full w-full object-cover"
       poster={HERO_MEDIA.poster}
-      autoPlay
-      muted={!live}
       loop
       playsInline
       preload="none"
