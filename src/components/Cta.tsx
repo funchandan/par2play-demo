@@ -10,6 +10,8 @@ const tones = {
     "inline-flex h-11 items-center justify-center rounded-full border border-slate-300 bg-white px-5 text-center text-[12px] font-semibold uppercase tracking-[0.14em] text-slate-900",
   solid:
     "inline-flex h-11 items-center justify-center rounded-full bg-slate-950 px-5 text-center text-[12px] font-semibold uppercase tracking-[0.14em] text-white",
+  text:
+    "inline-flex h-11 items-center text-[12px] font-semibold uppercase tracking-[0.14em] text-slate-900 underline-offset-4 hover:underline",
 } as const;
 
 type Tone = keyof typeof tones;

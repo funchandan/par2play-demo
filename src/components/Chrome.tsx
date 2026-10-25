@@ -36,14 +36,14 @@ export function ClubHeader({ light = false }: { light?: boolean }) {
             <button className={link} onClick={() => jump("practice")} type="button">
               Practice
             </button>
-            <button className={link} onClick={() => jump("coaching")} type="button">
-              Coaching
+            <button className={link} onClick={() => jump("lessons")} type="button">
+              Lessons
+            </button>
+            <button className={link} onClick={() => jump("juniors")} type="button">
+              Juniors
             </button>
             <button className={link} onClick={() => jump("venue")} type="button">
               Venue
-            </button>
-            <button className={link} onClick={() => jump("enquire")} type="button">
-              Enquire
             </button>
           </nav>
         ) : (
@@ -59,9 +59,9 @@ export function ClubHeader({ light = false }: { light?: boolean }) {
         <nav className={`mt-4 flex flex-col gap-3 text-[11px] font-medium uppercase tracking-[0.16em] ${light ? "text-white" : "text-slate-700"}`}>
           <button onClick={() => jump()} type="button">Home</button>
           <button onClick={() => jump("practice")} type="button">Practice</button>
-          <button onClick={() => jump("coaching")} type="button">Coaching</button>
+          <button onClick={() => jump("lessons")} type="button">Lessons</button>
+          <button onClick={() => jump("juniors")} type="button">Juniors</button>
           <button onClick={() => jump("venue")} type="button">Venue</button>
-          <button onClick={() => jump("enquire")} type="button">Enquire</button>
         </nav>
       )}
     </header>

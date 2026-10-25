@@ -111,7 +111,7 @@ export function EnquiryForm() {
     "mt-2 w-full border-b border-slate-300 bg-transparent py-3 text-base outline-none focus:border-slate-950";
 
   return (
-    <form className="grid max-w-xl gap-6" onSubmit={onSubmit} noValidate>
+    <form className="grid max-w-md gap-4" onSubmit={onSubmit} noValidate>
       <label className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
         Name
         <input
