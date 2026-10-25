@@ -63,10 +63,10 @@ function Shell() {
   return (
     <div className="min-h-screen bg-slate-100">
       <div className="sticky top-0 z-40 flex items-center justify-center gap-2 bg-white px-4 py-3">
-        <Button size="sm" variant={flow.layout === "mobile" ? "primary" : "outline"} onPress={() => flow.setLayout("mobile")}>
+        <Button className="min-h-11 px-5 text-base font-semibold" variant={flow.layout === "mobile" ? "primary" : "outline"} onPress={() => flow.setLayout("mobile")}>
           Mobile
         </Button>
-        <Button size="sm" variant={flow.layout === "web" ? "primary" : "outline"} onPress={() => flow.setLayout("web")}>
+        <Button className="min-h-11 px-5 text-base font-semibold" variant={flow.layout === "web" ? "primary" : "outline"} onPress={() => flow.setLayout("web")}>
           Desktop
         </Button>
       </div>

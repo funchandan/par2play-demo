@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { buttonFocus } from "./Cta";
 import { ENQUIRY, ENQUIRY_INTERESTS, NAP, type EnquiryInterest } from "../data/business";
 
 type Fields = {
@@ -108,7 +109,7 @@ export function EnquiryForm() {
   }
 
   const fieldClass =
-    "mt-2 w-full border border-slate-300 bg-white px-3 py-3 text-base outline-none focus:border-slate-950";
+    "aa-focus mt-2 w-full border-2 border-[#4b5563] bg-white px-3 py-3 text-base text-[#0A0F0B] outline-none placeholder:text-[#4b5563] focus-visible:border-[#0A0F0B]";
 
   return (
     <form className="grid max-w-md gap-4" onSubmit={onSubmit} noValidate>
@@ -212,7 +213,7 @@ export function EnquiryForm() {
       <button
         type="submit"
         disabled={status === "sending"}
-        className="mt-2 inline-flex h-12 w-fit items-center rounded-full bg-[#14D45E] px-6 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#06210f] disabled:opacity-60"
+        className={`mt-2 inline-flex min-h-11 w-fit items-center rounded-full bg-[#14D45E] px-5 text-base font-semibold text-[#0A0F0B] hover:bg-[#3dff7c] active:bg-[#0fb852] disabled:bg-[#c8f5d8] disabled:text-[#0A0F0B] ${buttonFocus}`}
       >
         {status === "sending" ? "Sending" : "Send"}
       </button>
