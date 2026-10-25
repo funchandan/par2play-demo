@@ -55,7 +55,7 @@ export function Clubhouse() {
               <button className={lightNav} type="button" onClick={flow.goHome}>Home</button>
               <button className={here} type="button" aria-current="page">Leagues</button>
               <button className={lightNav} type="button" onClick={() => flow.goSection("practice")}>Practice</button>
-              <button className={lightNav} type="button" onClick={() => flow.goSection("lessons")}>Lessons</button>
+              <button className={lightNav} type="button" onClick={() => flow.goSection("coaching")}>Coaching</button>
               <button className={lightNav} type="button" onClick={() => flow.goSection("juniors")}>Juniors</button>
               <button className={lightNav} type="button" onClick={() => flow.goSection("venue")}>Venue</button>
               <BookLink offer="bay" tone="line" className="h-10 px-4 text-[10px]">
@@ -73,7 +73,7 @@ export function Clubhouse() {
             <button type="button" onClick={() => { setMenu(false); flow.goHome(); }}>Home</button>
             <button type="button" aria-current="page">Leagues</button>
             <button type="button" onClick={() => { setMenu(false); flow.goSection("practice"); }}>Practice</button>
-            <button type="button" onClick={() => { setMenu(false); flow.goSection("lessons"); }}>Lessons</button>
+            <button type="button" onClick={() => { setMenu(false); flow.goSection("coaching"); }}>Coaching</button>
             <button type="button" onClick={() => { setMenu(false); flow.goSection("juniors"); }}>Juniors</button>
             <button type="button" onClick={() => { setMenu(false); flow.goSection("venue"); }}>Venue</button>
           </nav>

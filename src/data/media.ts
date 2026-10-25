@@ -1,11 +1,11 @@
 /**
- * Hero film paths. The current cut is v3 (29.3s, 1920×1080, no audio).
+ * Hero film paths. The current cut is v3 (29.3s, 1920×1080) with the
+ * approved soundtrack muxed in: AAC on the mp4, Opus on the webm.
  * The aerial is fully generated, so there is no satellite-imagery credit.
- * Swap a later cut by replacing these three files:
+ * The poster is unchanged and is also the Open Graph / Twitter image.
  *   public/media/hero.mp4
  *   public/media/hero.webm
  *   public/media/hero-poster.jpg
- * The poster is also the Open Graph / Twitter image.
  */
 const media = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
@@ -13,6 +13,15 @@ export const HERO_MEDIA = {
   mp4: media("media/hero.mp4"),
   webm: media("media/hero.webm"),
   poster: media("media/hero-poster.jpg"),
+} as const;
+
+/**
+ * Bar-aligned background loop (35.41s). The m4a is the seamless Web Audio
+ * source. The mp3 is a fallback only: encoder padding leaves a gap at the join.
+ */
+export const BG_LOOP = {
+  m4a: media("media/bg_loop_A.m4a"),
+  mp3: media("media/bg_loop_A.mp3"),
 } as const;
 
 export type ClipId = "venue" | "highfive" | "crew" | "junior" | "coaching";

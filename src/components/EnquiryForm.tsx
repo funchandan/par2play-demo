@@ -108,11 +108,11 @@ export function EnquiryForm() {
   }
 
   const fieldClass =
-    "mt-2 w-full border-b border-slate-300 bg-transparent py-3 text-base outline-none focus:border-slate-950";
+    "mt-2 w-full border border-slate-300 bg-white px-3 py-3 text-base outline-none focus:border-slate-950";
 
   return (
     <form className="grid max-w-md gap-4" onSubmit={onSubmit} noValidate>
-      <label className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+        <label className="block text-base font-medium text-slate-950">
         Name
         <input
           className={fieldClass}
@@ -129,7 +129,7 @@ export function EnquiryForm() {
           </span>
         )}
       </label>
-      <label className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+        <label className="block text-base font-medium text-slate-950">
         Email
         <input
           className={fieldClass}
@@ -147,7 +147,7 @@ export function EnquiryForm() {
           </span>
         )}
       </label>
-      <label className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+        <label className="block text-base font-medium text-slate-950">
         Phone
         <input
           className={fieldClass}
@@ -165,7 +165,7 @@ export function EnquiryForm() {
           </span>
         )}
       </label>
-      <label className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+        <label className="block text-base font-medium text-slate-950">
         Interest
         <select
           className={fieldClass}
@@ -188,7 +188,7 @@ export function EnquiryForm() {
           </span>
         )}
       </label>
-      <label className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+        <label className="block text-base font-medium text-slate-950">
         Message
         <textarea
           className={`${fieldClass} min-h-28 resize-y`}

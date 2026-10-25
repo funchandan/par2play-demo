@@ -39,10 +39,32 @@ h3,
   height: min(844px, calc(100vh - 88px));
 }
 
-.yardage {
-  background-color: #f3f6f1;
-  background-image:
-    linear-gradient(to bottom, transparent 31px, rgba(20, 212, 94, 0.28) 32px),
-    linear-gradient(to right, transparent 79px, rgba(6, 33, 15, 0.045) 80px);
-  background-size: 100% 32px, 80px 100%;
+@media (prefers-reduced-motion: no-preference) {
+  .word-in {
+    animation: word-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .frame-in {
+    animation: frame-in 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+}
+
+@keyframes word-in {
+  from {
+    transform: translateY(110%);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+@keyframes frame-in {
+  from {
+    transform: translateY(1.25rem);
+  }
+
+  to {
+    transform: none;
+  }
 }
