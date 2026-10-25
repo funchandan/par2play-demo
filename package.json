@@ -3,6 +3,11 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://lumenhaus-hq.github.io/par2play-demo/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lumenhaus-hq/par2play-demo"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

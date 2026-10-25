@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { bindHeroWatch } from "../audio/soundtrack";
 import { Mark } from "../components/Chrome";
-import { BookLink, MembershipLink, buttonFocus } from "../components/Cta";
+import { BookLink, HeroMembershipAction, MembershipLink, buttonFocus } from "../components/Cta";
 import { HeroProof } from "../components/HeroProof";
 import { HeroVideo, Photo } from "../components/Media";
 import { SoundToggle } from "../components/SoundToggle";
@@ -134,12 +134,11 @@ function Practice({
   return (
     <section id="practice" className={sectionSpace}>
       <h2 className="max-w-3xl font-display text-4xl font-semibold leading-none tracking-tight @5xl:text-5xl">
-        Unlimited practice membership
+        Save up to 30% with unlimited practice membership
       </h2>
       <p className="mt-6 max-w-xl text-base leading-relaxed">
         Unlimited practice, no minimum. The bay is yours when you want it.
       </p>
-      <p className="mt-3 max-w-xl text-base leading-relaxed">Save up to 30% with membership</p>
       <div className="mt-12 grid gap-10 @3xl:grid-cols-2 @3xl:gap-16">
         <div className="flex flex-col justify-center @3xl:sticky @3xl:top-28 @3xl:h-[calc(100dvh-8rem)]">
           <p className="text-base font-semibold">Membership</p>
@@ -395,7 +394,7 @@ export function Landing() {
                 text="Get better at golf. All year."
                 className="max-w-[16rem] font-display text-[1.35rem] font-semibold leading-[1.05] tracking-tight text-white @3xl:max-w-none @3xl:text-[2rem]"
               />
-              <BookLink offer="bay">Book a bay</BookLink>
+              <HeroMembershipAction onScrollToPractice={() => jump("practice")} />
             </div>
             <HeroProof />
           </div>
@@ -411,9 +410,6 @@ export function Landing() {
             <h2 className="font-display text-3xl font-semibold leading-none tracking-tight @5xl:text-5xl">
               PGA coaches to improve your game.
             </h2>
-            <p className="mt-6 max-w-md text-base leading-relaxed">
-              Nick and Sean find the one fix that matters, then build your practice around it.
-            </p>
             <div className="mt-8">
               <Stat value="2" label="PGA pros" />
             </div>

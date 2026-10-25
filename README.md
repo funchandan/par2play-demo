@@ -1,4 +1,11 @@
-# React + TypeScript + Vite
+# Par2Play
+
+Indoor golf simulators in Somerset, NJ.
+
+- Site: https://lumenhaus-hq.github.io/par2play-demo/
+- Repository: https://github.com/lumenhaus-hq/par2play-demo
+
+## React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
