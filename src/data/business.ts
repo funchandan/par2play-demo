@@ -21,7 +21,7 @@ export const NAP = {
 export const ADDRESS_LINE = `${NAP.street}, ${NAP.city}, ${NAP.region} ${NAP.postalCode}`;
 
 /** GitHub Pages origin for this repo. Used by canonical, Open Graph, and the sitemap. */
-export const SITE_URL = "https://funchandan.github.io/par2play-demo/";
+export const SITE_URL = "https://lumenhaus-hq.github.io/par2play-demo/";
 
 export const COACHES = [
   { id: "nick", name: "Nick" },
