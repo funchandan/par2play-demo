@@ -16,7 +16,7 @@ import { MembershipStepIcon, type MembershipStepId } from "../components/Members
 import { HeroVideo, Photo } from "../components/Media";
 import { SoundToggle } from "../components/SoundToggle";
 import { ValuePoint } from "../components/ValuePoint";
-import { ENQUIRY, NAP, golfClockBookingReady } from "../data/business";
+import { ENQUIRY, NAP, bookingHref, golfClockBookingReady } from "../data/business";
 import type { PhotoAsset } from "../data/photos";
 import { PHOTOS } from "../data/photos";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
@@ -56,6 +56,62 @@ const tracks: readonly {
 ];
 
 const sectionSpace = "scroll-mt-32 px-6 py-20 @3xl:px-12 @3xl:py-24";
+
+/**
+ * Sample data to replace with the real GolfClock schedule before launch.
+ * The CTA uses the same booking link as “Book a bay”.
+ */
+const SAMPLE_GROUP_LESSON = {
+  title: "Short game workshop",
+  line: "Chipping, pitching and putting to save shots around the green.",
+  when: "Thursday, 6:00–7:00pm",
+  capacity: 12,
+  spotsTaken: 9,
+  ctaUrl: bookingHref("bay"),
+} as const;
+
+function GroupLessonCard({ lesson }: { lesson: typeof SAMPLE_GROUP_LESSON }) {
+  const spotsLeft = lesson.capacity - lesson.spotsTaken;
+  const spotsLeftText = spotsLeft === 1 ? "1 spot left" : `${spotsLeft} spots left`;
+  const filled = Math.min(100, Math.round((lesson.spotsTaken / lesson.capacity) * 100));
+  const external = lesson.ctaUrl.startsWith("http")
+    ? ({ target: "_blank", rel: "noreferrer" } as const)
+    : {};
+
+  return (
+    <article className="border-2 border-[#0A0F0B] bg-white p-5">
+      <h3 className="font-display text-2xl font-semibold leading-tight tracking-tight text-[#0A0F0B]">
+        {lesson.title}
+      </h3>
+      <p className="mt-2 text-base leading-relaxed text-[#0A0F0B]">{lesson.line}</p>
+      <p className="mt-4 text-base font-semibold text-[#0A0F0B]">{lesson.when}</p>
+      <div className="mt-4">
+        <div className="flex items-baseline justify-between gap-3 text-base text-[#0A0F0B]">
+          <p className="font-semibold">Filling up soon</p>
+          <p>{spotsLeftText}</p>
+        </div>
+        <div
+          className="mt-2 h-2 bg-[#6B736E]"
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={lesson.capacity}
+          aria-valuenow={lesson.spotsTaken}
+          aria-valuetext={`${lesson.spotsTaken} of ${lesson.capacity} spots taken, ${spotsLeftText}`}
+          aria-label="Spots taken"
+        >
+          <div className="h-full bg-[#0A0F0B]" style={{ width: `${filled}%` }} />
+        </div>
+      </div>
+      <a
+        href={lesson.ctaUrl}
+        className={`mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#14D45E] px-5 text-center text-base font-semibold text-[#0A0F0B] hover:bg-[#3dff7c] hover:text-[#0A0F0B] active:bg-[#0fb852] active:text-[#0A0F0B] visited:bg-[#14D45E] visited:text-[#0A0F0B] @3xl:w-fit ${buttonFocus}`}
+        {...external}
+      >
+        Save a slot
+      </a>
+    </article>
+  );
+}
 
 const navButton = `nav-link inline-flex min-h-11 items-center px-1 text-base font-semibold text-[#0A0F0B] ${buttonFocus}`;
 
@@ -267,6 +323,7 @@ function TournamentForm() {
           name="email"
           type="email"
           autoComplete="email"
+          placeholder="Email"
           value={email}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? "tournament-email-error" : undefined}
@@ -287,7 +344,7 @@ function TournamentForm() {
       <button
         type="submit"
         disabled={status === "sending"}
-        className={`mt-2 inline-flex min-h-11 w-fit items-center rounded-full bg-[#14D45E] px-5 text-base font-semibold text-[#0A0F0B] hover:bg-[#3dff7c] active:bg-[#0fb852] disabled:bg-[#c8f5d8] disabled:text-[#0A0F0B] ${buttonFocus}`}
+        className={`mt-2 inline-flex min-h-11 w-fit items-center justify-self-center rounded-full bg-[#14D45E] px-5 text-base font-semibold text-[#0A0F0B] hover:bg-[#3dff7c] active:bg-[#0fb852] disabled:bg-[#c8f5d8] disabled:text-[#0A0F0B] ${buttonFocus}`}
       >
         {status === "sending" ? "Sending" : "Reserve your tournament spot"}
       </button>
@@ -451,9 +508,9 @@ export function Landing() {
                 Book a swing evaluation
               </BookLink>
             </div>
-            <div className="mt-8 flex flex-wrap items-end justify-between gap-4">
+            <div className="mt-8 grid gap-5">
               <ValuePoint icon={Users} label="Group lessons" line="A shared session with a PGA pro." />
-              <BookLink offer="group">Sign up</BookLink>
+              <GroupLessonCard lesson={SAMPLE_GROUP_LESSON} />
             </div>
           </div>
         </div>
@@ -490,8 +547,8 @@ export function Landing() {
       </section>
 
       <section id="tournament" className={`${sectionSpace} text-center`}>
-        <h2 className="mx-auto max-w-xl font-display text-4xl font-semibold leading-none tracking-tight @5xl:text-5xl">
-          Reserve your tournament spot
+        <h2 className="mx-auto max-w-xl font-display text-4xl font-semibold leading-tight tracking-tight @5xl:text-5xl">
+          Par2Play Fall League Coming Soon!
         </h2>
         <div className="mt-10">
           <TournamentForm />
