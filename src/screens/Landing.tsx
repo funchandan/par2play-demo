@@ -498,7 +498,7 @@ export function Landing() {
           <div className="hero-panel pointer-events-auto w-full max-w-[32rem] rounded-2xl px-4 py-3">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <Headline
-                text="Get better at golf. All year."
+                text="A home for all golfers. All year."
                 className="max-w-[16rem] font-display text-[1.35rem] font-semibold leading-[1.05] tracking-tight text-white @3xl:max-w-none @3xl:text-[2rem]"
               />
               <HeroMembershipAction onScrollToPractice={() => jump("practice")} />
