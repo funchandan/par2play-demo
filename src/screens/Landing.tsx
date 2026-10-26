@@ -29,31 +29,54 @@ const links = [
   ["tournament", "Tournament"],
 ] as const;
 
+/**
+ * Each benefit CTA uses the GolfClock booking target until a real membership
+ * URL exists. Swap that benefit's `ctaUrl` when it does.
+ */
 const tracks: readonly {
   id: MembershipStepId;
   word: string;
   line: string;
   photo: PhotoAsset;
+  ctaLabel: string;
+  ctaUrl: string;
 }[] = [
   {
     id: "availability",
     word: "Preferred bay availability",
     line: "Members are first in line for the times that suit them.",
     photo: PHOTOS.range,
+    ctaLabel: "Reserve member slots",
+    ctaUrl: bookingHref("bay"),
   },
   {
     id: "progress",
     word: "Track your progress",
     line: "Carry, ball speed and spin on every swing, so the change shows from session to session.",
     photo: PHOTOS.launchData,
+    ctaLabel: "Schedule a visit",
+    ctaUrl: bookingHref("bay"),
   },
   {
     id: "day",
     word: "Fit it around your day",
     line: "We’ve got you covered whether you’re at the dentist or picking up kids from school.",
     photo: PHOTOS.bays,
+    ctaLabel: "Reserve your timings",
+    ctaUrl: bookingHref("bay"),
   },
 ];
+
+const benefitCtaClass = `inline-flex min-h-11 min-w-11 w-fit items-center justify-center rounded-full bg-[#14D45E] px-5 text-center text-base font-semibold text-[#0A0F0B] hover:bg-[#3dff7c] hover:text-[#0A0F0B] active:bg-[#0fb852] active:text-[#0A0F0B] visited:bg-[#14D45E] visited:text-[#0A0F0B] ${buttonFocus}`;
+
+function BenefitCta({ href, children }: { href: string; children: string }) {
+  const external = href.startsWith("http") ? ({ target: "_blank", rel: "noreferrer" } as const) : {};
+  return (
+    <a href={href} className={benefitCtaClass} {...external}>
+      {children}
+    </a>
+  );
+}
 
 const sectionSpace = "scroll-mt-32 px-6 py-20 @3xl:px-12 @3xl:py-24";
 
@@ -180,7 +203,7 @@ function Practice({
     document.getElementById(id)?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
   };
 
-  const wordButton = `inline-flex min-h-11 w-full items-center gap-3 text-left text-base font-semibold text-[#0A0F0B] ${buttonFocus}`;
+  const wordButton = `inline-flex min-h-11 min-w-11 flex-1 items-center gap-3 text-left text-base font-semibold text-[#0A0F0B] ${buttonFocus}`;
 
   return (
     <section id="practice" className={sectionSpace}>
@@ -197,7 +220,7 @@ function Practice({
               <Photo photo={track.photo} decorative />
             </div>
             <div
-              className="absolute inset-0 bg-gradient-to-t from-[#020806] from-45% via-[#020806]/80 via-70% to-[#020806]/15"
+              className="absolute inset-0 bg-gradient-to-t from-[#020806] from-58% via-[#020806]/85 via-78% to-[#020806]/15"
               aria-hidden="true"
             />
             <div className="relative flex min-h-96 flex-col justify-end gap-3 p-5">
@@ -206,6 +229,7 @@ function Practice({
                 {track.word}
               </h3>
               <p className="max-w-sm text-base leading-relaxed text-white">{track.line}</p>
+              <BenefitCta href={track.ctaUrl}>{track.ctaLabel}</BenefitCta>
             </div>
           </article>
         ))}
@@ -219,20 +243,22 @@ function Practice({
           <p className="mt-3 max-w-md font-display text-3xl font-semibold leading-tight tracking-tight @4xl:text-4xl">
             {tracks[active]?.word}
           </p>
-          <div className="mt-6 flex flex-col items-start gap-1">
+          <div className="mt-6 flex flex-col items-start gap-4">
             {tracks.map((track, index) => (
-              <button
-                key={track.id}
-                type="button"
-                aria-current={active === index ? "true" : undefined}
-                className={wordButton}
-                onClick={() => go(track.id)}
-              >
-                <MembershipStepIcon id={track.id} />
-                <span className={active === index ? "underline decoration-2 underline-offset-4" : undefined}>
-                  {track.word}
-                </span>
-              </button>
+              <div key={track.id} className="flex w-full flex-wrap items-center justify-between gap-x-4 gap-y-2">
+                <button
+                  type="button"
+                  aria-current={active === index ? "true" : undefined}
+                  className={wordButton}
+                  onClick={() => go(track.id)}
+                >
+                  <MembershipStepIcon id={track.id} />
+                  <span className={active === index ? "underline decoration-2 underline-offset-4" : undefined}>
+                    {track.word}
+                  </span>
+                </button>
+                <BenefitCta href={track.ctaUrl}>{track.ctaLabel}</BenefitCta>
+              </div>
             ))}
           </div>
           {tracks[active] && (
