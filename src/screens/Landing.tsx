@@ -15,7 +15,7 @@ import { HeroProof } from "../components/HeroProof";
 import { MembershipStepIcon, type MembershipStepId } from "../components/MembershipIcons";
 import { HeroVideo, Photo } from "../components/Media";
 import { SoundToggle } from "../components/SoundToggle";
-import { Stat, ValuePoint } from "../components/ValuePoint";
+import { ValuePoint } from "../components/ValuePoint";
 import { ENQUIRY, NAP, golfClockBookingReady } from "../data/business";
 import type { PhotoAsset } from "../data/photos";
 import { PHOTOS } from "../data/photos";
@@ -36,9 +36,9 @@ const tracks: readonly {
   photo: PhotoAsset;
 }[] = [
   {
-    id: "often",
-    word: "Practice as often as you want",
-    line: "Unlimited bay time, with no minimum commitment.",
+    id: "availability",
+    word: "Preferred bay availability",
+    line: "Members are first in line for the times that suit them.",
     photo: PHOTOS.range,
   },
   {
@@ -50,7 +50,7 @@ const tracks: readonly {
   {
     id: "day",
     word: "Fit it around your day",
-    line: "Book any open bay through GolfClock. Midday is the quieter off-peak.",
+    line: "Midday stays the quieter off-peak, booked through GolfClock.",
     photo: PHOTOS.bays,
   },
 ];
@@ -129,12 +129,35 @@ function Practice({
   return (
     <section id="practice" className={sectionSpace}>
       <h2 className="max-w-3xl font-display text-4xl font-semibold leading-none tracking-tight @5xl:text-5xl">
-        Save up to 30% with unlimited practice membership
+        Practice as often as you want
       </h2>
       <p className="mt-6 max-w-xl text-base leading-relaxed">
-        Unlimited practice, no minimum. The bay is yours when you want it.
+        Save up to 30% with unlimited practice membership
       </p>
-      <div className="mt-12 grid gap-10 @3xl:grid-cols-2 @3xl:gap-16">
+      <div className="mt-10 flex flex-col gap-4 @3xl:hidden">
+        {tracks.map((track) => (
+          <article key={track.id} className="relative isolate min-h-96 overflow-hidden">
+            <div className="absolute inset-0">
+              <Photo photo={track.photo} decorative />
+            </div>
+            <div
+              className="absolute inset-0 bg-gradient-to-t from-[#020806] from-45% via-[#020806]/80 via-70% to-[#020806]/15"
+              aria-hidden="true"
+            />
+            <div className="relative flex min-h-96 flex-col justify-end gap-3 p-5">
+              <MembershipStepIcon id={track.id} />
+              <h3 className="font-display text-2xl font-semibold leading-tight tracking-tight text-white">
+                {track.word}
+              </h3>
+              <p className="max-w-sm text-base leading-relaxed text-white">{track.line}</p>
+            </div>
+          </article>
+        ))}
+        <div className="mt-4">
+          <MembershipLink>Become a member</MembershipLink>
+        </div>
+      </div>
+      <div className="mt-12 hidden gap-10 @3xl:grid @3xl:grid-cols-2 @3xl:gap-16">
         <div className="flex flex-col justify-center @3xl:sticky @3xl:top-28 @3xl:h-[calc(100dvh-8rem)]">
           <p className="text-base font-semibold">Membership</p>
           <p className="mt-3 max-w-md font-display text-3xl font-semibold leading-tight tracking-tight @4xl:text-4xl">
@@ -160,7 +183,7 @@ function Practice({
             <p className="mt-4 max-w-md text-base leading-relaxed">{tracks[active].line}</p>
           )}
           <div className="mt-8">
-            <MembershipLink>Book unlimited practice</MembershipLink>
+            <MembershipLink>Become a member</MembershipLink>
           </div>
         </div>
         <div className="flex flex-col gap-16">
@@ -179,9 +202,9 @@ function Practice({
         </div>
       </div>
       <div className="mt-16 grid gap-8 @3xl:grid-cols-3">
-        <ValuePoint icon={Users} label="Up to 4 friends" line="Play with up to four friends in one bay." />
-        <ValuePoint icon={CalendarDays} label="Ten sessions" line="Ten bay sessions as a monthly routine." />
-        <ValuePoint icon={Clock} label="Regular sessions" line="One bay when you want a single session." />
+        <ValuePoint icon={Users} label="Up to 4 friends" line="Share one visit with the people you play with." />
+        <ValuePoint icon={CalendarDays} label="Ten sessions" line="A monthly block you can use as a routine." />
+        <ValuePoint icon={Clock} label="Regular sessions" line="A single visit on its own." />
       </div>
     </section>
   );
@@ -411,11 +434,10 @@ export function Landing() {
             <h2 className="font-display text-3xl font-semibold leading-none tracking-tight @5xl:text-5xl">
               PGA coaches to improve your game.
             </h2>
-            <div className="mt-8">
-              <Stat value="2" label="PGA pros" />
-            </div>
+            <p className="mt-8 max-w-md font-display text-2xl font-semibold leading-tight tracking-tight">
+              Two PGA professional coaches, Nick and Sean
+            </p>
             <div className="mt-8 grid gap-5">
-              <ValuePoint icon={UserRound} label="PGA pros" line="Nick and Sean coach here." />
               <ValuePoint icon={Target} label="1:1 lessons" line="A plan you can track month to month." />
               <ValuePoint icon={Activity} label="Swing evaluation" line="Once per golfer." />
             </div>

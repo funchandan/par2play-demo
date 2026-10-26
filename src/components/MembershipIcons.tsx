@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export type MembershipStepId = "often" | "progress" | "day";
+export type MembershipStepId = "availability" | "progress" | "day";
 
 /**
  * Badge is #10281A. Both greens clear 3:1 against it
@@ -19,21 +19,15 @@ function Mark({ children }: { children: ReactNode }) {
 
 function Glyph({ id }: { id: MembershipStepId }) {
   switch (id) {
-    case "often":
+    case "availability":
       return (
         <Mark>
-          <path
-            d="M16.2 5.2a10.2 10.2 0 1 1-7.4 17"
-            fill="none"
-            stroke="#7DFFB0"
-            strokeWidth="3.2"
-            strokeLinecap="round"
-          />
-          <path fill="#7DFFB0" d="M7.6 20.2 4.8 26.2 11.2 23.6Z" />
-          <circle cx="16" cy="16.2" r="5.4" fill="currentColor" />
-          <circle cx="14.3" cy="14.8" r="0.85" fill="#10281A" />
-          <circle cx="17.2" cy="15.3" r="0.75" fill="#10281A" />
-          <circle cx="15.5" cy="17.6" r="0.75" fill="#10281A" />
+          <rect x="4.5" y="8" width="23" height="19.5" rx="3" fill="currentColor" />
+          <path fill="#7DFFB0" d="M7.5 8h17a3 3 0 0 1 3 3v2.2h-23V11a3 3 0 0 1 3-3Z" />
+          <rect x="9.2" y="4.2" width="2.4" height="6.2" rx="1.1" fill="#7DFFB0" />
+          <rect x="20.4" y="4.2" width="2.4" height="6.2" rx="1.1" fill="#7DFFB0" />
+          <rect x="8.4" y="16.6" width="15.2" height="3.1" rx="1" fill="#10281A" />
+          <rect x="8.4" y="21.6" width="9.4" height="2.6" rx="1" fill="#7DFFB0" />
         </Mark>
       );
     case "progress":
