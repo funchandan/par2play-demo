@@ -439,7 +439,11 @@ export function Landing() {
             </p>
             <div className="mt-8 grid gap-5">
               <ValuePoint icon={Target} label="1:1 lessons" line="A plan you can track month to month." />
-              <ValuePoint icon={Activity} label="Swing evaluation" line="Once per golfer." />
+              <ValuePoint
+                icon={Activity}
+                label="Swing evaluation"
+                line="Swing your way to your first hole in one with drill down analysis and personalised 1:1 coaching."
+              />
             </div>
             <div className="mt-8 flex flex-wrap gap-3">
               <BookLink offer="lesson">Book a lesson</BookLink>
