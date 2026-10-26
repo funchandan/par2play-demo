@@ -9,7 +9,7 @@ export default defineConfig({
     channel: "chrome",
   },
   webServer: {
-    command: "npm run preview -- --host 127.0.0.1 --port 4180 --strictPort",
+    command: "VITE_BASE=/par2play-demo/ npm run preview -- --host 127.0.0.1 --port 4180 --strictPort",
     port: 4180,
     reuseExistingServer: true,
     timeout: 30_000,

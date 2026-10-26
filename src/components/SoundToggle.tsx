@@ -14,6 +14,7 @@ export function SoundToggle({ className = "" }: { className?: string }) {
       type="button"
       aria-label="Sound"
       aria-pressed={live}
+      data-sound-toggle=""
       onClick={toggleSound}
       className={`inline-flex size-11 items-center justify-center rounded-full ${buttonFocus} ${className}`}
     >

@@ -3,17 +3,16 @@ import {
   Activity,
   CalendarDays,
   Clock,
-  Infinity as InfinityIcon,
   Shield,
   Target,
   UserRound,
   Users,
-  type LucideIcon,
 } from "lucide-react";
 import { bindHeroWatch } from "../audio/soundtrack";
 import { Mark } from "../components/Chrome";
 import { BookLink, HeroMembershipAction, MembershipLink, buttonFocus } from "../components/Cta";
 import { HeroProof } from "../components/HeroProof";
+import { MembershipStepIcon, type MembershipStepId } from "../components/MembershipIcons";
 import { HeroVideo, Photo } from "../components/Media";
 import { SoundToggle } from "../components/SoundToggle";
 import { Stat, ValuePoint } from "../components/ValuePoint";
@@ -31,32 +30,28 @@ const links = [
 ] as const;
 
 const tracks: readonly {
-  id: string;
+  id: MembershipStepId;
   word: string;
   line: string;
   photo: PhotoAsset;
-  icon: LucideIcon;
 }[] = [
   {
     id: "often",
     word: "Practice as often as you want",
     line: "Unlimited bay time, with no minimum commitment.",
     photo: PHOTOS.range,
-    icon: InfinityIcon,
   },
   {
     id: "progress",
     word: "Track your progress",
     line: "Carry, ball speed and spin on every swing, so the change shows from session to session.",
     photo: PHOTOS.launchData,
-    icon: Activity,
   },
   {
     id: "day",
     word: "Fit it around your day",
     line: "Book any open bay through GolfClock. Midday is the quieter off-peak.",
     photo: PHOTOS.bays,
-    icon: Clock,
   },
 ];
 
@@ -129,7 +124,7 @@ function Practice({
     document.getElementById(id)?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
   };
 
-  const wordButton = `inline-flex min-h-11 min-w-11 items-center text-left text-base font-semibold text-[#0A0F0B] ${buttonFocus}`;
+  const wordButton = `inline-flex min-h-11 w-full items-center gap-3 text-left text-base font-semibold text-[#0A0F0B] ${buttonFocus}`;
 
   return (
     <section id="practice" className={sectionSpace}>
@@ -151,10 +146,13 @@ function Practice({
                 key={track.id}
                 type="button"
                 aria-current={active === index ? "true" : undefined}
-                className={`${wordButton} ${active === index ? "underline decoration-2 underline-offset-4" : ""}`}
+                className={wordButton}
                 onClick={() => go(track.id)}
               >
-                {track.word}
+                <MembershipStepIcon id={track.id} />
+                <span className={active === index ? "underline decoration-2 underline-offset-4" : undefined}>
+                  {track.word}
+                </span>
               </button>
             ))}
           </div>
@@ -387,7 +385,10 @@ export function Landing() {
       >
         <HeroVideo />
         <div className="hero-top-shade pointer-events-none absolute inset-x-0 top-0" aria-hidden="true" />
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-end px-6 pt-24 @3xl:px-12 @3xl:pt-28">
+        <div
+          data-hero-offer
+          className="pointer-events-none absolute inset-0 z-10 flex items-end justify-end px-6 pb-8 @3xl:px-12 @3xl:pb-12"
+        >
           <div className="hero-panel pointer-events-auto w-full max-w-[32rem] rounded-2xl px-4 py-3">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <Headline

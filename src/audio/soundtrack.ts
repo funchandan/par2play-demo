@@ -2,6 +2,7 @@ import { BG_LOOP } from "../data/media";
 
 const STORAGE_KEY = "par2play-sound";
 const FADE_SECONDS = 1;
+const GESTURES = ["pointerdown", "keydown", "touchstart", "scroll"] as const;
 
 type Snapshot = {
   enabled: boolean;
@@ -10,7 +11,8 @@ type Snapshot = {
 
 type Listener = () => void;
 
-let enabled = readStored();
+let suppressAuto = readStoredChoice() === "off";
+let enabled = !suppressAuto;
 let live = false;
 let heroInView = true;
 let video: HTMLVideoElement | null = null;
@@ -20,13 +22,18 @@ let bgSource: AudioBufferSourceNode | null = null;
 let buffer: AudioBuffer | null = null;
 let loading: Promise<void> | null = null;
 let videoFade = 0;
+let bootToken = 0;
+let attemptStarted = false;
+let armed = false;
 const listeners = new Set<Listener>();
 
-function readStored(): boolean {
+function readStoredChoice(): "on" | "off" | null {
   try {
-    return localStorage.getItem(STORAGE_KEY) === "on";
+    const value = localStorage.getItem(STORAGE_KEY);
+    if (value === "on" || value === "off") return value;
+    return null;
   } catch {
-    return false;
+    return null;
   }
 }
 
@@ -36,6 +43,7 @@ function emit() {
 
 function remember(next: boolean) {
   enabled = next;
+  suppressAuto = !next;
   try {
     localStorage.setItem(STORAGE_KEY, next ? "on" : "off");
   } catch {
@@ -55,12 +63,67 @@ export function subscribeSound(listener: () => void) {
   };
 }
 
+function isSoundControl(event: Event) {
+  const target = event.target;
+  if (!(target instanceof Node)) return false;
+  const element = target instanceof Element ? target : target.parentElement;
+  return Boolean(element?.closest("[data-sound-toggle]"));
+}
+
+function onGesture(event: Event) {
+  if (!event.isTrusted || isSoundControl(event)) return;
+  if (suppressAuto) {
+    disarm();
+    return;
+  }
+  if (live) {
+    disarm();
+    void ctx?.resume();
+    ensureLoop();
+    return;
+  }
+  activateSound();
+}
+
+function armGesture() {
+  if (armed || suppressAuto) return;
+  armed = true;
+  for (const type of GESTURES) {
+    window.addEventListener(type, onGesture, true);
+  }
+  emit();
+}
+
+function disarm() {
+  if (!armed) return;
+  armed = false;
+  for (const type of GESTURES) {
+    window.removeEventListener(type, onGesture, true);
+  }
+  emit();
+}
+
 export function registerHeroVideo(element: HTMLVideoElement | null) {
   video = element;
-  if (!element) return;
-  // Stay muted for autoplay, but leave volume at 1. Unmuting at volume 0
-  // and raising it later is outside the user gesture, so browsers keep it silent.
-  if (!live) element.muted = true;
+  if (!element) {
+    bootToken += 1;
+    if (!live) attemptStarted = false;
+    return;
+  }
+  if (suppressAuto) {
+    element.muted = true;
+    void element.play().catch(() => undefined);
+    return;
+  }
+  if (live) {
+    element.muted = false;
+    element.volume = heroInView ? 1 : 0;
+    void element.play().catch(() => undefined);
+    return;
+  }
+  if (attemptStarted) return;
+  attemptStarted = true;
+  void attemptUnmuted(element);
 }
 
 export function setHeroInView(inView: boolean) {
@@ -155,6 +218,17 @@ async function decodeLoop(context: AudioContext, url: string) {
   return context.decodeAudioData(data.slice(0));
 }
 
+function ensureContext() {
+  const AudioCtx = window.AudioContext;
+  if (!ctx) ctx = new AudioCtx();
+  if (!bgGain) {
+    bgGain = ctx.createGain();
+    bgGain.gain.value = 0;
+    bgGain.connect(ctx.destination);
+  }
+  bindVisibility();
+}
+
 function ensureLoop() {
   if (!ctx || !live) return;
   if (buffer) {
@@ -198,27 +272,75 @@ function bindVisibility() {
   document.addEventListener("visibilitychange", onVisibility);
 }
 
+function commitLive() {
+  live = true;
+  enabled = true;
+  ensureContext();
+  void ctx?.resume().then(() => {
+    if (!live || suppressAuto) return;
+    ensureLoop();
+    applyFade();
+    if (ctx?.state === "running") disarm();
+    else armGesture();
+  });
+  ensureLoop();
+  applyFade();
+  emit();
+}
+
 /**
- * Starts playback inside the user gesture. The context is created and the
- * hero is unmuted before any fetch. The background file is requested only
- * after this runs.
+ * Try the hero unmuted. If that play() is rejected, fall back to muted
+ * playback and wait for the first real gesture.
+ */
+async function attemptUnmuted(element: HTMLVideoElement) {
+  const token = bootToken;
+  element.muted = false;
+  element.volume = 1;
+  try {
+    await element.play();
+  } catch {
+    if (token !== bootToken || video !== element || suppressAuto || live) return;
+    element.muted = true;
+    try {
+      await element.play();
+    } catch {
+      /* The element can disappear before muted playback starts. */
+    }
+    if (token !== bootToken || video !== element || suppressAuto || live) return;
+    armGesture();
+    emit();
+    return;
+  }
+  if (token !== bootToken || video !== element || suppressAuto) return;
+  commitLive();
+}
+
+/** Reduced motion has no hero video. Still try the background loop. */
+export function bootAmbient() {
+  if (suppressAuto || live || video || attemptStarted) return;
+  attemptStarted = true;
+  ensureContext();
+  void ctx?.resume().then(() => {
+    if (suppressAuto || live) return;
+    if (ctx?.state === "running") commitLive();
+    else armGesture();
+  });
+}
+
+/**
+ * Starts playback inside one user gesture. Unmute, set the volume, then
+ * play() before any await, so the browser still treats it as activation.
  */
 export function activateSound() {
-  const AudioCtx = window.AudioContext;
-  bindVisibility();
-  if (!ctx) ctx = new AudioCtx();
-  void ctx.resume();
-  if (!bgGain) {
-    bgGain = ctx.createGain();
-    bgGain.gain.value = 0;
-    bgGain.connect(ctx.destination);
-  }
-  live = true;
+  bootToken += 1;
+  suppressAuto = false;
+  disarm();
+  ensureContext();
+  void ctx?.resume();
   syncHeroInView();
+  live = true;
   const element = video;
   if (element) {
-    // Unmute, full volume, and play() have to happen in this gesture.
-    // A later animation frame is not a user activation, so WebKit stays silent.
     element.muted = false;
     element.volume = heroInView ? 1 : 0;
     const played = element.play();
@@ -234,6 +356,9 @@ export function activateSound() {
 }
 
 export function silenceSound() {
+  suppressAuto = true;
+  bootToken += 1;
+  disarm();
   live = false;
   videoFade += 1;
   if (video) {
@@ -268,6 +393,8 @@ export type SoundProbe = {
   volume: number;
   paused: boolean;
   bgGain: number;
+  armed: boolean;
+  stored: "on" | "off" | null;
 };
 
 declare global {
@@ -283,6 +410,8 @@ function readProbe(): SoundProbe {
     volume: video?.volume ?? 0,
     paused: video?.paused ?? true,
     bgGain: bgGain?.gain.value ?? 0,
+    armed,
+    stored: readStoredChoice(),
   };
 }
 
