@@ -50,7 +50,7 @@ const tracks: readonly {
   {
     id: "day",
     word: "Fit it around your day",
-    line: "Midday stays the quieter off-peak, booked through GolfClock.",
+    line: "We’ve got you covered whether you’re at the dentist or picking up kids from school.",
     photo: PHOTOS.bays,
   },
 ];
