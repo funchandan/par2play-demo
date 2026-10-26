@@ -16,7 +16,7 @@ import { MembershipStepIcon, type MembershipStepId } from "../components/Members
 import { HeroVideo, Photo } from "../components/Media";
 import { SoundToggle } from "../components/SoundToggle";
 import { ValuePoint } from "../components/ValuePoint";
-import { ENQUIRY, NAP, golfClockBookingReady } from "../data/business";
+import { ENQUIRY, NAP, bookingHref, golfClockBookingReady } from "../data/business";
 import type { PhotoAsset } from "../data/photos";
 import { PHOTOS } from "../data/photos";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
@@ -29,33 +29,112 @@ const links = [
   ["tournament", "Tournament"],
 ] as const;
 
+/**
+ * Each benefit CTA uses the GolfClock booking target until a real membership
+ * URL exists. Swap that benefit's `ctaUrl` when it does.
+ */
 const tracks: readonly {
   id: MembershipStepId;
   word: string;
   line: string;
   photo: PhotoAsset;
+  ctaLabel: string;
+  ctaUrl: string;
 }[] = [
   {
     id: "availability",
     word: "Preferred bay availability",
     line: "Members are first in line for the times that suit them.",
     photo: PHOTOS.range,
+    ctaLabel: "Reserve member slots",
+    ctaUrl: bookingHref("bay"),
   },
   {
     id: "progress",
     word: "Track your progress",
     line: "Carry, ball speed and spin on every swing, so the change shows from session to session.",
     photo: PHOTOS.launchData,
+    ctaLabel: "Schedule a visit",
+    ctaUrl: bookingHref("bay"),
   },
   {
     id: "day",
     word: "Fit it around your day",
-    line: "Midday stays the quieter off-peak, booked through GolfClock.",
+    line: "We’ve got you covered whether you’re at the dentist or picking up kids from school.",
     photo: PHOTOS.bays,
+    ctaLabel: "Reserve your timings",
+    ctaUrl: bookingHref("bay"),
   },
 ];
 
+const benefitCtaClass = `inline-flex min-h-11 min-w-11 w-fit items-center justify-center rounded-full bg-[#14D45E] px-5 text-center text-base font-semibold text-[#0A0F0B] hover:bg-[#3dff7c] hover:text-[#0A0F0B] active:bg-[#0fb852] active:text-[#0A0F0B] visited:bg-[#14D45E] visited:text-[#0A0F0B] ${buttonFocus}`;
+
+function BenefitCta({ href, children }: { href: string; children: string }) {
+  const external = href.startsWith("http") ? ({ target: "_blank", rel: "noreferrer" } as const) : {};
+  return (
+    <a href={href} className={benefitCtaClass} {...external}>
+      {children}
+    </a>
+  );
+}
+
 const sectionSpace = "scroll-mt-32 px-6 py-20 @3xl:px-12 @3xl:py-24";
+
+/**
+ * Sample data to replace with the real GolfClock schedule before launch.
+ * The CTA uses the same booking link as “Book a bay”.
+ */
+const SAMPLE_GROUP_LESSON = {
+  title: "Short game workshop",
+  line: "Chipping, pitching and putting to save shots around the green.",
+  when: "Thursday, 6:00–7:00pm",
+  capacity: 12,
+  spotsTaken: 9,
+  ctaUrl: bookingHref("bay"),
+} as const;
+
+function GroupLessonCard({ lesson }: { lesson: typeof SAMPLE_GROUP_LESSON }) {
+  const spotsLeft = lesson.capacity - lesson.spotsTaken;
+  const spotsLeftText = spotsLeft === 1 ? "1 spot left" : `${spotsLeft} spots left`;
+  const filled = Math.min(100, Math.round((lesson.spotsTaken / lesson.capacity) * 100));
+  const external = lesson.ctaUrl.startsWith("http")
+    ? ({ target: "_blank", rel: "noreferrer" } as const)
+    : {};
+
+  return (
+    <article className="border-2 border-[#0A0F0B] bg-white p-5">
+      <h3 className="font-display text-2xl font-semibold leading-tight tracking-tight text-[#0A0F0B]">
+        {lesson.title}
+      </h3>
+      <p className="mt-2 text-base leading-relaxed text-[#0A0F0B]">{lesson.line}</p>
+      <p className="mt-4 text-base font-semibold text-[#0A0F0B]">{lesson.when}</p>
+      <div className="mt-4">
+        <div className="flex items-baseline justify-between gap-3 text-base text-[#0A0F0B]">
+          <p className="font-semibold">Filling up soon</p>
+          <p>{spotsLeftText}</p>
+        </div>
+        <div
+          className="mt-2 h-2 bg-[#6B736E]"
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={lesson.capacity}
+          aria-valuenow={lesson.spotsTaken}
+          aria-valuetext={`${lesson.spotsTaken} of ${lesson.capacity} spots taken, ${spotsLeftText}`}
+          aria-label="Spots taken"
+        >
+          <div className="h-full bg-[#0A0F0B]" style={{ width: `${filled}%` }} />
+        </div>
+      </div>
+      <a
+        href={lesson.ctaUrl}
+        className={`mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#14D45E] px-5 text-center text-base font-semibold text-[#0A0F0B] hover:bg-[#3dff7c] hover:text-[#0A0F0B] active:bg-[#0fb852] active:text-[#0A0F0B] visited:bg-[#14D45E] visited:text-[#0A0F0B] @3xl:w-fit ${buttonFocus}`}
+        {...external}
+      >
+        Save a slot
+      </a>
+    </article>
+  );
+}
 
 const navButton = `nav-link inline-flex min-h-11 items-center px-1 text-base font-semibold text-[#0A0F0B] ${buttonFocus}`;
 
@@ -124,7 +203,7 @@ function Practice({
     document.getElementById(id)?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
   };
 
-  const wordButton = `inline-flex min-h-11 w-full items-center gap-3 text-left text-base font-semibold text-[#0A0F0B] ${buttonFocus}`;
+  const wordButton = `inline-flex min-h-11 min-w-11 flex-1 items-center gap-3 text-left text-base font-semibold text-[#0A0F0B] ${buttonFocus}`;
 
   return (
     <section id="practice" className={sectionSpace}>
@@ -141,7 +220,7 @@ function Practice({
               <Photo photo={track.photo} decorative />
             </div>
             <div
-              className="absolute inset-0 bg-gradient-to-t from-[#020806] from-45% via-[#020806]/80 via-70% to-[#020806]/15"
+              className="absolute inset-0 bg-gradient-to-t from-[#020806] from-58% via-[#020806]/85 via-78% to-[#020806]/15"
               aria-hidden="true"
             />
             <div className="relative flex min-h-96 flex-col justify-end gap-3 p-5">
@@ -150,6 +229,7 @@ function Practice({
                 {track.word}
               </h3>
               <p className="max-w-sm text-base leading-relaxed text-white">{track.line}</p>
+              <BenefitCta href={track.ctaUrl}>{track.ctaLabel}</BenefitCta>
             </div>
           </article>
         ))}
@@ -163,20 +243,22 @@ function Practice({
           <p className="mt-3 max-w-md font-display text-3xl font-semibold leading-tight tracking-tight @4xl:text-4xl">
             {tracks[active]?.word}
           </p>
-          <div className="mt-6 flex flex-col items-start gap-1">
+          <div className="mt-6 flex flex-col items-start gap-4">
             {tracks.map((track, index) => (
-              <button
-                key={track.id}
-                type="button"
-                aria-current={active === index ? "true" : undefined}
-                className={wordButton}
-                onClick={() => go(track.id)}
-              >
-                <MembershipStepIcon id={track.id} />
-                <span className={active === index ? "underline decoration-2 underline-offset-4" : undefined}>
-                  {track.word}
-                </span>
-              </button>
+              <div key={track.id} className="flex w-full flex-wrap items-center justify-between gap-x-4 gap-y-2">
+                <button
+                  type="button"
+                  aria-current={active === index ? "true" : undefined}
+                  className={wordButton}
+                  onClick={() => go(track.id)}
+                >
+                  <MembershipStepIcon id={track.id} />
+                  <span className={active === index ? "underline decoration-2 underline-offset-4" : undefined}>
+                    {track.word}
+                  </span>
+                </button>
+                <BenefitCta href={track.ctaUrl}>{track.ctaLabel}</BenefitCta>
+              </div>
             ))}
           </div>
           {tracks[active] && (
@@ -267,6 +349,7 @@ function TournamentForm() {
           name="email"
           type="email"
           autoComplete="email"
+          placeholder="Email"
           value={email}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? "tournament-email-error" : undefined}
@@ -287,7 +370,7 @@ function TournamentForm() {
       <button
         type="submit"
         disabled={status === "sending"}
-        className={`mt-2 inline-flex min-h-11 w-fit items-center rounded-full bg-[#14D45E] px-5 text-base font-semibold text-[#0A0F0B] hover:bg-[#3dff7c] active:bg-[#0fb852] disabled:bg-[#c8f5d8] disabled:text-[#0A0F0B] ${buttonFocus}`}
+        className={`mt-2 inline-flex min-h-11 w-fit items-center justify-self-center rounded-full bg-[#14D45E] px-5 text-base font-semibold text-[#0A0F0B] hover:bg-[#3dff7c] active:bg-[#0fb852] disabled:bg-[#c8f5d8] disabled:text-[#0A0F0B] ${buttonFocus}`}
       >
         {status === "sending" ? "Sending" : "Reserve your tournament spot"}
       </button>
@@ -439,7 +522,11 @@ export function Landing() {
             </p>
             <div className="mt-8 grid gap-5">
               <ValuePoint icon={Target} label="1:1 lessons" line="A plan you can track month to month." />
-              <ValuePoint icon={Activity} label="Swing evaluation" line="Once per golfer." />
+              <ValuePoint
+                icon={Activity}
+                label="Swing evaluation"
+                line="Swing your way to your first hole in one with drill down analysis and personalised 1:1 coaching."
+              />
             </div>
             <div className="mt-8 flex flex-wrap gap-3">
               <BookLink offer="lesson">Book a lesson</BookLink>
@@ -447,9 +534,9 @@ export function Landing() {
                 Book a swing evaluation
               </BookLink>
             </div>
-            <div className="mt-8 flex flex-wrap items-end justify-between gap-4">
+            <div className="mt-8 grid gap-5">
               <ValuePoint icon={Users} label="Group lessons" line="A shared session with a PGA pro." />
-              <BookLink offer="group">Sign up</BookLink>
+              <GroupLessonCard lesson={SAMPLE_GROUP_LESSON} />
             </div>
           </div>
         </div>
@@ -486,8 +573,8 @@ export function Landing() {
       </section>
 
       <section id="tournament" className={`${sectionSpace} text-center`}>
-        <h2 className="mx-auto max-w-xl font-display text-4xl font-semibold leading-none tracking-tight @5xl:text-5xl">
-          Reserve your tournament spot
+        <h2 className="mx-auto max-w-xl font-display text-4xl font-semibold leading-tight tracking-tight @5xl:text-5xl">
+          Par2Play Fall League Coming Soon!
         </h2>
         <div className="mt-10">
           <TournamentForm />
