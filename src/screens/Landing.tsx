@@ -97,11 +97,11 @@ export function Landing() {
   return (
     <div ref={scrollRef} className={`@container page-grid text-base text-[#0A0F0B] ${scroll}`}>
       <header
-        className={`sticky z-30 px-6 py-3 @3xl:px-12 ${mobile ? "top-0" : "top-[4.25rem]"} ${onFilm ? "" : "header-bar"}`}
+        className={`sticky z-30 px-6 py-3 @5xl:px-12 ${mobile ? "top-0" : "top-[4.25rem]"} ${onFilm ? "" : "header-bar"}`}
       >
         <div className="flex items-center justify-between gap-4">
           <Mark light={onFilm} />
-          <nav className="hidden items-center gap-6 @3xl:flex" aria-label="Page">
+          <nav className="hidden items-center gap-3 @3xl:flex @5xl:gap-6" aria-label="Page">
             {SITE_NAV.map((item) => (
               <a
                 key={item.slug}
@@ -115,7 +115,9 @@ export function Landing() {
           </nav>
           <div className="flex items-center gap-2">
             <SoundToggle className={onFilm ? "text-white" : "text-[#0A0F0B]"} />
-            <MembershipLink className="hidden @3xl:inline-flex">Become a Member</MembershipLink>
+            <span className="hidden @3xl:contents">
+              <MembershipLink className="shrink-0">Become a Member</MembershipLink>
+            </span>
             <button
               type="button"
               className={`${filmLink} @3xl:hidden`}
