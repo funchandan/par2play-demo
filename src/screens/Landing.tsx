@@ -8,6 +8,7 @@ import { MembershipBand } from "../components/MembershipBand";
 import { HeroVideo, Photo } from "../components/Media";
 import { SoundToggle } from "../components/SoundToggle";
 import { TournamentForm } from "../components/TournamentForm";
+import { CommunityStrip, EventGallery } from "../components/PhotoStrips";
 import { UspTicker } from "../components/UspTicker";
 import { VideoSlot } from "../components/VideoSlot";
 import { ValuePoint } from "../components/ValuePoint";
@@ -209,6 +210,8 @@ export function Landing() {
         </div>
       </section>
 
+      <CommunityStrip />
+
       <section id="juniors" className={sectionSpace}>
         <div className="grid items-center gap-10 @3xl:grid-cols-2 @3xl:gap-16">
           <div className="@3xl:order-2">
@@ -245,6 +248,9 @@ export function Landing() {
           Holiday parties, birthdays, company events, and tournaments in four enclosed bays. A golf pro can teach
           mini-lessons and run casual games.
         </p>
+        <div className="mt-8">
+          <EventGallery />
+        </div>
         <div className="mt-8 flex flex-wrap gap-3">
           <a
             href={pageHref("events")}

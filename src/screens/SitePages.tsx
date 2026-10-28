@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import { CalendarDays, Flag, Target, Users, Wrench } from "lucide-react";
 import { MembershipCalculator } from "../components/MembershipCalculator";
+import { CommunityStrip, EventGallery, EventHero } from "../components/PhotoStrips";
 import { PageFrame, pageSpace } from "../components/SiteChrome";
 import { BookLink, buttonFocus } from "../components/Cta";
 import { TournamentForm } from "../components/TournamentForm";
@@ -125,6 +126,7 @@ export function MembershipPage() {
           </div>
         </dl>
       </article>
+      <CommunityStrip />
     </PageFrame>
   );
 }
@@ -265,11 +267,14 @@ export function JuniorsPage() {
 export function EventsPage() {
   return (
     <PageFrame>
+      <EventHero />
       <article className={pageSpace}>
-        <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight @5xl:text-6xl">Events</h1>
-        <p className="mt-4 max-w-2xl text-base leading-relaxed">
+        <p className="max-w-2xl text-base leading-relaxed">
           Par2Play hosts parties and company events in the studio. A golf pro can teach mini-lessons and run casual games.
         </p>
+        <div className="mt-8">
+          <EventGallery />
+        </div>
         <ul className="mt-8 grid gap-3 @3xl:grid-cols-2">
           {EVENT_TYPES.map((type) => (
             <li key={type} className="border-2 border-[#4b5563] bg-white px-4 py-3 text-base font-semibold">
