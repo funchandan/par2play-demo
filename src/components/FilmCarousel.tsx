@@ -1,36 +1,65 @@
+import { useEffect, useRef } from "react";
 import { TESTIMONIAL_FILMS, type TestimonialFilm } from "../data/films";
-import { Photo } from "./Media";
 
-function Slide({ film, active }: { film: TestimonialFilm; active: boolean }) {
-  if (!active || film.src.trim() === "") {
-    return (
-      <div className={active ? "absolute inset-0" : "hidden"}>
-        <Photo photo={film.poster} decorative priority={active} />
-      </div>
-    );
-  }
+function ActiveFilm({
+  film,
+  paused,
+  onEnded,
+}: {
+  film: TestimonialFilm;
+  paused: boolean;
+  onEnded: () => void;
+}) {
+  const ref = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return;
+    if (paused) {
+      video.pause();
+      return;
+    }
+    void video.play().catch(() => undefined);
+  }, [paused, film.id]);
 
   return (
     <video
-      className="absolute inset-0 h-full w-full object-cover"
-      poster={film.poster.jpg}
-      src={film.src}
+      ref={ref}
+      className="absolute inset-0 h-full w-full object-cover object-center"
+      poster={film.poster}
       muted
       playsInline
-      loop
-      autoPlay
-      preload="none"
-      aria-hidden="true"
-    />
+      preload="auto"
+      autoPlay={!paused}
+      onEnded={onEnded}
+    >
+      <source src={film.srcMobile} type="video/mp4" media="(max-width: 767px)" />
+      <source src={film.src} type="video/mp4" />
+    </video>
   );
 }
 
-export function FilmCarousel({ index }: { index: number }) {
+export function FilmCarousel({
+  index,
+  paused,
+  reduce,
+  onEnded,
+}: {
+  index: number;
+  paused: boolean;
+  reduce: boolean;
+  onEnded: () => void;
+}) {
+  const film = TESTIMONIAL_FILMS[index] ?? TESTIMONIAL_FILMS[0];
+  if (!film) return null;
+
+  if (reduce) {
+    return <img src={film.poster} alt="" className="absolute inset-0 h-full w-full object-cover object-center" />;
+  }
+
   return (
     <div className="absolute inset-0" aria-hidden="true">
-      {TESTIMONIAL_FILMS.map((film, filmIndex) => (
-        <Slide key={film.id} film={film} active={filmIndex === index} />
-      ))}
+      <ActiveFilm key={film.id} film={film} paused={paused} onEnded={onEnded} />
     </div>
   );
 }

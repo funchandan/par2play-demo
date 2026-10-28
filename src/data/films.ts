@@ -1,39 +1,37 @@
-import { PHOTOS, type PhotoAsset } from "./photos";
+import { PHOTOS } from "./photos";
+
+const media = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
 /**
- * Testimonial films for the membership background.
- * Leave `src` empty until the MP4 arrives, then set it to a path under public/
- * (for example "media/testimonials/bay.mp4"). The poster stays up until then.
+ * Client testimonial films for the membership background.
+ * Desktop files are 1280×720. Mobile files are 720×406.
+ * Order is the clearest thumbs-up first, then the third clip, then the second.
  */
 export type TestimonialFilm = {
   id: string;
   src: string;
-  poster: PhotoAsset;
-  quote?: string;
-  name?: string;
+  srcMobile: string;
+  poster: string;
 };
 
 export const TESTIMONIAL_FILMS: readonly TestimonialFilm[] = [
   {
-    id: "bays",
-    src: "",
-    poster: PHOTOS.bays,
-    quote: "Great place, great staff, amazing owners.",
-    name: "Tristan",
+    id: "testimonial-1",
+    src: media("media/testimonials/testimonial-1.mp4"),
+    srcMobile: media("media/testimonials/testimonial-1-mobile.mp4"),
+    poster: media("media/testimonials/testimonial-1.jpg"),
   },
   {
-    id: "lesson",
-    src: "",
-    poster: PHOTOS.gripLesson,
-    quote: "Thank you Nick for the best coaching experience and for helping me improve so much.",
-    name: "Jeric",
+    id: "testimonial-3",
+    src: media("media/testimonials/testimonial-3.mp4"),
+    srcMobile: media("media/testimonials/testimonial-3-mobile.mp4"),
+    poster: media("media/testimonials/testimonial-3.jpg"),
   },
   {
-    id: "group",
-    src: "",
-    poster: PHOTOS.groupWave,
-    quote: "Had an amazing time at Par2Play.",
-    name: "Kenssy",
+    id: "testimonial-2",
+    src: media("media/testimonials/testimonial-2.mp4"),
+    srcMobile: media("media/testimonials/testimonial-2-mobile.mp4"),
+    poster: media("media/testimonials/testimonial-2.jpg"),
   },
 ];
 
