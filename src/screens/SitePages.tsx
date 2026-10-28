@@ -1,7 +1,7 @@
 import type { LucideIcon } from "lucide-react";
-import { CalendarDays, Flag, Target, Users, Wrench } from "lucide-react";
+import { CalendarDays, Flag, Target, Users } from "lucide-react";
 import { MembershipCalculator } from "../components/MembershipCalculator";
-import { CommunityStrip, EventGallery, EventHero } from "../components/PhotoStrips";
+import { CommunityStrip, EventGallery, EventHero, StillGrid } from "../components/PhotoStrips";
 import { PageFrame, pageSpace } from "../components/SiteChrome";
 import { BookLink, buttonFocus } from "../components/Cta";
 import { TournamentForm } from "../components/TournamentForm";
@@ -10,6 +10,7 @@ import { OCLOCK, PRICES } from "../data/business";
 import { PUBLISHED_COACHES } from "../data/coaches";
 import { EVENT_FACTS, HOLIDAY_FACTS } from "../data/events";
 import { EventTypeList } from "../components/EventTypeList";
+import { COACHING_GALLERY, FITTING_GALLERY, JUNIORS_GALLERY } from "../data/gallery";
 import { pageHref } from "../data/routes";
 
 function CheckoutLink({ href, children }: { href: string; children: string }) {
@@ -165,6 +166,7 @@ export function CoachingPage() {
         <p className="mt-4 max-w-2xl font-display text-2xl font-semibold leading-tight">
           Two PGA professional coaches, Nick and Sean
         </p>
+        <StillGrid photos={COACHING_GALLERY} className="@3xl:grid-cols-3" />
         <ol className="mt-10 grid gap-6 @3xl:grid-cols-3">
           <JourneyStep icon={Target} step="1" title="Swing evaluation" line="Start with a swing evaluation, then a plan for what to change." />
           <JourneyStep icon={Flag} step="2" title="Lessons" line="1:1 lessons that follow that plan." />
@@ -198,10 +200,11 @@ export function CoachingPage() {
           <CheckoutLink href={OCLOCK.lessonPacks}>See lesson packs</CheckoutLink>
         </div>
         <h2 className="mt-16 font-display text-3xl font-semibold tracking-tight">Club fitting</h2>
-        <ul className="mt-6 grid gap-3 @3xl:grid-cols-4">
+        <StillGrid photos={FITTING_GALLERY} />
+        <ul className="mt-6 grid grid-cols-2 gap-3 @3xl:grid-cols-4">
           {fittingChoices.map((choice) => (
-            <li key={choice}>
-              <ValuePoint icon={Wrench} label={choice} line="Book this fitting in the fitting flow." />
+            <li key={choice} className="text-base font-semibold">
+              {choice}
             </li>
           ))}
         </ul>
@@ -252,6 +255,7 @@ export function JuniorsPage() {
       <article className={pageSpace}>
         <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight @5xl:text-6xl">Junior coaching.</h1>
         <p className="mt-4 max-w-xl text-base leading-relaxed">Building the golfers of tomorrow.</p>
+        <StillGrid photos={JUNIORS_GALLERY} />
         <div className="mt-8 grid max-w-xl gap-5">
           <ValuePoint icon={Users} label="Future pros" line="1:1 coaching with PGA pros Nick and Sean, once or twice a week." />
           <ValuePoint icon={CalendarDays} label="Supervised care" line="Juniors practise under staff supervision in a safe, friendly bay." />

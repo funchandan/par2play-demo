@@ -5,7 +5,7 @@ import { Mark } from "../components/Chrome";
 import { BookLink, HeroMembershipAction, buttonFocus } from "../components/Cta";
 import { HeroProof } from "../components/HeroProof";
 import { MembershipBand } from "../components/MembershipBand";
-import { HeroVideo, Photo } from "../components/Media";
+import { HeroVideo } from "../components/Media";
 import { SoundToggle } from "../components/SoundToggle";
 import { TournamentForm } from "../components/TournamentForm";
 import { EventTypeList } from "../components/EventTypeList";
@@ -14,9 +14,7 @@ import { UspTicker } from "../components/UspTicker";
 import { VideoSlot } from "../components/VideoSlot";
 import { ValuePoint } from "../components/ValuePoint";
 import { NAP, OCLOCK, golfClockBookingReady } from "../data/business";
-import { COACHING_FILM } from "../data/films";
-import type { PhotoAsset } from "../data/photos";
-import { PHOTOS } from "../data/photos";
+import { COACHING_FILM, JUNIORS_FILM } from "../data/films";
 import { SITE_NAV, pageHref } from "../data/routes";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { useFlow } from "../state/flow";
@@ -24,14 +22,6 @@ import { useFlow } from "../state/flow";
 const sectionSpace = "scroll-mt-32 px-6 py-20 @3xl:px-12 @3xl:py-24";
 
 const navButton = `nav-link inline-flex min-h-11 items-center px-1 text-base font-semibold text-[#0A0F0B] ${buttonFocus}`;
-
-function Frame({ photo, className = "" }: { photo: PhotoAsset; className?: string }) {
-  return (
-    <div className={`frame-in overflow-hidden bg-slate-100 ${className}`}>
-      <Photo photo={photo} />
-    </div>
-  );
-}
 
 function Headline({ text, className }: { text: string; className: string }) {
   const words = text.split(" ");
@@ -187,7 +177,13 @@ export function Landing() {
 
       <section id="coaching" className={sectionSpace}>
         <div className="grid items-start gap-10 @3xl:grid-cols-2 @3xl:gap-16">
-          <VideoSlot src={COACHING_FILM.src} poster={COACHING_FILM.poster} className="aspect-[4/3]" />
+          <VideoSlot
+            src={COACHING_FILM.src}
+            srcMobile={COACHING_FILM.srcMobile}
+            poster={COACHING_FILM.poster}
+            className="aspect-video"
+            pausable
+          />
           <div>
             <h2 className="font-display text-3xl font-semibold leading-none tracking-tight @5xl:text-5xl">Coaching</h2>
             <p className="mt-8 max-w-md font-display text-2xl font-semibold leading-tight tracking-tight">
@@ -239,7 +235,13 @@ export function Landing() {
               <BookLink offer="junior">Book junior coaching</BookLink>
             </div>
           </div>
-          <Frame photo={PHOTOS.juniorGroup} className="aspect-[4/3] @3xl:order-1" />
+          <VideoSlot
+            src={JUNIORS_FILM.src}
+            srcMobile={JUNIORS_FILM.srcMobile}
+            poster={JUNIORS_FILM.poster}
+            className="aspect-video @3xl:order-1"
+            pausable
+          />
         </div>
       </section>
 
