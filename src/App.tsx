@@ -1,5 +1,7 @@
 import { Button } from "@heroui/react";
+import { currentRoute } from "./data/routes";
 import { Landing } from "./screens/Landing";
+import { CoachingPage, EventsPage, JuniorsPage, MembershipPage, NotFoundPage, TournamentPage } from "./screens/SitePages";
 import { Clubhouse } from "./screens/Clubhouse";
 import { JourneyMap } from "./screens/JourneyMap";
 import {
@@ -58,6 +60,30 @@ function StepView() {
   }
 }
 
+function Routed() {
+  const route = currentRoute();
+  switch (route) {
+    case "home":
+      return <StepView />;
+    case "membership":
+      return <MembershipPage />;
+    case "coaching":
+      return <CoachingPage />;
+    case "juniors":
+      return <JuniorsPage />;
+    case "events":
+      return <EventsPage />;
+    case "tournament":
+      return <TournamentPage />;
+    case "notfound":
+      return <NotFoundPage />;
+    default: {
+      const exhaustive: never = route;
+      return exhaustive;
+    }
+  }
+}
+
 function Shell() {
   const flow = useFlow();
   return (
@@ -78,13 +104,13 @@ function Shell() {
             data-layout="mobile"
           >
             <div className="h-full">
-              <StepView />
+              <Routed />
             </div>
           </div>
         </div>
       ) : (
         <div className="bg-white" data-testid="layout" data-layout="web">
-          <StepView />
+          <Routed />
         </div>
       )}
     </div>

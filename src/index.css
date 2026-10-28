@@ -194,3 +194,36 @@ h3,
     opacity: 1;
   }
 }
+
+@keyframes usp-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.usp-track {
+  animation: usp-marquee 42s linear infinite;
+}
+
+.usp-marquee:hover .usp-track,
+.usp-marquee:focus-within .usp-track {
+  animation-play-state: paused;
+}
+
+.usp-static {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .usp-marquee {
+    display: none;
+  }
+
+  .usp-static {
+    display: block;
+  }
+}

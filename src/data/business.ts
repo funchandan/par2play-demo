@@ -52,7 +52,8 @@ export const PRICES = {
    * TODO(pricing): Atul confirmed a 10-pack exists. No confirmed price is in
    * the repo. Do not publish a dollar amount for it.
    */
-  tenPack: null as number | null,
+  /** Confirmed: 10 x 60-minute sessions. */
+  tenPack: 400,
   unlimitedMonthly: 200,
   swingEvaluationMinutes: 50,
   swingEvaluation: 100,
@@ -61,10 +62,14 @@ export const PRICES = {
   lessonMinutes: 30,
   lessonPack3Count: 3,
   lessonPack3: 240,
-  /** TODO(pricing): 5, 10, and 20 lesson-pack prices are unconfirmed (open item: about $400–$3,000). */
-  lessonPack5: null as number | null,
+  /** Confirmed pack ends. 10, 20, and 30 are not listed on par2play.com, so they stay null and the page says they are shown at checkout. */
+  lessonPack5: 400,
   lessonPack10: null as number | null,
   lessonPack20: null as number | null,
+  lessonPack30: null as number | null,
+  lessonPack50: 3000,
+  /** Lessons, assessments, practice time, and a workshop. */
+  golfImprovementBundle: 599,
   /** Once-a-week 1:1 lesson plus unlimited facility access. */
   juniorOneLessonWeekly: 249,
   /** Twice-a-week lessons plus unlimited facility access. */
@@ -83,24 +88,32 @@ export type BookingOffer =
   | "lesson"
   | "swing-evaluation"
   | "swing-lab"
+  | "fitting"
   | "group"
   | "junior"
   | "junior-plus"
   | "tournament";
 
-/**
- * TODO(golfclock): Paste the live URLs. They are not in this repo — the
- * strategy sheet still says "[GolfClock … link]".
- *
- * Booking is one GolfClock calendar. `bookingHref` adds `offer` so bay,
- * 10-pack, lesson, swing evaluation, swing lab, group, junior, and
- * tournament share it.
- * Confirm GolfClock's real filter parameter name before relying on `offer`.
- * Membership checkout is a separate GolfClock URL.
- */
+/** Live GolfClock / oclock destinations. These replace the old phone fallback. */
+export const OCLOCK = {
+  bayRental: "https://par2play.oclock.app/book?flow=flow_bf_bay_rental",
+  lessons: "https://par2play.oclock.app/book?flow=flow_bf_lessons",
+  fitting: "https://par2play.oclock.app/book?flow=flow_bf_fitting",
+  league: "https://par2play.oclock.app/book?flow=flow_bf_league",
+  practiceUnlimited: "https://par2play.oclock.app/store/prod_practice_unlimited",
+  tenPracticePack: "https://par2play.oclock.app/store/prod_10_practice_pack",
+  lessonPacks: "https://par2play.oclock.app/store/prod_lesson_packs",
+  golfImprovementBundle: "https://par2play.oclock.app/store/prod_golf_improvement_bundle",
+  book: "https://par2play.oclock.app/book",
+  store: "https://par2play.oclock.app/store",
+  memberships: "https://par2play.oclock.app/store?category=Memberships",
+  seriesPackages: "https://par2play.oclock.app/store?category=Series+Packages",
+  events: "https://par2play.oclock.app/events",
+} as const;
+
 export const GOLF_CLOCK = {
-  bookingUrl: "",
-  membershipUrl: "",
+  bookingUrl: OCLOCK.book,
+  membershipUrl: OCLOCK.practiceUnlimited,
 } as const;
 
 export function golfClockBookingReady(): boolean {
@@ -112,17 +125,32 @@ export function golfClockMembershipReady(): boolean {
 }
 
 export function bookingHref(offer: BookingOffer): string {
-  const base = GOLF_CLOCK.bookingUrl.trim();
-  if (!base) return NAP.phoneTel;
-  const url = new URL(base);
-  url.searchParams.set("offer", offer);
-  return url.toString();
+  switch (offer) {
+    case "bay":
+      return OCLOCK.bayRental;
+    case "ten-pack":
+      return OCLOCK.tenPracticePack;
+    case "lesson":
+    case "swing-evaluation":
+    case "swing-lab":
+    case "junior":
+    case "junior-plus":
+      return OCLOCK.lessons;
+    case "fitting":
+      return OCLOCK.fitting;
+    case "group":
+      return OCLOCK.events;
+    case "tournament":
+      return OCLOCK.league;
+    default: {
+      const exhaustive: never = offer;
+      return exhaustive;
+    }
+  }
 }
 
 export function membershipHref(): string {
-  const base = GOLF_CLOCK.membershipUrl.trim();
-  if (!base) return NAP.phoneTel;
-  return base;
+  return OCLOCK.practiceUnlimited;
 }
 
 /**
