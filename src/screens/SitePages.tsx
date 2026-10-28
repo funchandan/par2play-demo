@@ -37,7 +37,7 @@ const plans = [
     detail: "Up to 1 hour a day.",
     includes: "The bay is yours for up to an hour each day you come in.",
     href: OCLOCK.practiceUnlimited,
-    cta: "Book a membership",
+    cta: "Become a Member",
     best: true,
   },
   {
@@ -55,7 +55,7 @@ const plans = [
     detail: "One 60-minute rental.",
     includes: "One hour in a bay. The slot price is confirmed when you check out.",
     href: OCLOCK.bayRental,
-    cta: "Book a bay",
+    cta: "Reserve a bay",
     best: false,
   },
 ] as const;
@@ -178,7 +178,7 @@ export function CoachingPage() {
           />
         </ol>
         <div className="mt-8 flex flex-wrap gap-3">
-          <BookLink offer="swing-evaluation">Book a swing evaluation</BookLink>
+          <BookLink offer="swing-evaluation">Analyze my swing</BookLink>
           <BookLink offer="lesson" tone="line">
             Schedule a lesson
           </BookLink>
@@ -209,7 +209,7 @@ export function CoachingPage() {
           ))}
         </ul>
         <div className="mt-6">
-          <BookLink offer="fitting">Book a club fitting</BookLink>
+          <BookLink offer="fitting">Get fitted</BookLink>
         </div>
         <h2 className="mt-16 font-display text-3xl font-semibold tracking-tight">Instructors on par2play.com</h2>
         <p className="mt-3 max-w-2xl text-base leading-relaxed">
@@ -262,7 +262,7 @@ export function JuniorsPage() {
           <ValuePoint icon={Target} label="Technology-assisted development" line="Shot data on every swing shows progress week to week." />
         </div>
         <div className="mt-8">
-          <BookLink offer="junior">Book junior coaching</BookLink>
+          <BookLink offer="junior">Schedule junior coaching</BookLink>
         </div>
       </article>
     </PageFrame>
@@ -290,7 +290,7 @@ export function EventsPage() {
           ))}
         </ul>
         <div className="mt-8 flex flex-wrap gap-3">
-          <BookLink offer="group">Events calendar</BookLink>
+          <BookLink offer="group">Check availability</BookLink>
           <a href={pageHref("")} className={`inline-flex min-h-11 items-center text-base font-semibold underline decoration-2 underline-offset-4 ${buttonFocus}`}>
             Back to the landing page
           </a>
@@ -311,7 +311,7 @@ export function TournamentPage() {
           League booking is 18 holes. A League Player tag is required.
         </p>
         <div className="mt-8">
-          <BookLink offer="tournament">Book league play</BookLink>
+          <BookLink offer="tournament">Join the league</BookLink>
         </div>
         <div className="mt-10">
           <TournamentForm />

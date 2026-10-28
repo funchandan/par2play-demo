@@ -228,7 +228,7 @@ export function titleFor(step: Step): string {
     case "book":
       return "First visit";
     case "visit-place":
-      return "Book a visit";
+      return "Reserve a visit";
     case "visit-party":
       return "Who is coming";
     case "visit-time":

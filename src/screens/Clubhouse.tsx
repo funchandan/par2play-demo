@@ -59,7 +59,7 @@ export function Clubhouse() {
               <button className={lightNav} type="button" onClick={() => flow.goSection("juniors")}>Juniors</button>
               <button className={lightNav} type="button" onClick={() => flow.goSection("venue")}>Venue</button>
               <BookLink offer="bay" tone="line">
-                Book a bay
+                Reserve a bay
               </BookLink>
             </nav>
           ) : (
@@ -94,7 +94,7 @@ export function Clubhouse() {
               Claim a seat
             </a>
             <BookLink offer="bay" tone="line">
-              Book a bay
+              Reserve a bay
             </BookLink>
           </div>
         </div>

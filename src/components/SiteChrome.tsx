@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { Mark } from "./Chrome";
-import { BookLink, buttonFocus } from "./Cta";
+import { MembershipLink, buttonFocus } from "./Cta";
 import { SoundToggle } from "./SoundToggle";
 import { NAP, golfClockBookingReady } from "../data/business";
 import { SITE_NAV, currentRoute, pageHref } from "../data/routes";
@@ -34,9 +34,7 @@ export function SiteHeader() {
         </nav>
         <div className="flex items-center gap-2">
           <SoundToggle className="text-[#0A0F0B]" />
-          <BookLink offer="bay" className="hidden @3xl:inline-flex">
-            Book a bay
-          </BookLink>
+          <MembershipLink className="hidden @3xl:inline-flex">Become a Member</MembershipLink>
           <button
             type="button"
             className={`${navClass} @3xl:hidden`}
@@ -59,9 +57,7 @@ export function SiteHeader() {
               {item.label}
             </a>
           ))}
-          <BookLink offer="bay" className="mt-2 w-fit">
-            Book a bay
-          </BookLink>
+          <MembershipLink className="mt-2 w-fit">Become a Member</MembershipLink>
         </nav>
       )}
     </header>

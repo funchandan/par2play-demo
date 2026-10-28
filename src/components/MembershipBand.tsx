@@ -8,18 +8,18 @@ import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 const benefits: readonly { id: MembershipStepId; word: string; line: string }[] = [
   {
     id: "availability",
-    word: "Preferred bay availability",
-    line: "Members are first in line for the times that suit them.",
+    word: "Member benefits",
+    line: "First in line for the times that suit you.",
   },
   {
     id: "progress",
     word: "Track your progress",
-    line: "Carry, ball speed and spin on every swing, so the change shows from session to session.",
+    line: "Carry, ball speed, and spin.",
   },
   {
     id: "day",
     word: "Fit it around your day",
-    line: "We’ve got you covered whether you’re at the dentist or picking up kids from school.",
+    line: "Dentist visits and school pickup.",
   },
 ];
 
@@ -52,23 +52,23 @@ function FilmToggle({ paused, onToggle }: { paused: boolean; onToggle: () => voi
 function Benefits() {
   return (
     <>
+      <div className="mt-6 flex flex-wrap gap-3">
+        <MembershipLink>Become a Member</MembershipLink>
+        <BookLink offer="bay" tone="line">
+          Try it out
+        </BookLink>
+      </div>
       <ul className="mt-6 grid gap-4 @3xl:mt-8 @3xl:gap-5">
         {benefits.map((benefit) => (
           <li key={benefit.id} className="flex gap-3">
             <MembershipStepIcon id={benefit.id} />
             <div>
-              <h3 className="font-display text-2xl font-semibold leading-tight tracking-tight">{benefit.word}</h3>
-              <p className="mt-1 text-base leading-relaxed">{benefit.line}</p>
+              <h3 className="font-display text-xl font-semibold leading-tight tracking-tight">{benefit.word}</h3>
+              <p className="mt-1 text-base leading-snug">{benefit.line}</p>
             </div>
           </li>
         ))}
       </ul>
-      <div className="mt-8 flex flex-wrap gap-3">
-        <MembershipLink>Book a membership</MembershipLink>
-        <BookLink offer="bay" tone="line">
-          Try it out
-        </BookLink>
-      </div>
     </>
   );
 }

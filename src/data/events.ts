@@ -2,17 +2,17 @@
  * Facts taken from https://par2play.com/events/ and https://par2play.com/holiday-party/.
  * Do not add packages, prices, or venues that those pages do not state.
  */
-export type EventTypeId = "holiday" | "small" | "large" | "birthday" | "company" | "tournament" | "team";
+export type EventTypeId = "corporate" | "parties" | "leagues" | "outings";
 
-/** Type names from par2play.com/events, with one short line that is not a gallery caption. */
+/**
+ * Four categories. Each line only restates a fact already on par2play.com/events
+ * or the holiday page, and it is not a gallery caption.
+ */
 export const EVENT_TYPES: readonly { id: EventTypeId; label: string; line: string }[] = [
-  { id: "holiday", label: "Holiday parties", line: "Groups of 6 to 40." },
-  { id: "small", label: "Small groups", line: "Including bachelor parties." },
-  { id: "large", label: "Large groups", line: "Corporate groups of 50 or more." },
-  { id: "birthday", label: "Kids and teens birthdays", line: "Casual games in a bay." },
-  { id: "company", label: "Company events", line: "Mini-lessons during the visit." },
-  { id: "tournament", label: "Tournaments and fundraisers", line: "Contests on the simulators." },
-  { id: "team", label: "Team building", line: "A shared session in the studio." },
+  { id: "corporate", label: "Corporate & team events", line: "Company visits, team building, and groups of 50 or more." },
+  { id: "parties", label: "Private parties & celebrations", line: "Holiday parties and birthdays, for groups of 6 to 40." },
+  { id: "leagues", label: "Leagues & tournaments", line: "Tournaments, fundraisers, and contests on the simulators." },
+  { id: "outings", label: "Group outings", line: "Small groups, including bachelor parties." },
 ];
 
 export const EVENT_FACTS = [

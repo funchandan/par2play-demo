@@ -2,7 +2,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Activity, Shield, Target, UserRound } from "lucide-react";
 import { bindHeroWatch } from "../audio/soundtrack";
 import { Mark } from "../components/Chrome";
-import { BookLink, HeroMembershipAction, buttonFocus } from "../components/Cta";
+import { BookLink, HeroMembershipAction, MembershipLink, buttonFocus } from "../components/Cta";
 import { HeroProof } from "../components/HeroProof";
 import { MembershipBand } from "../components/MembershipBand";
 import { HeroVideo } from "../components/Media";
@@ -115,9 +115,7 @@ export function Landing() {
           </nav>
           <div className="flex items-center gap-2">
             <SoundToggle className={onFilm ? "text-white" : "text-[#0A0F0B]"} />
-            <BookLink offer="bay" className="hidden @3xl:inline-flex">
-              Book a bay
-            </BookLink>
+            <MembershipLink className="hidden @3xl:inline-flex">Become a Member</MembershipLink>
             <button
               type="button"
               className={`${filmLink} @3xl:hidden`}
@@ -143,9 +141,7 @@ export function Landing() {
                 {item.label}
               </a>
             ))}
-            <BookLink offer="bay" className="mt-2 w-fit">
-              Book a bay
-            </BookLink>
+            <MembershipLink className="mt-2 w-fit">Become a Member</MembershipLink>
           </nav>
         )}
       </header>
@@ -198,7 +194,7 @@ export function Landing() {
               />
             </div>
             <div className="mt-8 flex flex-wrap gap-3">
-              <BookLink offer="swing-evaluation">Book a swing evaluation</BookLink>
+              <BookLink offer="swing-evaluation">Analyze my swing</BookLink>
               <BookLink offer="lesson" tone="line">
                 Schedule a lesson
               </BookLink>
@@ -232,7 +228,7 @@ export function Landing() {
               />
             </div>
             <div className="mt-8">
-              <BookLink offer="junior">Book junior coaching</BookLink>
+              <BookLink offer="junior">Schedule junior coaching</BookLink>
             </div>
           </div>
           <VideoSlot
@@ -269,7 +265,7 @@ export function Landing() {
             rel="noopener noreferrer"
             className={`inline-flex min-h-11 items-center rounded-full border-2 border-[#0A0F0B] bg-white px-5 text-base font-semibold text-[#0A0F0B] hover:bg-[#f3f6f1] ${buttonFocus}`}
           >
-            Events calendar
+            Check availability
           </a>
         </div>
       </section>
