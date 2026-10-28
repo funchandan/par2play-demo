@@ -8,6 +8,7 @@ import { MembershipBand } from "../components/MembershipBand";
 import { HeroVideo, Photo } from "../components/Media";
 import { SoundToggle } from "../components/SoundToggle";
 import { TournamentForm } from "../components/TournamentForm";
+import { EventTypeList } from "../components/EventTypeList";
 import { CommunityStrip, EventGallery } from "../components/PhotoStrips";
 import { UspTicker } from "../components/UspTicker";
 import { VideoSlot } from "../components/VideoSlot";
@@ -245,9 +246,11 @@ export function Landing() {
       <section id="events" className={sectionSpace}>
         <h2 className="font-display text-4xl font-semibold leading-none tracking-tight @5xl:text-6xl">Events</h2>
         <p className="mt-6 max-w-xl text-base leading-relaxed">
-          Holiday parties, birthdays, company events, and tournaments in four enclosed bays. A golf pro can teach
-          mini-lessons and run casual games.
+          Four enclosed bays, with a golf pro for mini-lessons and casual games.
         </p>
+        <div className="mt-6">
+          <EventTypeList />
+        </div>
         <div className="mt-8">
           <EventGallery />
         </div>

@@ -8,7 +8,8 @@ import { TournamentForm } from "../components/TournamentForm";
 import { ValuePoint } from "../components/ValuePoint";
 import { OCLOCK, PRICES } from "../data/business";
 import { PUBLISHED_COACHES } from "../data/coaches";
-import { EVENT_FACTS, EVENT_TYPES, HOLIDAY_FACTS } from "../data/events";
+import { EVENT_FACTS, HOLIDAY_FACTS } from "../data/events";
+import { EventTypeList } from "../components/EventTypeList";
 import { pageHref } from "../data/routes";
 
 function CheckoutLink({ href, children }: { href: string; children: string }) {
@@ -269,19 +270,10 @@ export function EventsPage() {
     <PageFrame>
       <EventHero />
       <article className={pageSpace}>
-        <p className="max-w-2xl text-base leading-relaxed">
-          Par2Play hosts parties and company events in the studio. A golf pro can teach mini-lessons and run casual games.
-        </p>
+        <EventTypeList />
         <div className="mt-8">
           <EventGallery />
         </div>
-        <ul className="mt-8 grid gap-3 @3xl:grid-cols-2">
-          {EVENT_TYPES.map((type) => (
-            <li key={type} className="border-2 border-[#4b5563] bg-white px-4 py-3 text-base font-semibold">
-              {type}
-            </li>
-          ))}
-        </ul>
         <ul className="mt-8 grid max-w-2xl list-disc gap-2 pl-5 text-base leading-relaxed">
           {EVENT_FACTS.map((fact) => (
             <li key={fact}>{fact}</li>

@@ -2,19 +2,22 @@
  * Facts taken from https://par2play.com/events/ and https://par2play.com/holiday-party/.
  * Do not add packages, prices, or venues that those pages do not state.
  */
-export const EVENT_TYPES = [
-  "Holiday parties",
-  "Small groups",
-  "Large groups",
-  "Kids and teens birthday parties",
-  "Company events",
-  "Tournaments and fundraisers",
-  "Team building",
-] as const;
+export type EventTypeId = "holiday" | "small" | "large" | "birthday" | "company" | "tournament" | "team";
+
+/** Type names from par2play.com/events, with one short line that is not a gallery caption. */
+export const EVENT_TYPES: readonly { id: EventTypeId; label: string; line: string }[] = [
+  { id: "holiday", label: "Holiday parties", line: "Groups of 6 to 40." },
+  { id: "small", label: "Small groups", line: "Including bachelor parties." },
+  { id: "large", label: "Large groups", line: "Corporate groups of 50 or more." },
+  { id: "birthday", label: "Kids and teens birthdays", line: "Casual games in a bay." },
+  { id: "company", label: "Company events", line: "Mini-lessons during the visit." },
+  { id: "tournament", label: "Tournaments and fundraisers", line: "Contests on the simulators." },
+  { id: "team", label: "Team building", line: "A shared session in the studio." },
+];
 
 export const EVENT_FACTS = [
   "Four enclosed bays with comfortable seating and HDTVs in the studio.",
-  "Events run from smaller birthday gatherings to corporate groups of 50 or more.",
+  "Associates are there to help host the gathering.",
   "Event hosting includes a golf pro for mini-lessons, the simulators, and casual games.",
   "Packages are worked out around the request. The site does not publish a price list.",
 ] as const;

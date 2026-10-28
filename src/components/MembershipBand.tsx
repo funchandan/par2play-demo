@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { Pause, Play } from "lucide-react";
-import { BookLink, MembershipLink, buttonFocus } from "./Cta";
+import { BookLink, MembershipLink } from "./Cta";
 import { FilmCarousel } from "./FilmCarousel";
 import { MembershipStepIcon, type MembershipStepId } from "./MembershipIcons";
 import { TESTIMONIAL_FILMS } from "../data/films";
@@ -38,17 +37,15 @@ function useWideScreen() {
   return wide;
 }
 
-function FilmControl({ paused, onToggle, className }: { paused: boolean; onToggle: () => void; className: string }) {
+function FilmToggle({ paused, onToggle }: { paused: boolean; onToggle: () => void }) {
   return (
     <button
       type="button"
-      className={`inline-flex size-11 items-center justify-center rounded-full bg-[#020806] text-white hover:bg-white hover:text-[#0A0F0B] ${buttonFocus} ${className}`}
-      onClick={onToggle}
+      className="absolute inset-0 z-10 cursor-default bg-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-white"
       aria-pressed={paused}
       aria-label={paused ? "Play video" : "Pause video"}
-    >
-      {paused ? <Play className="size-5" aria-hidden="true" /> : <Pause className="size-5" aria-hidden="true" />}
-    </button>
+      onClick={onToggle}
+    />
   );
 }
 
@@ -100,7 +97,7 @@ export function MembershipBand() {
             className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#020806] to-transparent"
             aria-hidden="true"
           />
-          {showControl ? <FilmControl paused={paused} onToggle={toggle} className="absolute top-3 right-3 z-20" /> : null}
+          {showControl ? <FilmToggle paused={paused} onToggle={toggle} /> : null}
         </div>
         <div className="px-6 pt-2 pb-10">
           <h2 className="font-display text-4xl font-semibold leading-none tracking-tight">Membership</h2>
@@ -114,13 +111,13 @@ export function MembershipBand() {
           className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#020806] from-6% via-[#020806]/92 via-28% to-transparent to-46%"
           aria-hidden="true"
         />
-        <div className="relative z-10 flex min-h-[36rem] items-center px-12 py-20">
-          <div className="max-w-lg">
+        {showControl ? <FilmToggle paused={paused} onToggle={toggle} /> : null}
+        <div className="pointer-events-none relative z-20 flex min-h-[36rem] items-center px-12 py-20">
+          <div className="pointer-events-auto max-w-lg">
             <h2 className="font-display text-4xl font-semibold leading-none tracking-tight @5xl:text-6xl">Membership</h2>
             <Benefits />
           </div>
         </div>
-        {showControl ? <FilmControl paused={paused} onToggle={toggle} className="absolute top-6 right-6 z-20" /> : null}
       </div>
       )}
     </section>
