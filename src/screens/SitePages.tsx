@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import { CalendarDays, Flag, Target, Users, Wrench } from "lucide-react";
+import { MembershipCalculator } from "../components/MembershipCalculator";
 import { PageFrame, pageSpace } from "../components/SiteChrome";
 import { BookLink, buttonFocus } from "../components/Cta";
 import { TournamentForm } from "../components/TournamentForm";
@@ -40,16 +41,16 @@ const plans = [
     name: "10 Practice Pack",
     price: `$${PRICES.tenPack}`,
     detail: "10 sessions of 60 minutes.",
-    includes: "Ten hour-long visits, paid as one pack.",
+    includes: "Ten hour-long visits. They do not expire.",
     href: OCLOCK.tenPracticePack,
     cta: "Buy the pack",
     best: false,
   },
   {
     name: "Single bay session",
-    price: "Priced at checkout",
-    detail: "One bay rental.",
-    includes: "Book a single visit. The rate is confirmed when you check out.",
+    price: `$${PRICES.baySession}`,
+    detail: "One 60-minute rental.",
+    includes: "One hour in a bay. The slot price is confirmed when you check out.",
     href: OCLOCK.bayRental,
     cta: "Book a bay",
     best: false,
@@ -64,8 +65,9 @@ export function MembershipPage() {
           Membership
         </h1>
         <p className="mt-4 max-w-2xl text-base leading-relaxed">
-          Compare a monthly membership with a ten-visit pack and a single bay rental.
+          Pick how long you will come and how often. The totals update as you go.
         </p>
+        <MembershipCalculator />
         <div className="mt-10 grid gap-4 @3xl:hidden">
           {plans.map((plan) => (
             <PlanCard key={plan.name} plan={plan} />
@@ -110,19 +112,13 @@ export function MembershipPage() {
         <h2 className="mt-16 font-display text-3xl font-semibold tracking-tight">Questions</h2>
         <dl className="mt-6 grid max-w-2xl gap-6">
           <div>
-            <dt className="text-base font-semibold">What does the membership include?</dt>
-            <dd className="mt-1 text-base leading-relaxed">Up to 1 hour in a bay each day, at $200 a month.</dd>
+            <dt className="text-base font-semibold">Do pack sessions expire?</dt>
+            <dd className="mt-1 text-base leading-relaxed">
+              The 10 Practice Pack on GolfClock says the ten sessions never expire.
+            </dd>
           </div>
           <div>
-            <dt className="text-base font-semibold">How is the pack different?</dt>
-            <dd className="mt-1 text-base leading-relaxed">The 10 Practice Pack is $400 for ten 60-minute sessions.</dd>
-          </div>
-          <div>
-            <dt className="text-base font-semibold">What does one bay cost?</dt>
-            <dd className="mt-1 text-base leading-relaxed">A single rental is priced at checkout.</dd>
-          </div>
-          <div>
-            <dt className="text-base font-semibold">Can I cancel?</dt>
+            <dt className="text-base font-semibold">Can I cancel membership?</dt>
             <dd className="mt-1 text-base leading-relaxed">
               The membership page on par2play.com says you can cancel anytime.
             </dd>

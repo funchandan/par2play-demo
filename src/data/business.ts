@@ -47,6 +47,12 @@ export const BAY_WINDOWS = {
 
 export const PRICES = {
   taxIncluded: true,
+  /**
+   * 60-minute bay rental. Live GolfClock rule `rule_bay_rental` is 7000 cents
+   * per resource hour on flow_bf_bay_rental. That flow offers 30, 60, 120, and
+   * 180 minute variants; 30-minute slots show $35. par2play.com says "as low as
+   * $40", which does not match those slots, so the calculator uses this rate.
+   */
   baySession: 70,
   /**
    * TODO(pricing): Atul confirmed a 10-pack exists. No confirmed price is in
