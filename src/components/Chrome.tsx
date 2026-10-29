@@ -52,7 +52,7 @@ export function ClubHeader({ light = false }: { light?: boolean }) {
           </Button>
         )}
         {flow.layout === "web" && flow.step !== "landing" && (
-          <MembershipLink>Join</MembershipLink>
+          <MembershipLink>Become a Member</MembershipLink>
         )}
       </div>
       {flow.layout === "mobile" && open && (

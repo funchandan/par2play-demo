@@ -1,11 +1,9 @@
-import { PHOTOS } from "./photos";
-
 const media = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
 /**
  * Client testimonial films for the membership background.
  * Desktop files are 1280×720. Mobile files are 720×406.
- * Order is the clearest thumbs-up first, then the third clip, then the second.
+ * Order starts with the group countdown, then the earlier three clips.
  */
 export type TestimonialFilm = {
   id: string;
@@ -15,6 +13,12 @@ export type TestimonialFilm = {
 };
 
 export const TESTIMONIAL_FILMS: readonly TestimonialFilm[] = [
+  {
+    id: "testimonial-4",
+    src: media("media/testimonials/testimonial-4.mp4"),
+    srcMobile: media("media/testimonials/testimonial-4-mobile.mp4"),
+    poster: media("media/testimonials/testimonial-4-poster.jpg"),
+  },
   {
     id: "testimonial-1",
     src: media("media/testimonials/testimonial-1.mp4"),
@@ -35,11 +39,20 @@ export const TESTIMONIAL_FILMS: readonly TestimonialFilm[] = [
   },
 ];
 
-/**
- * Coaching film. Set `src` to the MP4 when it is delivered.
- * The poster is the still that used to fill this frame.
- */
 export const COACHING_FILM = {
-  src: "",
-  poster: PHOTOS.coachAndPlayer,
+  src: media("media/coaching/coaching-loop.mp4"),
+  srcMobile: media("media/coaching/coaching-loop-mobile.mp4"),
+  poster: media("media/coaching/coaching-loop-poster.jpg"),
+} as const;
+
+export const JUNIORS_FILM = {
+  src: media("media/juniors/juniors-loop.mp4"),
+  srcMobile: media("media/juniors/juniors-loop-mobile.mp4"),
+  poster: media("media/juniors/juniors-loop-poster.jpg"),
+} as const;
+
+export const EVENTS_HERO_FILM = {
+  src: media("media/events/events-hero.mp4"),
+  srcMobile: media("media/events/events-hero-mobile.mp4"),
+  poster: media("media/events/events-hero-poster.jpg"),
 } as const;

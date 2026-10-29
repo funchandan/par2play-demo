@@ -2,10 +2,10 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Activity, Shield, Target, UserRound } from "lucide-react";
 import { bindHeroWatch } from "../audio/soundtrack";
 import { Mark } from "../components/Chrome";
-import { BookLink, HeroMembershipAction, buttonFocus } from "../components/Cta";
+import { BookLink, HeroMembershipAction, MembershipLink, buttonFocus } from "../components/Cta";
 import { HeroProof } from "../components/HeroProof";
 import { MembershipBand } from "../components/MembershipBand";
-import { HeroVideo, Photo } from "../components/Media";
+import { HeroVideo } from "../components/Media";
 import { SoundToggle } from "../components/SoundToggle";
 import { TournamentForm } from "../components/TournamentForm";
 import { EventTypeList } from "../components/EventTypeList";
@@ -14,9 +14,7 @@ import { UspTicker } from "../components/UspTicker";
 import { VideoSlot } from "../components/VideoSlot";
 import { ValuePoint } from "../components/ValuePoint";
 import { NAP, OCLOCK, golfClockBookingReady } from "../data/business";
-import { COACHING_FILM } from "../data/films";
-import type { PhotoAsset } from "../data/photos";
-import { PHOTOS } from "../data/photos";
+import { COACHING_FILM, JUNIORS_FILM } from "../data/films";
 import { SITE_NAV, pageHref } from "../data/routes";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { useFlow } from "../state/flow";
@@ -24,14 +22,6 @@ import { useFlow } from "../state/flow";
 const sectionSpace = "scroll-mt-32 px-6 py-20 @3xl:px-12 @3xl:py-24";
 
 const navButton = `nav-link inline-flex min-h-11 items-center px-1 text-base font-semibold text-[#0A0F0B] ${buttonFocus}`;
-
-function Frame({ photo, className = "" }: { photo: PhotoAsset; className?: string }) {
-  return (
-    <div className={`frame-in overflow-hidden bg-slate-100 ${className}`}>
-      <Photo photo={photo} />
-    </div>
-  );
-}
 
 function Headline({ text, className }: { text: string; className: string }) {
   const words = text.split(" ");
@@ -107,11 +97,11 @@ export function Landing() {
   return (
     <div ref={scrollRef} className={`@container page-grid text-base text-[#0A0F0B] ${scroll}`}>
       <header
-        className={`sticky z-30 px-6 py-3 @3xl:px-12 ${mobile ? "top-0" : "top-[4.25rem]"} ${onFilm ? "" : "header-bar"}`}
+        className={`sticky z-30 px-6 py-3 @5xl:px-12 ${mobile ? "top-0" : "top-[4.25rem]"} ${onFilm ? "" : "header-bar"}`}
       >
         <div className="flex items-center justify-between gap-4">
           <Mark light={onFilm} />
-          <nav className="hidden items-center gap-6 @3xl:flex" aria-label="Page">
+          <nav className="hidden items-center gap-3 @3xl:flex @5xl:gap-6" aria-label="Page">
             {SITE_NAV.map((item) => (
               <a
                 key={item.slug}
@@ -125,9 +115,9 @@ export function Landing() {
           </nav>
           <div className="flex items-center gap-2">
             <SoundToggle className={onFilm ? "text-white" : "text-[#0A0F0B]"} />
-            <BookLink offer="bay" className="hidden @3xl:inline-flex">
-              Book a bay
-            </BookLink>
+            <span className="hidden @3xl:contents">
+              <MembershipLink className="shrink-0">Become a Member</MembershipLink>
+            </span>
             <button
               type="button"
               className={`${filmLink} @3xl:hidden`}
@@ -153,9 +143,7 @@ export function Landing() {
                 {item.label}
               </a>
             ))}
-            <BookLink offer="bay" className="mt-2 w-fit">
-              Book a bay
-            </BookLink>
+            <MembershipLink className="mt-2 w-fit">Become a Member</MembershipLink>
           </nav>
         )}
       </header>
@@ -187,7 +175,13 @@ export function Landing() {
 
       <section id="coaching" className={sectionSpace}>
         <div className="grid items-start gap-10 @3xl:grid-cols-2 @3xl:gap-16">
-          <VideoSlot src={COACHING_FILM.src} poster={COACHING_FILM.poster} className="aspect-[4/3]" />
+          <VideoSlot
+            src={COACHING_FILM.src}
+            srcMobile={COACHING_FILM.srcMobile}
+            poster={COACHING_FILM.poster}
+            className="aspect-video"
+            pausable
+          />
           <div>
             <h2 className="font-display text-3xl font-semibold leading-none tracking-tight @5xl:text-5xl">Coaching</h2>
             <p className="mt-8 max-w-md font-display text-2xl font-semibold leading-tight tracking-tight">
@@ -202,7 +196,7 @@ export function Landing() {
               />
             </div>
             <div className="mt-8 flex flex-wrap gap-3">
-              <BookLink offer="swing-evaluation">Book a swing evaluation</BookLink>
+              <BookLink offer="swing-evaluation">Analyze my swing</BookLink>
               <BookLink offer="lesson" tone="line">
                 Schedule a lesson
               </BookLink>
@@ -236,10 +230,16 @@ export function Landing() {
               />
             </div>
             <div className="mt-8">
-              <BookLink offer="junior">Book junior coaching</BookLink>
+              <BookLink offer="junior">Schedule junior coaching</BookLink>
             </div>
           </div>
-          <Frame photo={PHOTOS.juniorGroup} className="aspect-[4/3] @3xl:order-1" />
+          <VideoSlot
+            src={JUNIORS_FILM.src}
+            srcMobile={JUNIORS_FILM.srcMobile}
+            poster={JUNIORS_FILM.poster}
+            className="aspect-video @3xl:order-1"
+            pausable
+          />
         </div>
       </section>
 
@@ -267,7 +267,7 @@ export function Landing() {
             rel="noopener noreferrer"
             className={`inline-flex min-h-11 items-center rounded-full border-2 border-[#0A0F0B] bg-white px-5 text-base font-semibold text-[#0A0F0B] hover:bg-[#f3f6f1] ${buttonFocus}`}
           >
-            Events calendar
+            Check availability
           </a>
         </div>
       </section>

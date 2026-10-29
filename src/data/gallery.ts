@@ -1,5 +1,3 @@
-import { PHOTOS } from "./photos";
-
 const file = (path: string) => `${import.meta.env.BASE_URL}media/${path}`;
 
 export type TickerChip = {
@@ -50,26 +48,26 @@ export const TICKER_CHIPS: readonly TickerChip[] = [
   {
     id: "coaches",
     label: "Two PGA professional coaches",
-    webp: PHOTOS.coachAndPlayer.webp,
-    jpg: PHOTOS.coachAndPlayer.jpg,
+    webp: file("ticker/coaching.webp"),
+    jpg: file("ticker/coaching.jpg"),
   },
   {
     id: "fitting",
     label: "Club fitting",
-    webp: PHOTOS.clubRack.webp,
-    jpg: PHOTOS.clubRack.jpg,
+    webp: file("ticker/club-fitting.webp"),
+    jpg: file("ticker/club-fitting.jpg"),
   },
   {
     id: "juniors",
     label: "Junior coaching",
-    webp: PHOTOS.juniorGroup.webp,
-    jpg: PHOTOS.juniorGroup.jpg,
+    webp: file("ticker/junior-coaching.webp"),
+    jpg: file("ticker/junior-coaching.jpg"),
   },
   {
     id: "events",
     label: "Leagues and events",
-    webp: file("events/event-5-800.webp"),
-    jpg: file("events/event-5.webp"),
+    webp: file("ticker/leagues-events.webp"),
+    jpg: file("ticker/leagues-events.jpg"),
   },
 ];
 
@@ -84,48 +82,143 @@ export type GalleryPhoto = {
 
 export const EVENT_GALLERY: readonly GalleryPhoto[] = [
   {
-    id: "event-2",
-    alt: "Catered dessert table with cookies, pastries and brownies on tiered stands",
-    src800: file("events/event-2-800.webp"),
-    src1600: file("events/event-2.webp"),
+    id: "group-cheer",
+    alt: "A smiling group waving in front of a golf simulator screen",
+    src800: file("events/event-group-cheer-800.webp"),
+    src1600: file("events/event-group-cheer.webp"),
     width: 1600,
-    height: 1067,
+    height: 900,
   },
   {
-    id: "event-3",
-    alt: "Drinks station with bottles of wine on ice and rows of glasses",
-    src800: file("events/event-3-800.webp"),
-    src1600: file("events/event-3.webp"),
+    id: "group-photo",
+    alt: "A large group posing together on the hitting mat in front of a simulator screen",
+    src800: file("events/event-group-photo-800.webp"),
+    src1600: file("events/event-group-photo.webp"),
     width: 1600,
-    height: 1067,
+    height: 900,
   },
   {
-    id: "event-4",
-    alt: "Buffet table of baked goods and sweets with holiday decorations",
-    src800: file("events/event-4-800.webp"),
-    src1600: file("events/event-4.webp"),
+    id: "crowd",
+    alt: "Event guests lined up watching a friend swing in the simulator lounge",
+    src800: file("events/event-crowd-watching-swing-800.webp"),
+    src1600: file("events/event-crowd-watching-swing.webp"),
     width: 1600,
-    height: 1067,
+    height: 900,
   },
   {
-    id: "event-5",
-    alt: "Two men laughing during birthday karaoke, one singing into a microphone",
-    src800: file("events/event-5-800.webp"),
-    src1600: file("events/event-5.webp"),
+    id: "lounge",
+    alt: "Guests gathered around a simulator bay watching a player during an event",
+    src800: file("events/event-lounge-watching-800.webp"),
+    src1600: file("events/event-lounge-watching.webp"),
     width: 1600,
-    height: 1164,
+    height: 900,
   },
   {
-    id: "event-6",
-    alt: "Couple smiling in front of the illuminated Par2Play sign at a holiday event",
-    src800: file("events/event-6-800.webp"),
-    src1600: file("events/event-6.webp"),
+    id: "bays",
+    alt: "Several simulator bays in use with golfers of different ages",
+    src800: file("events/event-bays-in-use-800.webp"),
+    src1600: file("events/event-bays-in-use.webp"),
     width: 1600,
-    height: 1067,
+    height: 900,
   },
 ];
 
-export const EVENT_HERO = EVENT_GALLERY[4];
+export const COACHING_GALLERY: readonly GalleryPhoto[] = [
+  {
+    id: "demo",
+    alt: "A coach explaining a swing point to a student in front of the simulator screen",
+    src800: file("coaching/coaching-demo-800.webp"),
+    src1600: file("coaching/coaching-demo.webp"),
+    width: 1600,
+    height: 900,
+  },
+  {
+    id: "grip",
+    alt: "A coach crouching to adjust a young golfer's grip during a lesson",
+    src800: file("coaching/coaching-grip-adjust-800.webp"),
+    src1600: file("coaching/coaching-grip-adjust.webp"),
+    width: 1600,
+    height: 900,
+  },
+  {
+    id: "setup",
+    alt: "A coach checking a golfer's setup at address in a simulator bay",
+    src800: file("coaching/coaching-setup-check-800.webp"),
+    src1600: file("coaching/coaching-setup-check.webp"),
+    width: 1600,
+    height: 900,
+  },
+];
+
+export const JUNIORS_GALLERY: readonly GalleryPhoto[] = [
+  {
+    id: "clinic",
+    alt: "Junior golfers lined up watching a coach's demonstration at a simulator bay",
+    src800: file("juniors/juniors-clinic-line-800.webp"),
+    src1600: file("juniors/juniors-clinic-line.webp"),
+    width: 1600,
+    height: 900,
+  },
+  {
+    id: "group",
+    alt: "A coach and a junior golfer at the front of a group lesson, with young players watching",
+    src800: file("juniors/juniors-group-lesson-800.webp"),
+    src1600: file("juniors/juniors-group-lesson.webp"),
+    width: 1600,
+    height: 900,
+  },
+  {
+    id: "one",
+    alt: "A coach helping a young golfer with setup in a simulator bay",
+    src800: file("juniors/juniors-one-on-one-800.webp"),
+    src1600: file("juniors/juniors-one-on-one.webp"),
+    width: 1600,
+    height: 900,
+  },
+  {
+    id: "swing",
+    alt: "A young golfer practising swings while a coach watches",
+    src800: file("juniors/juniors-swing-practice-800.webp"),
+    src1600: file("juniors/juniors-swing-practice.webp"),
+    width: 1600,
+    height: 900,
+  },
+];
+
+export const FITTING_GALLERY: readonly GalleryPhoto[] = [
+  {
+    id: "workshop",
+    alt: "A staff member working on a golf club grip at the pro shop counter",
+    src800: file("fitting/fitting-club-workshop-800.webp"),
+    src1600: file("fitting/fitting-club-workshop.webp"),
+    width: 1600,
+    height: 900,
+  },
+  {
+    id: "grip",
+    alt: "A staff member checking a club grip at the pro shop counter",
+    src800: file("fitting/fitting-grip-check-800.webp"),
+    src1600: file("fitting/fitting-grip-check.webp"),
+    width: 1600,
+    height: 900,
+  },
+  {
+    id: "cart",
+    alt: "A fitting cart of interchangeable iron heads",
+    src800: file("fitting/fitting-ping-cart-800.webp"),
+    src1600: file("fitting/fitting-ping-cart.webp"),
+    width: 1600,
+    height: 900,
+  },
+  {
+    id: "analysis",
+    alt: "Swing analysis software showing a golfer's swing on monitors",
+    src800: file("fitting/fitting-swing-analysis-800.webp"),
+    src1600: file("fitting/fitting-swing-analysis.webp"),
+    width: 1600,
+    height: 900,
+  },
+];
 
 /** community-8 is omitted. The frame is weak and is not shown. */
 export const COMMUNITY_GALLERY: readonly GalleryPhoto[] = [

@@ -160,7 +160,7 @@ export function MembershipCalculator() {
           perSession={estimate.membership.perSession}
           detail={estimate.membership.detail}
           href={OCLOCK.practiceUnlimited}
-          cta="Book a membership"
+          cta="Become a Member"
           summary={summary}
           featured={estimate.saveOverMonths > 0}
           callout={
@@ -175,7 +175,7 @@ export function MembershipCalculator() {
           perSession={estimate.payg.perSession}
           detail={estimate.payg.detail}
           href={OCLOCK.bayRental}
-          cta="Book a bay"
+          cta="Reserve a bay"
           featured={false}
         />
         <Column

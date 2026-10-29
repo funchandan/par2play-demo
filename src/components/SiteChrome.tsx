@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { Mark } from "./Chrome";
-import { BookLink, buttonFocus } from "./Cta";
+import { MembershipLink, buttonFocus } from "./Cta";
 import { SoundToggle } from "./SoundToggle";
 import { NAP, golfClockBookingReady } from "../data/business";
 import { SITE_NAV, currentRoute, pageHref } from "../data/routes";
@@ -15,12 +15,12 @@ export function SiteHeader() {
   const mobile = useFlow().layout === "mobile";
 
   return (
-    <header className={`header-bar sticky z-30 px-6 py-3 @3xl:px-12 ${mobile ? "top-0" : "top-[4.25rem]"}`}>
+    <header className={`header-bar sticky z-30 px-6 py-3 @5xl:px-12 ${mobile ? "top-0" : "top-[4.25rem]"}`}>
       <div className="flex items-center justify-between gap-4">
         <a href={pageHref("")} className={`inline-flex min-h-11 items-center ${buttonFocus}`}>
           <Mark />
         </a>
-        <nav className="hidden items-center gap-6 @3xl:flex" aria-label="Page">
+        <nav className="hidden items-center gap-3 @3xl:flex @5xl:gap-6" aria-label="Page">
           {SITE_NAV.map((item) => (
             <a
               key={item.slug}
@@ -34,9 +34,9 @@ export function SiteHeader() {
         </nav>
         <div className="flex items-center gap-2">
           <SoundToggle className="text-[#0A0F0B]" />
-          <BookLink offer="bay" className="hidden @3xl:inline-flex">
-            Book a bay
-          </BookLink>
+          <span className="hidden @3xl:contents">
+            <MembershipLink className="shrink-0">Become a Member</MembershipLink>
+          </span>
           <button
             type="button"
             className={`${navClass} @3xl:hidden`}
@@ -59,9 +59,7 @@ export function SiteHeader() {
               {item.label}
             </a>
           ))}
-          <BookLink offer="bay" className="mt-2 w-fit">
-            Book a bay
-          </BookLink>
+          <MembershipLink className="mt-2 w-fit">Become a Member</MembershipLink>
         </nav>
       )}
     </header>

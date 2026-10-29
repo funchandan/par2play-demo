@@ -206,7 +206,7 @@ export function PlaceStep() {
   return (
     <ChoiceQuestion
       name="place"
-      eyebrow={visit ? "Book a visit · 1 of 3" : "Qualify · 3 of 4"}
+      eyebrow={visit ? "Reserve a visit · 1 of 3" : "Qualify · 3 of 4"}
       title="Where will you play?"
       progress={visit ? 33 : 75}
       value={flow.answers.place}
@@ -245,7 +245,7 @@ export function PartyStep() {
   return (
     <ChoiceQuestion
       name="party"
-      eyebrow="Book a visit · 2 of 3"
+      eyebrow="Reserve a visit · 2 of 3"
       title="How many people is this visit?"
       progress={66}
       value={flow.answers.party}
