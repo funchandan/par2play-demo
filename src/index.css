@@ -277,6 +277,18 @@ h3,
   background: #fff;
 }
 
+.pace-slider-on-dark::-webkit-slider-runnable-track {
+  background: linear-gradient(
+    to right,
+    #14d45e 0 var(--pace, 0%),
+    rgb(255 255 255 / 0.28) var(--pace, 0%) 100%
+  );
+}
+
+.pace-slider-on-dark::-moz-range-track {
+  background: rgb(255 255 255 / 0.28);
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .pace-bar {
     transition: width 0.28s ease; /* taste-skill-ignore */
