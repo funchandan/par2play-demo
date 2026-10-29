@@ -105,6 +105,14 @@ export const COMPARE_HOURS_MAX = 16;
 export const HOURS_PER_WEEK_MAX = 7;
 
 /**
+ * Fraction off Silver and Gold when billed annually. Null hides the Save chip.
+ * Platinum is already an annual plan and is not discounted again.
+ */
+export const ANNUAL_PLAN_DISCOUNT: number | null = 0.1;
+
+export type BillingPeriod = "month" | "year";
+
+/**
  * First hour in a month where pay-as-you-go costs at least as much as Practice Unlimited.
  * $200 / $70 is 2.86, so that hour is the 3rd.
  */
@@ -211,6 +219,19 @@ export const JUNIOR_TIER_QUOTE =
 export function tierMonthCost(tier: MemberTier, monthHours: number): number {
   const extra = Math.max(0, monthHours - tier.includedHours);
   return tier.monthlyFee + extra * PRICES.baySession * (1 - tier.bayDiscount);
+}
+
+/** Monthly fee after the annual discount. Platinum stays on its published year price. */
+export function effectiveMonthlyFee(tier: MemberTier, period: BillingPeriod): number {
+  if (period === "month" || tier.yearlyFee != null || ANNUAL_PLAN_DISCOUNT == null) return tier.monthlyFee;
+  return tier.monthlyFee * (1 - ANNUAL_PLAN_DISCOUNT);
+}
+
+/** What this pace costs on a tier for the selected billing view. */
+export function periodPaceTotal(tier: MemberTier, monthHours: number, period: BillingPeriod): number {
+  const extra = Math.max(0, monthHours - tier.includedHours);
+  const monthly = effectiveMonthlyFee(tier, period) + extra * PRICES.baySession * (1 - tier.bayDiscount);
+  return period === "year" ? monthly * 12 : monthly;
 }
 
 export function quoteWeek(hoursPerWeek: number): WeekPace & { tiers: TierQuote[]; best: TierQuote; normal: number } {
