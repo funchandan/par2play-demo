@@ -1,0 +1,108 @@
+import type { ReactNode } from "react";
+import { BookLink } from "./Cta";
+import { OfferTicker, type OfferBenefit } from "./OfferTicker";
+import { VideoSlot } from "./VideoSlot";
+import type { BookingOffer } from "../data/business";
+
+const figureClass =
+  "mt-3 max-w-full font-display text-[clamp(2.25rem,14cqi,6rem)] font-semibold leading-none tracking-tight text-white @3xl:text-8xl";
+
+export function PricingHero({
+  id,
+  heading,
+  figure,
+  live,
+  selector,
+  comparison,
+  primary,
+  secondary,
+  film,
+  benefits,
+}: {
+  id: string;
+  heading: string;
+  figure: string;
+  live: string;
+  selector?: ReactNode;
+  comparison?: ReactNode;
+  primary: { offer: BookingOffer; label: string };
+  secondary?: { offer: BookingOffer; label: string };
+  film: { src: string; srcMobile?: string; poster: string };
+  benefits: readonly OfferBenefit[];
+}) {
+  return (
+    <section id={id} aria-labelledby={`${id}-heading`} className="@container min-w-0 overflow-hidden rounded-3xl bg-[#020806] @3xl:grid @3xl:grid-cols-2">
+      <div className="flex min-w-0 flex-col justify-center bg-[radial-gradient(120%_80%_at_0%_0%,rgb(20_212_94/0.16),transparent_52%)] px-5 pt-8 @3xl:px-12 @3xl:py-14">
+        <h1 id={`${id}-heading`} className="font-display text-2xl font-semibold tracking-tight text-[#7DFFB0]">
+          {heading}
+        </h1>
+        <div aria-live="polite" aria-atomic="true" className="mt-2">
+          <p className="sr-only">{live}</p>
+          <p className={figureClass}>{figure}</p>
+        </div>
+        {selector ? <div className="mt-6 min-w-0">{selector}</div> : null}
+        {comparison ? <div className="mt-6 min-w-0">{comparison}</div> : null}
+        <div className="mt-6 grid w-full grid-cols-1 gap-3 @3xl:inline-grid @3xl:w-auto @3xl:grid-cols-2">
+          <BookLink className="w-full" offer={primary.offer}>
+            {primary.label}
+          </BookLink>
+          {secondary ? (
+            <BookLink className="w-full" offer={secondary.offer} tone="inverted">
+              {secondary.label}
+            </BookLink>
+          ) : null}
+        </div>
+        <div className="-mx-5 mt-6 @3xl:hidden">
+          <OfferTicker items={benefits} />
+        </div>
+      </div>
+      <div className="relative flex min-h-72 w-full min-w-0 flex-col justify-end overflow-hidden @3xl:min-h-full">
+        <VideoSlot src={film.src} srcMobile={film.srcMobile} poster={film.poster} className="absolute inset-0 h-full w-full" pausable />
+        <div className="relative z-20 hidden @3xl:block">
+          <OfferTicker items={benefits} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PriceCell({ label, value, hot }: { label: string; value: string; hot: boolean }) {
+  return (
+    <div
+      className={
+        hot
+          ? "min-w-0 rounded-2xl border-2 border-[#14D45E] bg-[#0c2416] p-3 shadow-[0_0_36px_rgb(20_212_94/0.22)] @3xl:p-4"
+          : "min-w-0 rounded-2xl border border-white/25 bg-white/5 p-3 @3xl:p-4"
+      }
+    >
+      <p className={`text-xs font-semibold uppercase leading-tight tracking-[0.04em] @3xl:text-sm ${hot ? "text-[#7DFFB0]" : "text-[#E5E7EB]"}`}>{label}</p>
+      <p className={`mt-3 font-display text-2xl font-semibold leading-none tabular-nums @3xl:text-4xl ${hot ? "text-[#7DFFB0]" : "text-[#E5E7EB]"}`}>{value}</p>
+    </div>
+  );
+}
+
+export function CompareBoxes({
+  mutedLabel,
+  muted,
+  highlightLabel,
+  highlight,
+  note,
+  emphasized = "right",
+}: {
+  mutedLabel: string;
+  muted: string;
+  highlightLabel: string;
+  highlight: string;
+  note?: string;
+  emphasized?: "left" | "right";
+}) {
+  return (
+    <div>
+      <div className="grid min-w-0 grid-cols-2 gap-3">
+        <PriceCell label={mutedLabel} value={muted} hot={emphasized === "left"} />
+        <PriceCell label={highlightLabel} value={highlight} hot={emphasized === "right"} />
+      </div>
+      {note ? <p className="mt-3 border-t border-dashed border-white/40 pt-3 text-xl font-semibold text-white">{note}</p> : null}
+    </div>
+  );
+}
