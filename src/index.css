@@ -210,11 +210,18 @@ h3,
 }
 
 .usp-marquee:hover .usp-track,
-.usp-marquee:focus-within .usp-track {
+.usp-marquee:focus-within .usp-track,
+.benefit-marquee:hover .benefit-track,
+.benefit-marquee:focus-within .benefit-track {
   animation-play-state: paused;
 }
 
-.usp-static {
+.benefit-track {
+  animation: usp-marquee 36s linear infinite;
+}
+
+.usp-static,
+.benefit-static {
   display: none;
 }
 
@@ -296,11 +303,16 @@ h3,
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .usp-marquee {
+  .usp-marquee,
+  .benefit-marquee {
     display: none;
   }
 
   .usp-static {
     display: block;
+  }
+
+  .benefit-static {
+    display: flex;
   }
 }

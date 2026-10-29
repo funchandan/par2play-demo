@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from "react";
+import { BenefitTicker } from "./BenefitTicker";
 import { VideoSlot } from "./VideoSlot";
 import { BookLink, buttonFocus } from "./Cta";
 import { NAP, OCLOCK, PRICES } from "../data/business";
@@ -283,7 +284,10 @@ export function MembershipCalculator() {
             </BookLink>
           </div>
         </div>
-        <VideoSlot src={FILM.src} srcMobile={FILM.srcMobile} poster={FILM.poster} className="min-h-56 @3xl:min-h-full" pausable />
+        <div className="relative flex min-h-72 flex-col justify-end @3xl:min-h-full">
+          <VideoSlot src={FILM.src} srcMobile={FILM.srcMobile} poster={FILM.poster} className="absolute inset-0" pausable />
+          <BenefitTicker />
+        </div>
       </section>
 
       <section aria-labelledby="tiers-heading">
