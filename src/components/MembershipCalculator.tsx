@@ -1,10 +1,11 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { CalendarDays, Clock, SunMedium, Undo2, type LucideIcon } from "lucide-react";
 import { BookLink, MembershipLink } from "./Cta";
 import { VideoSlot } from "./VideoSlot";
-import { NAP, PRICES } from "../data/business";
+import { NAP, PRICES, bookingHref, membershipHref } from "../data/business";
 import { TESTIMONIAL_FILMS } from "../data/films";
 import { COMPARE_HOURS_MAX, SESSIONS_PER_PACK, estimateMonth, money } from "../data/membershipEstimate";
+import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 
 /** 30-minute bay slots show $35. The hour rate is PRICES.baySession. */
 const HALF_HOUR = PRICES.baySession / 2;
@@ -36,19 +37,46 @@ const benefits: readonly { title: string; line: string; icon: LucideIcon }[] = [
 
 const badge = "inline-flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#10281A] text-[#14D45E]";
 
-function ordinal(hour: number): string {
-  const mod = hour % 100;
-  if (mod >= 11 && mod <= 13) return `${hour}th`;
-  switch (hour % 10) {
-    case 1:
-      return `${hour}st`;
-    case 2:
-      return `${hour}nd`;
-    case 3:
-      return `${hour}rd`;
-    default:
-      return `${hour}th`;
-  }
+function useAnimatedAmount(target: number, reduce: boolean): number {
+  const [value, setValue] = useState(target);
+  const valueRef = useRef(target);
+
+  useEffect(() => {
+    const from = valueRef.current;
+    if (reduce || from === target) {
+      valueRef.current = target;
+      setValue(target);
+      return;
+    }
+    const start = performance.now();
+    const duration = 320;
+    let frame = 0;
+    const step = (now: number) => {
+      const progress = Math.min(1, (now - start) / duration);
+      const eased = 1 - (1 - progress) ** 3;
+      const next = Math.round(from + (target - from) * eased);
+      valueRef.current = next;
+      setValue(next);
+      if (progress < 1) frame = requestAnimationFrame(step);
+    };
+    frame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frame);
+  }, [target, reduce]);
+
+  return value;
+}
+
+function QuietLink({ href, children }: { href: string; children: string }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="aa-focus-ink inline-flex min-h-11 items-center text-base font-semibold text-white underline decoration-2 underline-offset-4"
+    >
+      {children}
+    </a>
+  );
 }
 
 function CostBar({
@@ -58,6 +86,7 @@ function CostBar({
   fill,
   marker,
   thick = false,
+  onDark = false,
 }: {
   label: string;
   amount: number;
@@ -65,16 +94,20 @@ function CostBar({
   fill: string;
   marker: string;
   thick?: boolean;
+  onDark?: boolean;
 }) {
+  const ink = onDark ? "text-white" : "text-[#0A0F0B]";
+  const line = onDark ? "bg-white" : "bg-[#0A0F0B]";
+  const track = onDark ? "bg-white/15" : "bg-[#0A0F0B]/10";
   return (
     <div>
       <div className="flex items-baseline justify-between gap-3">
-        <p className="text-base font-semibold text-white">{label}</p>
-        <p className="text-base font-semibold text-white tabular-nums">{money(amount)}</p>
+        <p className={`text-base font-semibold ${ink}`}>{label}</p>
+        <p className={`text-base font-semibold tabular-nums ${ink}`}>{money(amount)}</p>
       </div>
-      <div className={`relative mt-1 rounded-full bg-white/15 ${thick ? "h-3.5" : "h-2"}`}>
+      <div className={`relative mt-1 rounded-full ${track} ${thick ? "h-3.5" : "h-2"}`}>
         <div className={`pace-bar absolute inset-y-0 left-0 rounded-full ${fill}`} style={{ width }} />
-        <div className="absolute inset-y-[-7px] w-0.5 bg-white" style={{ left: marker }} />
+        <div className={`absolute inset-y-[-7px] w-0.5 ${line}`} style={{ left: marker }} />
       </div>
     </div>
   );
@@ -82,51 +115,60 @@ function CostBar({
 
 export function MembershipCalculator() {
   const [hours, setHours] = useState(8);
+  const reduce = usePrefersReducedMotion();
   const sliderId = useId();
   const pace = estimateMonth(hours);
   const wins = pace.saveVsPayg > 0;
+  const shownPayg = useAnimatedAmount(pace.payg, reduce);
+  const shownSave = useAnimatedAmount(Math.max(0, pace.saveVsPayg), reduce);
   const marker = `${(pace.membership / SCALE) * 100}%`;
+  const breakAt = `${((pace.breakEvenHour - 1) / (COMPARE_HOURS_MAX - 1)) * 100}%`;
   const widthOf = (amount: number) => `${Math.min(100, (amount / SCALE) * 100)}%`;
   const hourWord = pace.hours === 1 ? "hour" : "hours";
-  const callout = wins
-    ? `At ${pace.hours} ${hourWord} you'd pay ${money(pace.payg)} pay-as-you-go. Members pay ${money(pace.membership)} and save ${money(pace.saveVsPayg)}.`
-    : `At ${pace.hours} ${hourWord} you'd pay ${money(pace.payg)} pay-as-you-go. Members pay ${money(pace.membership)}.`;
   const setPace = (next: number) => setHours(estimateMonth(next).hours);
   const paceFill = `${((pace.hours - 1) / (COMPARE_HOURS_MAX - 1)) * 100}%`;
-  const live = `${callout} Bay time: up to 1 hour a day, or ${money(pace.perHourPayg)} an hour, or ${SESSIONS_PER_PACK} sessions in a pack. Per hour now: membership ${money(pace.perHourMembership)}, pack ${money(pace.perHourPack)}.`;
+  const live = wins
+    ? `Pay as you go ${money(pace.payg)}. Membership ${money(pace.membership)}. You save ${money(pace.saveVsPayg)} a month.`
+    : `At ${pace.hours} ${hourWord}, pay as you go is ${money(pace.payg)}. Just come try it.`;
 
   return (
     <div className="grid gap-16 @3xl:gap-24">
       <section id="why-membership" aria-labelledby="why-membership-heading" className="overflow-hidden rounded-3xl bg-[#020806] @3xl:grid @3xl:grid-cols-2">
         <div className="flex flex-col justify-center px-6 py-8 @3xl:px-10 @3xl:py-12">
-          <h1 id="why-membership-heading" className="font-display text-4xl font-semibold leading-none tracking-tight text-white @5xl:text-6xl">
+          <h1 id="why-membership-heading" className="text-base font-semibold uppercase tracking-[0.14em] text-[#7DFFB0]">
             Membership
           </h1>
-          <p className="mt-4 text-base font-semibold text-[#7DFFB0]">Practice Unlimited</p>
-          <p className="mt-2 font-display text-6xl font-semibold leading-none tracking-tight text-white">
-            {money(PRICES.unlimitedMonthly)}
-            <span className="text-2xl">/mo</span>
+          <p className="mt-3 text-base font-semibold text-white">
+            {money(PRICES.unlimitedMonthly)}/mo · up to 1 hour a day
           </p>
-          <p className="mt-4 max-w-md text-base leading-snug text-white">
-            Up to 1 hour a day. It pays for itself by the {ordinal(pace.breakEvenHour)} hour, against ${PRICES.baySession} an hour.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <MembershipLink>Become a Member</MembershipLink>
-            <BookLink offer="bay" tone="inverted">
-              Try it out
-            </BookLink>
+          <div aria-live="polite" aria-atomic="true" className="mt-6">
+            <p className="sr-only">{live}</p>
+            {wins ? (
+              <p className="font-display text-6xl font-semibold leading-none tracking-tight text-white @5xl:text-7xl">
+                <span className="mr-3 text-4xl text-[#E5E7EB] line-through decoration-2 @5xl:text-5xl">{money(shownPayg)}</span>
+                {money(pace.membership)}
+              </p>
+            ) : (
+              <p className="font-display text-6xl font-semibold leading-none tracking-tight text-white @5xl:text-7xl">
+                {money(shownPayg)}
+              </p>
+            )}
+            <p className="mt-3 text-xl font-semibold leading-snug text-white @5xl:text-2xl">
+              {wins ? (
+                <>
+                  You save <span className="text-[#7DFFB0]">{money(shownSave)}</span> a month
+                </>
+              ) : (
+                <>
+                  At {pace.hours} {hourWord}, pay as you go is {money(pace.payg)}. Just come try it.
+                </>
+              )}
+            </p>
           </div>
-          <p className="mt-3 max-w-md text-base leading-snug text-white">You're welcome to just come try it.</p>
-
-          <div className="mt-8 border-t border-white/20 pt-6">
-            <div className="flex items-end justify-between gap-4">
-              <label htmlFor={sliderId} className="text-base font-semibold text-white">
-                Hours this month
-              </label>
-              <output htmlFor={sliderId} className="font-display text-4xl font-semibold leading-none text-[#7DFFB0] tabular-nums">
-                {pace.hours}
-              </output>
-            </div>
+          <div className="mt-6">
+            <label htmlFor={sliderId} className="text-base font-semibold text-white">
+              Hours you play a month
+            </label>
             <div className="mt-3 flex items-center gap-3">
               <button
                 type="button"
@@ -136,18 +178,32 @@ export function MembershipCalculator() {
               >
                 −
               </button>
-              <input
-                id={sliderId}
-                className="pace-slider pace-slider-on-dark"
-                type="range"
-                min={1}
-                max={COMPARE_HOURS_MAX}
-                step={1}
-                value={pace.hours}
-                style={{ ["--pace" as string]: paceFill }}
-                aria-valuetext={`${pace.hours} ${hourWord} this month`}
-                onChange={(event) => setPace(Number(event.target.value))}
-              />
+              <div className="relative min-w-0 flex-1">
+                <input
+                  id={sliderId}
+                  className="pace-slider pace-slider-on-dark"
+                  type="range"
+                  min={1}
+                  max={COMPARE_HOURS_MAX}
+                  step={1}
+                  value={pace.hours}
+                  style={{ ["--pace" as string]: paceFill }}
+                  aria-valuetext={`${pace.hours} ${hourWord} you play a month`}
+                  onChange={(event) => setPace(Number(event.target.value))}
+                />
+                <span
+                  className="pointer-events-none absolute top-1/2 h-4 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-[#7DFFB0]"
+                  style={{ left: breakAt }}
+                  aria-hidden="true"
+                />
+                <span
+                  className="pointer-events-none absolute top-full -translate-x-1/2 text-sm font-semibold text-[#7DFFB0]"
+                  style={{ left: breakAt }}
+                  aria-hidden="true"
+                >
+                  {pace.breakEvenHour}
+                </span>
+              </div>
               <button
                 type="button"
                 className="aa-focus-ink inline-flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-white text-2xl font-semibold text-white"
@@ -157,37 +213,24 @@ export function MembershipCalculator() {
                 +
               </button>
             </div>
-            <div aria-live="polite" aria-atomic="true" className="mt-5">
-              <p className="sr-only">{live}</p>
-              <p className="max-w-xl text-xl font-semibold leading-snug text-white">
-                {wins ? (
-                  <>
-                    At {pace.hours} {hourWord} you'd pay {money(pace.payg)} pay-as-you-go. Members pay {money(pace.membership)} and save{" "}
-                    <span className="text-[#7DFFB0]">{money(pace.saveVsPayg)}</span>.
-                  </>
-                ) : (
-                  callout
-                )}
-              </p>
-              {wins ? <p className="mt-2 w-fit rounded-full bg-[#14D45E] px-3 py-1 text-sm font-semibold text-[#0A0F0B]">Best value</p> : null}
+          </div>
+          <div className="mt-7">
+            {wins ? (
+              <MembershipLink className="w-full @3xl:w-fit">
+                Become a Member, save {money(pace.saveVsPayg)}
+              </MembershipLink>
+            ) : (
+              <BookLink offer="bay" className="w-full @3xl:w-fit">
+                Try it out
+              </BookLink>
+            )}
+            <div className="mt-2">
+              {wins ? (
+                <QuietLink href={bookingHref("bay")}>Try it out</QuietLink>
+              ) : (
+                <QuietLink href={membershipHref()}>Become a Member</QuietLink>
+              )}
             </div>
-            <div className="mt-5 grid gap-3">
-              <CostBar label="Pay as you go" amount={pace.payg} width={widthOf(pace.payg)} fill="bg-[#9CA3AF]" marker={marker} />
-              <CostBar label="10 Practice Pack" amount={pace.pack} width={widthOf(pace.pack)} fill="bg-[#5C6560]" marker={marker} />
-              <CostBar
-                label="Practice Unlimited"
-                amount={pace.membership}
-                width={widthOf(pace.membership)}
-                fill="bg-[#14D45E]"
-                marker={marker}
-                thick
-              />
-            </div>
-            <p className="relative mt-2 h-6 text-sm font-semibold text-white">
-              <span className="absolute -translate-x-1/2 whitespace-nowrap" style={{ left: marker }}>
-                {ordinal(pace.breakEvenHour)} hour
-              </span>
-            </p>
           </div>
         </div>
         <VideoSlot
@@ -197,6 +240,21 @@ export function MembershipCalculator() {
           className="min-h-56 @3xl:min-h-full"
           pausable
         />
+      </section>
+
+      <section aria-label="Monthly cost">
+        <div className="grid gap-4">
+          <CostBar label="Pay as you go" amount={pace.payg} width={widthOf(pace.payg)} fill="bg-[#4b5563]" marker={marker} />
+          <CostBar label="10 Practice Pack" amount={pace.pack} width={widthOf(pace.pack)} fill="bg-[#5C6560]" marker={marker} />
+          <CostBar
+            label="Practice Unlimited"
+            amount={pace.membership}
+            width={widthOf(pace.membership)}
+            fill="bg-[#14D45E]"
+            marker={marker}
+            thick
+          />
+        </div>
       </section>
 
       <section aria-labelledby="perk-heading">
