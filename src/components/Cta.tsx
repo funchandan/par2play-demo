@@ -48,14 +48,17 @@ export function MembershipLink({
   children,
   tone = "brand",
   className = "",
+  href,
 }: {
   children: ReactNode;
   tone?: Tone;
   className?: string;
+  /** Overrides the Practice Unlimited product. The membership page passes the live carousel. */
+  href?: string;
 }) {
-  const href = membershipHref();
+  const target = href ?? membershipHref();
   return (
-    <a href={href} className={`${tones[tone]} ${className}`} {...externalProps(href)}>
+    <a href={target} className={`${tones[tone]} ${className}`} {...externalProps(target)}>
       {children}
     </a>
   );

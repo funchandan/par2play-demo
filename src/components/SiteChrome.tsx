@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Mark } from "./Chrome";
 import { MembershipLink, buttonFocus } from "./Cta";
 import { SoundToggle } from "./SoundToggle";
-import { NAP, golfClockBookingReady } from "../data/business";
+import { NAP, OCLOCK, golfClockBookingReady } from "../data/business";
 import { SITE_NAV, currentRoute, pageHref } from "../data/routes";
 import { useFlow } from "../state/flow";
 
@@ -35,7 +35,9 @@ export function SiteHeader() {
         <div className="flex items-center gap-2">
           <SoundToggle className="text-[#0A0F0B]" />
           <span className="hidden @3xl:contents">
-            <MembershipLink className="shrink-0">Become a Member</MembershipLink>
+            <MembershipLink href={route === "membership" ? OCLOCK.liveMembership : undefined} className="shrink-0">
+              Become a Member
+            </MembershipLink>
           </span>
           <button
             type="button"
@@ -59,7 +61,9 @@ export function SiteHeader() {
               {item.label}
             </a>
           ))}
-          <MembershipLink className="mt-2 w-fit">Become a Member</MembershipLink>
+          <MembershipLink href={route === "membership" ? OCLOCK.liveMembership : undefined} className="mt-2 w-fit">
+            Become a Member
+          </MembershipLink>
         </nav>
       )}
     </header>

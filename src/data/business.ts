@@ -107,6 +107,8 @@ export const OCLOCK = {
   fitting: "https://par2play.oclock.app/book?flow=flow_bf_fitting",
   league: "https://par2play.oclock.app/book?flow=flow_bf_league",
   practiceUnlimited: "https://par2play.oclock.app/store/prod_practice_unlimited",
+  /** Public membership carousel. Per-tier GolfClock products are not in the store yet. */
+  liveMembership: "https://par2play.com/membership",
   tenPracticePack: "https://par2play.oclock.app/store/prod_10_practice_pack",
   lessonPacks: "https://par2play.oclock.app/store/prod_lesson_packs",
   golfImprovementBundle: "https://par2play.oclock.app/store/prod_golf_improvement_bundle",
