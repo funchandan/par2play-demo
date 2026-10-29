@@ -159,6 +159,7 @@ export function MembershipCalculator() {
     reduce,
   );
   const weekWord = pace.hoursPerWeek === 1 ? "hour" : "hours";
+  const pacePhrase = `${pace.hoursPerWeek} ${weekWord} played per week`;
   const setPace = (next: number) => {
     const quote = quoteWeek(next);
     setHoursPerWeek(quote.hoursPerWeek);
@@ -174,7 +175,7 @@ export function MembershipCalculator() {
       : best.yearlyFee != null
         ? `${money(best.yearlyFee)}/yr, billed yearly`
         : null;
-  const live = `${best.name} ${money(shownFee)}${feeSuffix}. Booked normally ${money(normal)}. ${best.name} member ${money(best.total)}. ${save > 0 ? `You save ${money(save)} ${periodWord(period)}.` : "Booking normally is less at this pace."}`;
+  const live = `${best.name} ${money(shownFee)}${feeSuffix}. Booked normally ${money(normal)}. Members price ${money(best.total)}. ${save > 0 ? `You save ${money(save)} ${periodWord(period)}.` : "Booking normally is less at this pace."}`;
 
   return (
     <div className="grid gap-16 @3xl:gap-24">
@@ -219,11 +220,11 @@ export function MembershipCalculator() {
             </p>
           </div>
           <div className="mt-6">
-            <label htmlFor={sliderId} className="flex items-baseline gap-3 text-base font-semibold text-white">
-              Hours you play per week:
+            <label htmlFor={sliderId} className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-base font-semibold text-white">
               <output htmlFor={sliderId} className="font-display text-5xl font-semibold leading-none text-[#7DFFB0] tabular-nums">
                 {pace.hoursPerWeek}
               </output>
+              {weekWord} played per week
             </label>
             <div className="mt-3 flex items-center gap-3">
               <button
@@ -243,7 +244,7 @@ export function MembershipCalculator() {
                 step={1}
                 value={pace.hoursPerWeek}
                 style={{ ["--pace" as string]: paceFill }}
-                aria-valuetext={`${pace.hoursPerWeek} ${weekWord} per week`}
+                aria-valuetext={pacePhrase}
                 onChange={(event) => setPace(Number(event.target.value))}
               />
               <button
@@ -263,7 +264,7 @@ export function MembershipCalculator() {
                 <p className="mt-3 font-display text-3xl font-semibold leading-none text-[#E5E7EB] tabular-nums @3xl:text-4xl">{money(Math.round(shownNormal))}</p>
               </div>
               <div className="rounded-2xl border-2 border-[#14D45E] bg-[#0c2416] p-4 shadow-[0_0_36px_rgb(20_212_94/0.22)]">
-                <p className="text-sm font-semibold uppercase tracking-[0.08em] text-[#7DFFB0]">{best.name} member</p>
+                <p className="text-sm font-semibold uppercase tracking-[0.08em] text-[#7DFFB0]">Members price</p>
                 <p className="mt-3 font-display text-3xl font-semibold leading-none text-[#7DFFB0] tabular-nums @3xl:text-4xl">{money(Math.round(shownMember))}</p>
               </div>
             </div>
