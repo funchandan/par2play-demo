@@ -1,6 +1,8 @@
 import { useId, useState } from "react";
 import { PricingHero } from "./PricingHero";
+import { PRICES } from "../data/business";
 import { EVENTS_HERO_FILM } from "../data/films";
+import { formatPrice } from "../data/membershipEstimate";
 import type { OfferBenefit } from "./OfferTicker";
 
 const GUEST_MIN = 6;
@@ -26,13 +28,14 @@ export function EventsPanel() {
   const hourWord = "hours";
   const phrase = `${guests} ${guestWord} in the group`;
   const paceFill = `${((guests - GUEST_MIN) / (GUEST_MAX - GUEST_MIN)) * 100}%`;
-  const live = `See pricing. ${phrase}. ${bays} ${bayWord}. ${hours} ${hourWord}.`;
+  const figure = formatPrice(PRICES.eventPackage);
+  const live = `${figure}. ${phrase}. ${bays} ${bayWord}. ${hours} ${hourWord}.`;
 
   return (
     <PricingHero
       id="events-offer"
       heading="Event package"
-      figure="See pricing"
+      figure={figure}
       live={live}
       film={EVENTS_HERO_FILM}
       benefits={BENEFITS}

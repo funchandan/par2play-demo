@@ -7,11 +7,11 @@ import { MembershipCalculator } from "../components/MembershipCalculator";
 import { TournamentPanel } from "../components/TournamentPanel";
 import { CommunityStrip, EventGallery, StillGrid } from "../components/PhotoStrips";
 import { PageFrame, pageSpace } from "../components/SiteChrome";
-import { BookLink, buttonFocus } from "../components/Cta";
+import { BookLink, CtaPair, buttonFocus } from "../components/Cta";
 import { TournamentForm } from "../components/TournamentForm";
 import { ValuePoint } from "../components/ValuePoint";
 import { OCLOCK, PRICES } from "../data/business";
-import { money } from "../data/membershipEstimate";
+import { formatPrice, money } from "../data/membershipEstimate";
 import { PUBLISHED_COACHES } from "../data/coaches";
 import { EVENT_FACTS, HOLIDAY_FACTS } from "../data/events";
 import { EventTypeList } from "../components/EventTypeList";
@@ -86,7 +86,7 @@ export function CoachingPage() {
           <CheckoutLink href={OCLOCK.lessonPacks}>See lesson packs</CheckoutLink>
         </div>
         <h2 className="mt-16 font-display text-3xl font-semibold tracking-tight">Club fitting</h2>
-        <p className="mt-3 font-display text-4xl font-semibold leading-none tracking-tight">See pricing</p>
+        <p className="mt-3 font-display text-4xl font-semibold leading-none tracking-tight">{formatPrice(PRICES.fitting)}</p>
         <StillGrid photos={FITTING_GALLERY} />
         <ul className="mt-6 grid grid-cols-2 gap-3 @3xl:grid-cols-4">
           {fittingChoices.map((choice) => (
@@ -207,17 +207,20 @@ export function NotFoundPage() {
       <article className={pageSpace}>
         <h1 className="font-display text-4xl font-semibold tracking-tight">That page is not here.</h1>
         <p className="mt-4 max-w-xl text-base leading-relaxed">Try the membership page, or go back to the start.</p>
-        <div className="mt-8 flex flex-wrap gap-3">
+        <CtaPair className="mt-8">
           <a
             href={pageHref("membership")}
-            className={`inline-flex min-h-11 items-center rounded-full bg-[#14D45E] px-5 text-base font-semibold text-[#0A0F0B] ${buttonFocus}`}
+            className={`inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#14D45E] px-5 text-base font-semibold text-[#0A0F0B] ${buttonFocus}`}
           >
             Membership
           </a>
-          <a href={pageHref("")} className={`inline-flex min-h-11 items-center underline decoration-2 underline-offset-4 text-base font-semibold ${buttonFocus}`}>
+          <a
+            href={pageHref("")}
+            className={`inline-flex min-h-11 w-full items-center justify-center rounded-full border-2 border-[#0A0F0B] bg-white px-5 text-base font-semibold text-[#0A0F0B] ${buttonFocus}`}
+          >
             Home
           </a>
-        </div>
+        </CtaPair>
       </article>
     </PageFrame>
   );

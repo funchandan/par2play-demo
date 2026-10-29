@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BookLink, MembershipLink } from "./Cta";
+import { BookLink, CtaPair, MembershipLink } from "./Cta";
 import { FilmCarousel } from "./FilmCarousel";
 import { MembershipStepIcon, type MembershipStepId } from "./MembershipIcons";
 import { TESTIMONIAL_FILMS } from "../data/films";
@@ -52,12 +52,12 @@ function FilmToggle({ paused, onToggle }: { paused: boolean; onToggle: () => voi
 function Benefits() {
   return (
     <>
-      <div className="mt-6 flex flex-wrap gap-3">
-        <MembershipLink>Become a Member</MembershipLink>
-        <BookLink offer="bay" tone="line">
+      <CtaPair className="mt-6">
+        <MembershipLink className="w-full">Become a Member</MembershipLink>
+        <BookLink className="w-full" offer="bay" tone="line">
           Try it out
         </BookLink>
-      </div>
+      </CtaPair>
       <ul className="mt-6 grid gap-4 @3xl:mt-8 @3xl:gap-5">
         {benefits.map((benefit) => (
           <li key={benefit.id} className="flex gap-3">

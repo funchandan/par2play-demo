@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { BookLink } from "./Cta";
+import { BookLink, CtaPair } from "./Cta";
 import { OfferTicker, type OfferBenefit } from "./OfferTicker";
 import { VideoSlot } from "./VideoSlot";
 import type { BookingOffer } from "../data/business";
@@ -42,7 +42,7 @@ export function PricingHero({
         </div>
         {selector ? <div className="mt-6 min-w-0">{selector}</div> : null}
         {comparison ? <div className="mt-6 min-w-0">{comparison}</div> : null}
-        <div className="mt-6 grid w-full grid-cols-1 gap-3 @3xl:inline-grid @3xl:w-auto @3xl:grid-cols-2">
+        <CtaPair className="mt-6">
           <BookLink className="w-full" offer={primary.offer}>
             {primary.label}
           </BookLink>
@@ -51,7 +51,7 @@ export function PricingHero({
               {secondary.label}
             </BookLink>
           ) : null}
-        </div>
+        </CtaPair>
         <div className="-mx-5 mt-6 @3xl:hidden">
           <OfferTicker items={benefits} />
         </div>

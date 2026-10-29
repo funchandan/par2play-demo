@@ -1,5 +1,7 @@
 import { PricingHero } from "./PricingHero";
+import { PRICES } from "../data/business";
 import { EVENTS_HERO_FILM } from "../data/films";
+import { formatPrice } from "../data/membershipEstimate";
 import type { OfferBenefit } from "./OfferTicker";
 
 const BENEFITS: readonly OfferBenefit[] = [
@@ -13,8 +15,8 @@ export function TournamentPanel() {
     <PricingHero
       id="tournament-offer"
       heading="Fall league"
-      figure="Coming soon"
-      live="Coming soon. League booking is 18 holes. A League Player tag is required."
+      figure={formatPrice(PRICES.leagueEntry)}
+      live={`${formatPrice(PRICES.leagueEntry)}. League booking is 18 holes. A League Player tag is required.`}
       film={EVENTS_HERO_FILM}
       benefits={BENEFITS}
       primary={{ offer: "tournament", label: "Join the league" }}

@@ -14,7 +14,7 @@ import {
   TextField,
 } from "@heroui/react";
 import { useState } from "react";
-import { BookLink, MembershipLink } from "../components/Cta";
+import { BookLink, CtaPair, MembershipLink } from "../components/Cta";
 import { ScreenFrame } from "../components/Chrome";
 import { NAP } from "../data/business";
 import {
@@ -529,16 +529,18 @@ export function PayStep() {
       </p>
       <QuoteList includeVisit />
       <OfferCard />
-      <div className="mt-8 flex flex-wrap gap-3">
+      <CtaPair className="mt-8">
         {flow.buyingMembership ? (
-          <MembershipLink>Continue to membership</MembershipLink>
+          <MembershipLink className="w-full">Continue to membership</MembershipLink>
         ) : (
-          <BookLink offer={flow.product === "coaching" ? "lesson" : "bay"}>Continue to booking</BookLink>
+          <BookLink className="w-full" offer={flow.product === "coaching" ? "lesson" : "bay"}>
+            Continue to booking
+          </BookLink>
         )}
-        <Button className={pill} variant="outline" onPress={flow.finishHandoff}>
+        <Button className={`w-full ${pill}`} variant="outline" onPress={flow.finishHandoff}>
           Show the confirmation copy
         </Button>
-      </div>
+      </CtaPair>
     </ScreenFrame>
   );
 }

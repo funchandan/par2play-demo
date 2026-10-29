@@ -81,6 +81,12 @@ export const PRICES = {
   lessonPack20: 1400,
   lessonPack30: 2000,
   lessonPack50: 3000,
+  /** Standalone club fitting fee is not published on par2play.com. */
+  fitting: null as number | null,
+  /** Event packages are not priced on par2play.com/events or the holiday page. */
+  eventPackage: null as number | null,
+  /** Fall league entry fee is not published. */
+  leagueEntry: null as number | null,
   /**
    * Source: https://par2play.oclock.app/store/prod_golf_improvement_bundle ($599.00).
    * Includes a swing evaluation, a TPI assessment, five 30-minute lessons, a 2-hour practice session, a workout routine, workshop access, and coach check-ins.

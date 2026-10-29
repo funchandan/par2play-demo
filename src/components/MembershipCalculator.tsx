@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { BenefitTicker } from "./BenefitTicker";
 import { VideoSlot } from "./VideoSlot";
-import { BookLink, buttonFocus } from "./Cta";
+import { BookLink, CtaPair, buttonFocus } from "./Cta";
 import { NAP, OCLOCK, PRICES } from "../data/business";
 import { TESTIMONIAL_FILMS } from "../data/films";
 import {
@@ -9,6 +9,7 @@ import {
   JUNIOR_TIER_QUOTE,
   HOURS_PER_WEEK_MAX,
   effectiveMonthlyFee,
+  flooredMemberTotal,
   money,
   periodPaceTotal,
   quoteWeek,
@@ -150,9 +151,10 @@ export function MembershipCalculator() {
   const tiers = pace.tiers.map((tier) => ({ ...tier, total: periodPaceTotal(tier, pace.hours, period) }));
   const best = tiers.reduce((lowest, tier) => (tier.total < lowest.total ? tier : lowest));
   const normal = pace.normal * scale;
-  const save = normal - best.total;
+  const memberTotal = flooredMemberTotal(best.total, period);
+  const save = normal - memberTotal;
   const shownNormal = useAnimatedAmount(normal, reduce);
-  const shownMember = useAnimatedAmount(best.total, reduce);
+  const shownMember = useAnimatedAmount(memberTotal, reduce);
   const shownSave = useAnimatedAmount(Math.max(0, save), reduce);
   const shownFee = useAnimatedAmount(
     period === "year" ? (best.yearlyFee ?? effectiveMonthlyFee(best, "year") * 12) : effectiveMonthlyFee(best, "month"),
@@ -175,20 +177,20 @@ export function MembershipCalculator() {
       : best.yearlyFee != null
         ? `${money(best.yearlyFee)}/yr, billed yearly`
         : null;
-  const live = `${best.name} ${money(shownFee)}${feeSuffix}. Booked normally ${money(normal)}. Members price ${money(best.total)}. ${save > 0 ? `You save ${money(save)} ${periodWord(period)}.` : "Booking normally is less at this pace."}`;
+  const live = `${best.name} ${money(shownFee)}${feeSuffix}. Booked normally ${money(normal)}. Members price ${money(memberTotal)}. ${save > 0 ? `You save ${money(save)} ${periodWord(period)}.` : "Booking normally is less at this pace."}`;
 
   return (
     <div className="grid gap-16 @3xl:gap-24">
-      <section id="why-membership" aria-labelledby="why-membership-heading" className="overflow-hidden rounded-3xl bg-[#020806] @3xl:grid @3xl:grid-cols-2">
-        <div className="flex flex-col justify-center bg-[radial-gradient(120%_80%_at_0%_0%,rgb(20_212_94/0.16),transparent_52%)] px-8 pt-10 @3xl:px-12 @3xl:py-14">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+      <section id="why-membership" aria-labelledby="why-membership-heading" className="@container min-w-0 overflow-hidden rounded-3xl bg-[#020806] @3xl:grid @3xl:grid-cols-2">
+        <div className="flex min-w-0 flex-col justify-center bg-[radial-gradient(120%_80%_at_0%_0%,rgb(20_212_94/0.16),transparent_52%)] px-5 pt-8 @3xl:px-12 @3xl:py-14">
+          <div className="flex min-w-0 flex-col items-stretch gap-3 @3xl:flex-row @3xl:items-center @3xl:justify-between">
             <h1 id="why-membership-heading" className="font-display text-2xl font-semibold tracking-tight text-[#7DFFB0]">
               {best.name}
             </h1>
-            <div className="inline-flex rounded-full bg-white/10 p-1" role="group" aria-label="Billing period">
+            <div className="grid w-full min-w-0 grid-cols-2 gap-1 rounded-full bg-white/10 p-1 @3xl:flex @3xl:w-auto" role="group" aria-label="Billing period">
               <button
                 type="button"
-                className={`aa-focus-ink min-h-11 rounded-full px-4 text-base font-semibold ${period === "month" ? "bg-white text-[#0A0F0B]" : "text-white"}`}
+                className={`aa-focus-ink min-h-11 rounded-full px-3 text-sm font-semibold whitespace-nowrap @3xl:px-4 @3xl:text-base ${period === "month" ? "bg-white text-[#0A0F0B]" : "text-white"}`}
                 aria-pressed={period === "month"}
                 onClick={() => setPeriod("month")}
               >
@@ -196,23 +198,23 @@ export function MembershipCalculator() {
               </button>
               <button
                 type="button"
-                className={`aa-focus-ink inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-base font-semibold ${period === "year" ? "bg-[#14D45E] text-[#0A0F0B]" : "text-white"}`}
+                className={`aa-focus-ink inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-3 text-sm font-semibold whitespace-nowrap @3xl:px-4 @3xl:text-base ${period === "year" ? "bg-[#14D45E] text-[#0A0F0B]" : "text-white"}`}
                 aria-pressed={period === "year"}
                 onClick={() => setPeriod("year")}
               >
                 Annual
                 <span
-                  className={`rounded-full px-2 py-0.5 text-sm font-semibold ${period === "year" ? "bg-[#0A0F0B] text-[#7DFFB0]" : "bg-[#14D45E] text-[#0A0F0B]"}`}
+                  className={`rounded-full px-2 py-0.5 text-xs font-semibold whitespace-nowrap @3xl:text-sm ${period === "year" ? "bg-[#0A0F0B] text-[#7DFFB0]" : "bg-[#14D45E] text-[#0A0F0B]"}`}
                 >
                   {ANNUAL_PLAN_DISCOUNT == null ? "Best value" : `Save ${Math.round(ANNUAL_PLAN_DISCOUNT * 100)}%`}
                 </span>
               </button>
             </div>
           </div>
-          <div aria-live="polite" aria-atomic="true" className="mt-4">
+          <div aria-live="polite" aria-atomic="true" className="mt-4 min-w-0">
             <p className="sr-only">{live}</p>
-            <p className="flex flex-wrap items-baseline gap-x-3">
-              <span className="font-display text-6xl font-semibold leading-none tracking-tight text-white @3xl:text-8xl">
+            <p className="flex max-w-full flex-wrap items-baseline gap-x-3">
+              <span className="max-w-full font-display text-[clamp(2rem,11cqi,6rem)] font-semibold leading-none tracking-tight text-white @3xl:text-8xl">
                 {money(Math.round(shownFee))}
                 {feeSuffix}
               </span>
@@ -258,14 +260,14 @@ export function MembershipCalculator() {
             </div>
           </div>
           <div className="mt-6">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-2xl border border-white/25 bg-white/5 p-4">
-                <p className="text-sm font-semibold uppercase tracking-[0.08em] text-[#E5E7EB]">Booked normally</p>
-                <p className="mt-3 font-display text-3xl font-semibold leading-none text-[#E5E7EB] tabular-nums @3xl:text-4xl">{money(Math.round(shownNormal))}</p>
+            <div className="grid min-w-0 grid-cols-2 gap-2 @3xl:gap-3">
+              <div className="min-w-0 rounded-2xl border border-white/25 bg-white/5 p-3 @3xl:p-4">
+                <p className="text-xs font-semibold uppercase leading-tight tracking-[0.04em] text-[#E5E7EB] @3xl:text-sm">Booked normally</p>
+                <p className="mt-3 font-display text-2xl font-semibold leading-none text-[#E5E7EB] tabular-nums @3xl:text-4xl">{money(Math.round(shownNormal))}</p>
               </div>
-              <div className="rounded-2xl border-2 border-[#14D45E] bg-[#0c2416] p-4 shadow-[0_0_36px_rgb(20_212_94/0.22)]">
-                <p className="text-sm font-semibold uppercase tracking-[0.08em] text-[#7DFFB0]">Members price</p>
-                <p className="mt-3 font-display text-3xl font-semibold leading-none text-[#7DFFB0] tabular-nums @3xl:text-4xl">{money(Math.round(shownMember))}</p>
+              <div className="min-w-0 rounded-2xl border-2 border-[#14D45E] bg-[#0c2416] p-3 shadow-[0_0_36px_rgb(20_212_94/0.22)] @3xl:p-4">
+                <p className="text-xs font-semibold uppercase leading-tight tracking-[0.04em] text-[#7DFFB0] @3xl:text-sm">Members price</p>
+                <p className="mt-3 font-display text-2xl font-semibold leading-none text-[#7DFFB0] tabular-nums @3xl:text-4xl">{money(Math.round(shownMember))}</p>
               </div>
             </div>
             <p className="mt-3 border-t border-dashed border-white/40 pt-3 text-xl font-semibold text-white">
@@ -278,18 +280,18 @@ export function MembershipCalculator() {
               )}
             </p>
           </div>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3 @3xl:justify-start">
-            <MemberLink>Become a Member</MemberLink>
-            <BookLink offer="bay" tone="inverted">
+          <CtaPair className="mt-6">
+            <MemberLink className="w-full">Become a Member</MemberLink>
+            <BookLink className="w-full" offer="bay" tone="inverted">
               Try it out
             </BookLink>
-          </div>
-          <div className="-mx-8 mt-6 @3xl:hidden">
+          </CtaPair>
+          <div className="-mx-5 mt-6 @3xl:hidden">
             <BenefitTicker />
           </div>
         </div>
-        <div className="relative flex min-h-72 flex-col justify-end @3xl:min-h-full">
-          <VideoSlot src={FILM.src} srcMobile={FILM.srcMobile} poster={FILM.poster} className="absolute inset-0" pausable />
+        <div className="relative flex min-h-72 w-full min-w-0 flex-col justify-end overflow-hidden @3xl:min-h-full">
+          <VideoSlot src={FILM.src} srcMobile={FILM.srcMobile} poster={FILM.poster} className="absolute inset-0 h-full w-full" pausable />
           <div className="hidden @3xl:block">
             <BenefitTicker />
           </div>

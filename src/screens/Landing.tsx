@@ -2,7 +2,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Activity, Shield, Target, UserRound } from "lucide-react";
 import { bindHeroWatch } from "../audio/soundtrack";
 import { Mark } from "../components/Chrome";
-import { BookLink, HeroMembershipAction, MembershipLink, buttonFocus } from "../components/Cta";
+import { BookLink, CtaPair, HeroMembershipAction, MembershipLink, buttonFocus } from "../components/Cta";
 import { HeroProof } from "../components/HeroProof";
 import { MembershipBand } from "../components/MembershipBand";
 import { HeroVideo } from "../components/Media";
@@ -195,12 +195,14 @@ export function Landing() {
                 line="Swing your way to your first hole in one with drill down analysis and personalised 1:1 coaching."
               />
             </div>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <BookLink offer="swing-evaluation">Analyze my swing</BookLink>
-              <BookLink offer="lesson" tone="line">
+            <CtaPair className="mt-8">
+              <BookLink className="w-full" offer="swing-evaluation">
+                Analyze my swing
+              </BookLink>
+              <BookLink className="w-full" offer="lesson" tone="line">
                 Schedule a lesson
               </BookLink>
-            </div>
+            </CtaPair>
           </div>
         </div>
       </section>
@@ -254,10 +256,10 @@ export function Landing() {
         <div className="mt-8">
           <EventGallery />
         </div>
-        <div className="mt-8 flex flex-wrap gap-3">
+        <CtaPair className="mt-8">
           <a
             href={pageHref("events")}
-            className={`inline-flex min-h-11 items-center rounded-full bg-[#14D45E] px-5 text-base font-semibold text-[#0A0F0B] hover:bg-[#3dff7c] ${buttonFocus}`}
+            className={`inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#14D45E] px-5 text-base font-semibold text-[#0A0F0B] hover:bg-[#3dff7c] ${buttonFocus}`}
           >
             See events
           </a>
@@ -265,11 +267,11 @@ export function Landing() {
             href={OCLOCK.events}
             target="_blank"
             rel="noopener noreferrer"
-            className={`inline-flex min-h-11 items-center rounded-full border-2 border-[#0A0F0B] bg-white px-5 text-base font-semibold text-[#0A0F0B] hover:bg-[#f3f6f1] ${buttonFocus}`}
+            className={`inline-flex min-h-11 w-full items-center justify-center rounded-full border-2 border-[#0A0F0B] bg-white px-5 text-base font-semibold text-[#0A0F0B] hover:bg-[#f3f6f1] ${buttonFocus}`}
           >
             Check availability
           </a>
-        </div>
+        </CtaPair>
       </section>
 
       <section id="tournament" className={`${sectionSpace} text-center`}>
