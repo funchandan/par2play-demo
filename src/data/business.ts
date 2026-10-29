@@ -63,17 +63,22 @@ export const PRICES = {
   unlimitedMonthly: 200,
   swingEvaluationMinutes: 50,
   swingEvaluation: 100,
-  /** TODO(pricing): single 30-minute lesson price was not in the repo or the strategy sheet. */
+  /** TODO(pricing): single 30-minute lesson with Nick or Sean. Not in the repo or the strategy sheet. */
   lessonSingle: null as number | null,
   lessonMinutes: 30,
   lessonPack3Count: 3,
   lessonPack3: 240,
-  /** Confirmed pack ends. 10, 20, and 30 are not listed on par2play.com, so they stay null and the page says they are shown at checkout. */
+  /** Confirmed pack ends. 10, 20, and 30 are not listed on par2play.com, so the page shows $TBD. */
   lessonPack5: 400,
+  /** TODO(pricing): 10-lesson pack. Not listed on par2play.com. */
   lessonPack10: null as number | null,
+  /** TODO(pricing): 20-lesson pack. Not listed on par2play.com. */
   lessonPack20: null as number | null,
+  /** TODO(pricing): 30-lesson pack. Not listed on par2play.com. */
   lessonPack30: null as number | null,
   lessonPack50: 3000,
+  /** TODO(pricing): club fitting. par2play.com does not publish a fitting price. */
+  fitting: null as number | null,
   /** Lessons, assessments, practice time, and a workshop. */
   golfImprovementBundle: 599,
   /** Once-a-week 1:1 lesson plus unlimited facility access. */
@@ -86,6 +91,10 @@ export const PRICES = {
    * Campaign copy and the video guidelines both say $100.
    */
   swingLabGuest: 100,
+  /** TODO(pricing): event package. par2play.com/events does not publish a price list. */
+  eventPackage: null as number | null,
+  /** TODO(pricing): fall league entry. The league page does not publish a fee. */
+  leagueEntry: null as number | null,
 } as const;
 
 export type BookingOffer =

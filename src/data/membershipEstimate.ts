@@ -94,6 +94,11 @@ export function money(amount: number): string {
   });
 }
 
+/** Unknown prices stay the literal "$TBD". Callers must not substitute a made-up number. */
+export function formatPrice(amount: number | null): string {
+  return amount == null ? "$TBD" : money(amount);
+}
+
 export function monthLabel(months: number): string {
   return months === 1 ? "1 month" : `${months} months`;
 }

@@ -7,22 +7,46 @@ import { BookLink, buttonFocus } from "../components/Cta";
 import { TournamentForm } from "../components/TournamentForm";
 import { ValuePoint } from "../components/ValuePoint";
 import { OCLOCK, PRICES } from "../data/business";
+import { formatPrice } from "../data/membershipEstimate";
 import { PUBLISHED_COACHES } from "../data/coaches";
 import { EVENT_FACTS, HOLIDAY_FACTS } from "../data/events";
 import { EventTypeList } from "../components/EventTypeList";
 import { COACHING_GALLERY, FITTING_GALLERY, JUNIORS_GALLERY } from "../data/gallery";
 import { pageHref } from "../data/routes";
 
-function CheckoutLink({ href, children }: { href: string; children: string }) {
+function CheckoutLink({ href, children, className = "" }: { href: string; children: string; className?: string }) {
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className={`inline-flex min-h-11 items-center justify-center rounded-full bg-[#14D45E] px-5 text-base font-semibold text-[#0A0F0B] hover:bg-[#3dff7c] hover:text-[#0A0F0B] active:bg-[#0fb852] visited:bg-[#14D45E] visited:text-[#0A0F0B] ${buttonFocus}`}
+      className={`inline-flex min-h-11 items-center justify-center rounded-full bg-[#14D45E] px-5 text-base font-semibold text-[#0A0F0B] hover:bg-[#3dff7c] hover:text-[#0A0F0B] active:bg-[#0fb852] visited:bg-[#14D45E] visited:text-[#0A0F0B] ${buttonFocus} ${className}`}
     >
       {children}
     </a>
+  );
+}
+
+const keyPrice = "mt-2 font-display text-6xl font-semibold leading-none tracking-tight text-[#0A0F0B] @3xl:text-8xl";
+const boxPrice = "mt-3 font-display text-3xl font-semibold leading-none text-[#0A0F0B]";
+
+function KeyPrice({ label, amount, cadence }: { label: string; amount: number | null; cadence?: string }) {
+  const figure = formatPrice(amount);
+  return (
+    <div className="mt-6">
+      <p className="text-base font-semibold text-[#0A0F0B]">{label}</p>
+      <p className={keyPrice}>{amount == null ? figure : `${figure}${cadence ?? ""}`}</p>
+    </div>
+  );
+}
+
+function PriceBox({ label, amount, cadence }: { label: string; amount: number | null; cadence?: string }) {
+  const figure = formatPrice(amount);
+  return (
+    <div className="rounded-2xl border-2 border-[#4b5563] bg-white p-4">
+      <p className="text-sm font-semibold uppercase tracking-[0.06em] text-[#374151]">{label}</p>
+      <p className={boxPrice}>{amount == null ? figure : `${figure}${cadence ?? ""}`}</p>
+    </div>
   );
 }
 
@@ -38,11 +62,11 @@ export function MembershipPage() {
 }
 
 const lessonTiers = [
-  { count: "5 lessons", price: `$${PRICES.lessonPack5}`, href: OCLOCK.lessonPacks },
-  { count: "10 lessons", price: "Shown at checkout", href: OCLOCK.lessonPacks },
-  { count: "20 lessons", price: "Shown at checkout", href: OCLOCK.lessonPacks },
-  { count: "30 lessons", price: "Shown at checkout", href: OCLOCK.lessonPacks },
-  { count: "50 lessons", price: `$${PRICES.lessonPack50}`, href: OCLOCK.lessonPacks },
+  { count: "5 lessons", price: PRICES.lessonPack5 },
+  { count: "10 lessons", price: PRICES.lessonPack10 },
+  { count: "20 lessons", price: PRICES.lessonPack20 },
+  { count: "30 lessons", price: PRICES.lessonPack30 },
+  { count: "50 lessons", price: PRICES.lessonPack50 },
 ] as const;
 
 const fittingChoices = ["Driver", "Irons", "Wedges", "Full bag"] as const;
@@ -55,6 +79,12 @@ export function CoachingPage() {
         <p className="mt-4 max-w-2xl font-display text-2xl font-semibold leading-tight">
           Two PGA professional coaches, Nick and Sean
         </p>
+        <KeyPrice label="30-minute lesson" amount={PRICES.lessonSingle} />
+        <div className="mt-6 grid gap-3 @3xl:grid-cols-3">
+          <PriceBox label="Swing evaluation" amount={PRICES.swingEvaluation} />
+          <PriceBox label="Club fitting" amount={PRICES.fitting} />
+          <PriceBox label="Golf Improvement Bundle" amount={PRICES.golfImprovementBundle} />
+        </div>
         <StillGrid photos={COACHING_GALLERY} className="@3xl:grid-cols-3" />
         <ol className="mt-10 grid gap-6 @3xl:grid-cols-3">
           <JourneyStep icon={Target} step="1" title="Swing evaluation" line="Start with a swing evaluation, then a plan for what to change." />
@@ -63,25 +93,31 @@ export function CoachingPage() {
             icon={Users}
             step="3"
             title="Golf Improvement Bundle"
-            line={`$${PRICES.golfImprovementBundle}. Lessons, assessments, bay time, and a workshop.`}
+            line={`${formatPrice(PRICES.golfImprovementBundle)}. Lessons, assessments, bay time, and a workshop.`}
           />
         </ol>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <BookLink offer="swing-evaluation">Analyze my swing</BookLink>
-          <BookLink offer="lesson" tone="line">
+        <div className="mt-8 grid w-full grid-cols-1 gap-3 @3xl:inline-grid @3xl:w-auto @3xl:grid-cols-3">
+          <BookLink className="w-full" offer="swing-evaluation">
+            Analyze my swing
+          </BookLink>
+          <BookLink className="w-full" offer="lesson" tone="line">
             Schedule a lesson
           </BookLink>
-          <CheckoutLink href={OCLOCK.golfImprovementBundle}>Buy the bundle</CheckoutLink>
+          <CheckoutLink className="w-full" href={OCLOCK.golfImprovementBundle}>
+            Buy the bundle
+          </CheckoutLink>
         </div>
         <h2 className="mt-16 font-display text-3xl font-semibold tracking-tight">Lesson packs</h2>
         <p className="mt-3 max-w-2xl text-base leading-relaxed">
-          Five lessons are $400. Fifty lessons are $3,000. The prices between those two are shown at checkout.
+          Five lessons are {formatPrice(PRICES.lessonPack5)}. Ten lessons are {formatPrice(PRICES.lessonPack10)}. Twenty lessons are{" "}
+          {formatPrice(PRICES.lessonPack20)}. Thirty lessons are {formatPrice(PRICES.lessonPack30)}. Fifty lessons are{" "}
+          {formatPrice(PRICES.lessonPack50)}.
         </p>
         <ul className="mt-6 grid gap-3 @3xl:grid-cols-5">
           {lessonTiers.map((tier) => (
             <li key={tier.count} className="border-2 border-[#4b5563] bg-white p-4">
               <p className="text-base font-semibold">{tier.count}</p>
-              <p className="mt-2 font-display text-2xl font-semibold">{tier.price}</p>
+              <p className="mt-2 font-display text-2xl font-semibold">{formatPrice(tier.price)}</p>
             </li>
           ))}
         </ul>
@@ -89,6 +125,7 @@ export function CoachingPage() {
           <CheckoutLink href={OCLOCK.lessonPacks}>See lesson packs</CheckoutLink>
         </div>
         <h2 className="mt-16 font-display text-3xl font-semibold tracking-tight">Club fitting</h2>
+        <p className={boxPrice}>{formatPrice(PRICES.fitting)}</p>
         <StillGrid photos={FITTING_GALLERY} />
         <ul className="mt-6 grid grid-cols-2 gap-3 @3xl:grid-cols-4">
           {fittingChoices.map((choice) => (
@@ -144,6 +181,11 @@ export function JuniorsPage() {
       <article className={pageSpace}>
         <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight @5xl:text-6xl">Junior coaching.</h1>
         <p className="mt-4 max-w-xl text-base leading-relaxed">Building the golfers of tomorrow.</p>
+        <KeyPrice label="Twice a week" amount={PRICES.juniorTwoLessonsWeekly} cadence="/mo" />
+        <div className="mt-6 grid gap-3 @3xl:grid-cols-2">
+          <PriceBox label="Once a week" amount={PRICES.juniorOneLessonWeekly} cadence="/mo" />
+          <PriceBox label="Twice a week" amount={PRICES.juniorTwoLessonsWeekly} cadence="/mo" />
+        </div>
         <StillGrid photos={JUNIORS_GALLERY} />
         <div className="mt-8 grid max-w-xl gap-5">
           <ValuePoint icon={Users} label="Future pros" line="1:1 coaching with PGA pros Nick and Sean, once or twice a week." />
@@ -163,7 +205,10 @@ export function EventsPage() {
     <PageFrame>
       <EventHero />
       <article className={pageSpace}>
-        <EventTypeList />
+        <KeyPrice label="Event package" amount={PRICES.eventPackage} />
+        <div className="mt-8">
+          <EventTypeList />
+        </div>
         <div className="mt-8">
           <EventGallery />
         </div>
@@ -199,6 +244,9 @@ export function TournamentPage() {
         <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed">
           League booking is 18 holes. A League Player tag is required.
         </p>
+        <div className="mx-auto max-w-xl">
+          <KeyPrice label="League entry" amount={PRICES.leagueEntry} />
+        </div>
         <div className="mt-8">
           <BookLink offer="tournament">Join the league</BookLink>
         </div>
