@@ -2,14 +2,14 @@ import { useEffect, useId, useRef, useState } from "react";
 import { CalendarDays, Clock, SunMedium, Undo2, type LucideIcon } from "lucide-react";
 import { BookLink, MembershipLink } from "./Cta";
 import { VideoSlot } from "./VideoSlot";
-import { NAP, PRICES, bookingHref, membershipHref } from "../data/business";
+import { NAP, PRICES } from "../data/business";
 import { TESTIMONIAL_FILMS } from "../data/films";
-import { COMPARE_HOURS_MAX, SESSIONS_PER_PACK, estimateMonth, money } from "../data/membershipEstimate";
+import { HOURS_PER_WEEK_MAX, SESSIONS_PER_PACK, WEEKS_PER_MONTH, estimateWeek, money } from "../data/membershipEstimate";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 
 /** 30-minute bay slots show $35. The hour rate is PRICES.baySession. */
 const HALF_HOUR = PRICES.baySession / 2;
-const SCALE = COMPARE_HOURS_MAX * PRICES.baySession;
+const SCALE = HOURS_PER_WEEK_MAX * WEEKS_PER_MONTH * PRICES.baySession;
 const FILM = TESTIMONIAL_FILMS[0];
 
 const benefits: readonly { title: string; line: string; icon: LucideIcon }[] = [
@@ -66,25 +66,11 @@ function useAnimatedAmount(target: number, reduce: boolean): number {
   return value;
 }
 
-function QuietLink({ href, children }: { href: string; children: string }) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="aa-focus-ink inline-flex min-h-11 items-center text-base font-semibold text-white underline decoration-2 underline-offset-4"
-    >
-      {children}
-    </a>
-  );
-}
-
 function CostBar({
   label,
   amount,
   width,
   fill,
-  marker,
   thick = false,
   onDark = false,
 }: {
@@ -92,12 +78,10 @@ function CostBar({
   amount: number;
   width: string;
   fill: string;
-  marker: string;
   thick?: boolean;
   onDark?: boolean;
 }) {
   const ink = onDark ? "text-white" : "text-[#0A0F0B]";
-  const line = onDark ? "bg-white" : "bg-[#0A0F0B]";
   const track = onDark ? "bg-white/15" : "bg-[#0A0F0B]/10";
   return (
     <div>
@@ -107,29 +91,23 @@ function CostBar({
       </div>
       <div className={`relative mt-1 rounded-full ${track} ${thick ? "h-3.5" : "h-2"}`}>
         <div className={`pace-bar absolute inset-y-0 left-0 rounded-full ${fill}`} style={{ width }} />
-        <div className={`absolute inset-y-[-7px] w-0.5 ${line}`} style={{ left: marker }} />
       </div>
     </div>
   );
 }
 
 export function MembershipCalculator() {
-  const [hours, setHours] = useState(8);
+  const [hoursPerWeek, setHoursPerWeek] = useState(2);
   const reduce = usePrefersReducedMotion();
   const sliderId = useId();
-  const pace = estimateMonth(hours);
-  const wins = pace.saveVsPayg > 0;
-  const shownPayg = useAnimatedAmount(pace.payg, reduce);
-  const shownSave = useAnimatedAmount(Math.max(0, pace.saveVsPayg), reduce);
-  const marker = `${(pace.membership / SCALE) * 100}%`;
-  const breakAt = `${((pace.breakEvenHour - 1) / (COMPARE_HOURS_MAX - 1)) * 100}%`;
+  const pace = estimateWeek(hoursPerWeek);
+  const shownSave = useAnimatedAmount(pace.saveVsPayg, reduce);
+  const shownRate = useAnimatedAmount(pace.perHourMembership, reduce);
   const widthOf = (amount: number) => `${Math.min(100, (amount / SCALE) * 100)}%`;
-  const hourWord = pace.hours === 1 ? "hour" : "hours";
-  const setPace = (next: number) => setHours(estimateMonth(next).hours);
-  const paceFill = `${((pace.hours - 1) / (COMPARE_HOURS_MAX - 1)) * 100}%`;
-  const live = wins
-    ? `Pay as you go ${money(pace.payg)}. Membership ${money(pace.membership)}. You save ${money(pace.saveVsPayg)} a month.`
-    : `At ${pace.hours} ${hourWord}, pay as you go is ${money(pace.payg)}. Just come try it.`;
+  const weekWord = pace.hoursPerWeek === 1 ? "hour" : "hours";
+  const setPace = (next: number) => setHoursPerWeek(estimateWeek(next).hoursPerWeek);
+  const paceFill = `${((pace.hoursPerWeek - 1) / (HOURS_PER_WEEK_MAX - 1)) * 100}%`;
+  const live = `You save ${money(pace.saveVsPayg)} a month. ${money(pace.perHourMembership)} an hour as a member, ${money(pace.perHourPayg)} an hour booked normally. ${pace.hours} bay hours times ${money(PRICES.baySession)} is ${money(pace.payg)}.`;
 
   return (
     <div className="grid gap-16 @3xl:gap-24">
@@ -141,96 +119,67 @@ export function MembershipCalculator() {
           <p className="mt-3 text-base font-semibold text-white">
             {money(PRICES.unlimitedMonthly)}/mo · up to 1 hour a day
           </p>
-          <div aria-live="polite" aria-atomic="true" className="mt-6">
+          <div aria-live="polite" aria-atomic="true" className="mt-5">
             <p className="sr-only">{live}</p>
-            {wins ? (
-              <p className="font-display text-6xl font-semibold leading-none tracking-tight text-white @5xl:text-7xl">
-                <span className="mr-3 text-4xl text-[#E5E7EB] line-through decoration-2 @5xl:text-5xl">{money(shownPayg)}</span>
-                {money(pace.membership)}
-              </p>
-            ) : (
-              <p className="font-display text-6xl font-semibold leading-none tracking-tight text-white @5xl:text-7xl">
-                {money(shownPayg)}
-              </p>
-            )}
-            <p className="mt-3 text-xl font-semibold leading-snug text-white @5xl:text-2xl">
-              {wins ? (
-                <>
-                  You save <span className="text-[#7DFFB0]">{money(shownSave)}</span> a month
-                </>
-              ) : (
-                <>
-                  At {pace.hours} {hourWord}, pay as you go is {money(pace.payg)}. Just come try it.
-                </>
-              )}
+            <p className="text-base font-semibold text-white">You save</p>
+            <p className="font-display text-7xl font-semibold leading-none tracking-tight text-[#7DFFB0] @5xl:text-8xl">
+              {money(shownSave)}
+            </p>
+            <p className="mt-1 text-xl font-semibold text-white">a month</p>
+            <p className="mt-4 text-2xl font-semibold leading-tight text-white">
+              <span className="text-[#7DFFB0]">{money(shownRate)}/hr</span>
+              <span className="text-[#E5E7EB]"> vs </span>
+              <span className="text-[#E5E7EB] line-through decoration-2">{money(PRICES.baySession)}/hr</span>
+            </p>
+            <p className="mt-1 text-base text-white">as a member, vs booked normally</p>
+            <p className="mt-3 text-base leading-snug text-white">
+              {pace.hours} bay hours × {money(PRICES.baySession)} = {money(pace.payg)}. Member price {money(pace.membership)}.
             </p>
           </div>
           <div className="mt-6">
-            <label htmlFor={sliderId} className="text-base font-semibold text-white">
-              Hours you play a month
+            <label htmlFor={sliderId} className="flex items-baseline gap-3 text-base font-semibold text-white">
+              Hours you play per week:
+              <output htmlFor={sliderId} className="font-display text-5xl font-semibold leading-none text-[#7DFFB0] tabular-nums">
+                {pace.hoursPerWeek}
+              </output>
             </label>
             <div className="mt-3 flex items-center gap-3">
               <button
                 type="button"
                 className="aa-focus-ink inline-flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-white text-2xl font-semibold text-white"
                 aria-label="Fewer hours"
-                onClick={() => setPace(pace.hours - 1)}
+                onClick={() => setPace(pace.hoursPerWeek - 1)}
               >
                 −
               </button>
-              <div className="relative min-w-0 flex-1">
-                <input
-                  id={sliderId}
-                  className="pace-slider pace-slider-on-dark"
-                  type="range"
-                  min={1}
-                  max={COMPARE_HOURS_MAX}
-                  step={1}
-                  value={pace.hours}
-                  style={{ ["--pace" as string]: paceFill }}
-                  aria-valuetext={`${pace.hours} ${hourWord} you play a month`}
-                  onChange={(event) => setPace(Number(event.target.value))}
-                />
-                <span
-                  className="pointer-events-none absolute top-1/2 h-4 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-[#7DFFB0]"
-                  style={{ left: breakAt }}
-                  aria-hidden="true"
-                />
-                <span
-                  className="pointer-events-none absolute top-full -translate-x-1/2 text-sm font-semibold text-[#7DFFB0]"
-                  style={{ left: breakAt }}
-                  aria-hidden="true"
-                >
-                  {pace.breakEvenHour}
-                </span>
-              </div>
+              <input
+                id={sliderId}
+                className="pace-slider pace-slider-on-dark min-w-0 flex-1"
+                type="range"
+                min={1}
+                max={HOURS_PER_WEEK_MAX}
+                step={1}
+                value={pace.hoursPerWeek}
+                style={{ ["--pace" as string]: paceFill }}
+                aria-valuetext={`${pace.hoursPerWeek} ${weekWord} per week`}
+                onChange={(event) => setPace(Number(event.target.value))}
+              />
               <button
                 type="button"
                 className="aa-focus-ink inline-flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-white text-2xl font-semibold text-white"
                 aria-label="More hours"
-                onClick={() => setPace(pace.hours + 1)}
+                onClick={() => setPace(pace.hoursPerWeek + 1)}
               >
                 +
               </button>
             </div>
+            <p className="mt-2 text-sm leading-snug text-white">A month is {WEEKS_PER_MONTH} weeks.</p>
           </div>
-          <div className="mt-7">
-            {wins ? (
-              <MembershipLink className="w-full @3xl:w-fit">
-                Become a Member, save {money(pace.saveVsPayg)}
-              </MembershipLink>
-            ) : (
-              <BookLink offer="bay" className="w-full @3xl:w-fit">
-                Try it out
-              </BookLink>
-            )}
-            <div className="mt-2">
-              {wins ? (
-                <QuietLink href={bookingHref("bay")}>Try it out</QuietLink>
-              ) : (
-                <QuietLink href={membershipHref()}>Become a Member</QuietLink>
-              )}
-            </div>
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <MembershipLink>Become a Member</MembershipLink>
+            <BookLink offer="bay" tone="inverted">
+              Try it out
+            </BookLink>
           </div>
         </div>
         <VideoSlot
@@ -244,16 +193,9 @@ export function MembershipCalculator() {
 
       <section aria-label="Monthly cost">
         <div className="grid gap-4">
-          <CostBar label="Pay as you go" amount={pace.payg} width={widthOf(pace.payg)} fill="bg-[#4b5563]" marker={marker} />
-          <CostBar label="10 Practice Pack" amount={pace.pack} width={widthOf(pace.pack)} fill="bg-[#5C6560]" marker={marker} />
-          <CostBar
-            label="Practice Unlimited"
-            amount={pace.membership}
-            width={widthOf(pace.membership)}
-            fill="bg-[#14D45E]"
-            marker={marker}
-            thick
-          />
+          <CostBar label="Pay as you go" amount={pace.payg} width={widthOf(pace.payg)} fill="bg-[#4b5563]" />
+          <CostBar label="10 Practice Pack" amount={pace.pack} width={widthOf(pace.pack)} fill="bg-[#5C6560]" />
+          <CostBar label="Practice Unlimited" amount={pace.membership} width={widthOf(pace.membership)} fill="bg-[#14D45E]" thick />
         </div>
       </section>
 

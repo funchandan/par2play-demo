@@ -101,6 +101,9 @@ export function monthLabel(months: number): string {
 /** The comparison slider stops here. It is not a cap on daily play. */
 export const COMPARE_HOURS_MAX = 16;
 
+/** Membership allows up to 1 hour a day, so the week slider stops at 7. */
+export const HOURS_PER_WEEK_MAX = 7;
+
 /**
  * First hour in a month where pay-as-you-go costs at least as much as Practice Unlimited.
  * $200 / $70 is 2.86, so that hour is the 3rd.
@@ -122,6 +125,37 @@ export type MonthPace = {
   perHourPack: number;
   perHourPayg: number;
 };
+
+export type WeekPace = MonthPace & {
+  hoursPerWeek: number;
+  /** Pay-as-you-go minus membership, times 12. Same monthly rate, not a separate price. */
+  savePerYear: number;
+};
+
+/** One hour a week, counted as 4 weeks in the month. */
+export function estimateWeek(hoursPerWeek: number): WeekPace {
+  const perWeek = Math.min(HOURS_PER_WEEK_MAX, Math.max(1, Math.round(hoursPerWeek)));
+  const monthHours = perWeek * WEEKS_PER_MONTH;
+  const packs = Math.ceil(monthHours / SESSIONS_PER_PACK);
+  const payg = monthHours * PRICES.baySession;
+  const pack = packs * PRICES.tenPack;
+  const membership = PRICES.unlimitedMonthly;
+  const saveVsPayg = payg - membership;
+  return {
+    hours: monthHours,
+    hoursPerWeek: perWeek,
+    payg,
+    pack,
+    packs,
+    membership,
+    saveVsPayg,
+    savePerYear: saveVsPayg * 12,
+    breakEvenHour: breakEvenHour(),
+    perHourMembership: membership / monthHours,
+    perHourPack: pack / monthHours,
+    perHourPayg: PRICES.baySession,
+  };
+}
 
 /** Cost to cover `hours` one-hour visits in a single month. */
 export function estimateMonth(hours: number): MonthPace {
