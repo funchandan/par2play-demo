@@ -179,7 +179,7 @@ export function MembershipCalculator() {
   return (
     <div className="grid gap-16 @3xl:gap-24">
       <section id="why-membership" aria-labelledby="why-membership-heading" className="overflow-hidden rounded-3xl bg-[#020806] @3xl:grid @3xl:grid-cols-2">
-        <div className="flex flex-col justify-center bg-[radial-gradient(120%_80%_at_0%_0%,rgb(20_212_94/0.16),transparent_52%)] px-8 py-10 @3xl:px-12 @3xl:py-14">
+        <div className="flex flex-col justify-center bg-[radial-gradient(120%_80%_at_0%_0%,rgb(20_212_94/0.16),transparent_52%)] px-8 pt-10 @3xl:px-12 @3xl:py-14">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h1 id="why-membership-heading" className="font-display text-2xl font-semibold tracking-tight text-[#7DFFB0]">
               {best.name}
@@ -277,16 +277,21 @@ export function MembershipCalculator() {
               )}
             </p>
           </div>
-          <div className="mt-6 flex flex-wrap items-center gap-3">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3 @3xl:justify-start">
             <MemberLink>Become a Member</MemberLink>
             <BookLink offer="bay" tone="inverted">
               Try it out
             </BookLink>
           </div>
+          <div className="-mx-8 mt-6 @3xl:hidden">
+            <BenefitTicker />
+          </div>
         </div>
         <div className="relative flex min-h-72 flex-col justify-end @3xl:min-h-full">
           <VideoSlot src={FILM.src} srcMobile={FILM.srcMobile} poster={FILM.poster} className="absolute inset-0" pausable />
-          <BenefitTicker />
+          <div className="hidden @3xl:block">
+            <BenefitTicker />
+          </div>
         </div>
       </section>
 
