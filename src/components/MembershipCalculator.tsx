@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useState } from "react";
 import { VideoSlot } from "./VideoSlot";
 import { BookLink, buttonFocus } from "./Cta";
 import { NAP, OCLOCK, PRICES } from "../data/business";
@@ -12,37 +12,14 @@ import {
   type MemberTierId,
   type TierQuote,
 } from "../data/membershipEstimate";
-import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
-
 const FILM = TESTIMONIAL_FILMS[0];
 
-function useAnimatedAmount(target: number, reduce: boolean): number {
-  const [value, setValue] = useState(target);
-  const valueRef = useRef(target);
-
-  useEffect(() => {
-    const from = valueRef.current;
-    if (reduce || from === target) {
-      valueRef.current = target;
-      setValue(target);
-      return;
-    }
-    const start = performance.now();
-    const duration = 320;
-    let frame = 0;
-    const step = (now: number) => {
-      const progress = Math.min(1, (now - start) / duration);
-      const eased = 1 - (1 - progress) ** 3;
-      const next = Math.round(from + (target - from) * eased);
-      valueRef.current = next;
-      setValue(next);
-      if (progress < 1) frame = requestAnimationFrame(step);
-    };
-    frame = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(frame);
-  }, [target, reduce]);
-
-  return value;
+function paceLine(tier: TierQuote, monthHours: number): string {
+  const extra = Math.max(0, monthHours - tier.includedHours);
+  const fee = money(tier.monthlyFee);
+  if (extra === 0) return fee;
+  const hourWord = extra === 1 ? "hour" : "hours";
+  return `${fee} + ${extra} ${hourWord} at ${Math.round(tier.bayDiscount * 100)}% off`;
 }
 
 function MemberLink({ children, className = "" }: { children: string; className?: string }) {
@@ -110,49 +87,41 @@ function TierCard({
 export function MembershipCalculator() {
   const [hoursPerWeek, setHoursPerWeek] = useState(2);
   const [picked, setPicked] = useState<MemberTierId>("gold");
-  const reduce = usePrefersReducedMotion();
   const sliderId = useId();
   const pace = quoteWeek(hoursPerWeek);
-  const shownSave = useAnimatedAmount(pace.normal - pace.best.total, reduce);
-  const memberRate = pace.best.total / pace.hours;
+  const save = pace.normal - pace.best.total;
   const weekWord = pace.hoursPerWeek === 1 ? "hour" : "hours";
+  const includeLine = `${pace.best.includedHours} bay hours + ${Math.round(pace.best.bayDiscount * 100)}% off extra hours`;
   const setPace = (next: number) => {
     const quote = quoteWeek(next);
     setHoursPerWeek(quote.hoursPerWeek);
     setPicked(quote.best.id);
   };
   const paceFill = `${((pace.hoursPerWeek - 1) / (HOURS_PER_WEEK_MAX - 1)) * 100}%`;
-  const live = `You save ${money(pace.normal - pace.best.total)} a month. Booked normally ${money(pace.normal)}. ${pace.best.name} ${money(pace.best.total)}. ${money(pace.best.total / pace.hours)} an hour on ${pace.best.name}, versus ${money(PRICES.baySession)} an hour.`;
+  const live = `${pace.best.name} ${pace.best.priceLabel}. ${includeLine}. ${money(pace.normal)} booked normally. You save ${money(save)} a month.`;
 
   return (
     <div className="grid gap-16 @3xl:gap-24">
       <section id="why-membership" aria-labelledby="why-membership-heading" className="overflow-hidden rounded-3xl bg-[#020806] @3xl:grid @3xl:grid-cols-2">
         <div className="flex flex-col justify-center px-6 py-8 @3xl:px-10 @3xl:py-12">
-          <h1 id="why-membership-heading" className="text-base font-semibold uppercase tracking-[0.14em] text-[#7DFFB0]">
-            Membership
+          <h1 id="why-membership-heading" className="font-display text-2xl font-semibold tracking-tight text-[#7DFFB0]">
+            {pace.best.name}
           </h1>
-          <div aria-live="polite" aria-atomic="true" className="mt-5">
+          <div aria-live="polite" aria-atomic="true" className="mt-2">
             <p className="sr-only">{live}</p>
-            <p className="text-base font-semibold text-white">You save</p>
-            <p className="font-display text-7xl font-semibold leading-none tracking-tight text-[#7DFFB0] @5xl:text-8xl">
-              {money(shownSave)}
-            </p>
-            <p className="mt-1 text-xl font-semibold text-white">a month</p>
-            <p className="mt-4 text-2xl font-semibold leading-tight text-white">
-              <span className="text-[#E5E7EB] line-through decoration-2">{money(pace.normal)}</span>
-              <span className="text-[#E5E7EB]"> </span>
-              <span className="text-white">
-                {pace.best.name} {money(pace.best.total)}
-              </span>
-            </p>
-            <p className="mt-3 text-xl font-semibold leading-tight text-white">
-              <span className="text-[#7DFFB0]">{money(memberRate)}/hr</span>
-              <span className="text-[#E5E7EB]"> on {pace.best.name} vs </span>
-              <span className="text-[#E5E7EB] line-through decoration-2">{money(PRICES.baySession)}/hr</span>
-            </p>
-            <p className="mt-2 text-base leading-snug text-white">
-              {pace.hours} bay hours × {money(PRICES.baySession)} booked normally.
-            </p>
+            {pace.best.yearlyFee != null ? (
+              <p className="flex flex-wrap items-baseline gap-x-3">
+                <span className="font-display text-6xl font-semibold leading-none tracking-tight text-white @5xl:text-7xl">
+                  {money(pace.best.yearlyFee)}/yr
+                </span>
+                <span className="text-xl font-semibold text-white">{money(pace.best.monthlyFee)}/mo</span>
+              </p>
+            ) : (
+              <p className="font-display text-7xl font-semibold leading-none tracking-tight text-white @5xl:text-8xl">
+                {money(pace.best.monthlyFee)}/mo
+              </p>
+            )}
+            <p className="mt-3 text-base font-semibold leading-snug text-white">{includeLine}</p>
           </div>
           <div className="mt-6">
             <label htmlFor={sliderId} className="flex items-baseline gap-3 text-base font-semibold text-white">
@@ -192,6 +161,31 @@ export function MembershipCalculator() {
               </button>
             </div>
             <p className="mt-2 text-sm leading-snug text-white">A month is {WEEKS_PER_MONTH} weeks. Rollover is not in these totals.</p>
+          </div>
+          <div className="mt-5">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-2xl border border-white/35 p-3">
+                <p className="text-sm font-semibold uppercase tracking-[0.08em] text-[#E5E7EB]">Booked normally</p>
+                <p className="mt-2 text-base leading-snug text-[#E5E7EB]">
+                  {pace.hours} × {money(PRICES.baySession)}
+                </p>
+                <p className="mt-2 font-display text-3xl font-semibold leading-none text-[#E5E7EB]">{money(pace.normal)}</p>
+              </div>
+              <div className="rounded-2xl border-2 border-[#14D45E] bg-[#10281A] p-3">
+                <p className="text-sm font-semibold uppercase tracking-[0.08em] text-[#7DFFB0]">{pace.best.name} member</p>
+                <p className="mt-2 text-base leading-snug text-white">{paceLine(pace.best, pace.hours)}</p>
+                <p className="mt-2 font-display text-3xl font-semibold leading-none text-[#7DFFB0]">{money(pace.best.total)}</p>
+              </div>
+            </div>
+            <p className="mt-3 border-t border-dashed border-white/40 pt-3 text-xl font-semibold text-white">
+              {save > 0 ? (
+                <>
+                  You save <span className="text-[#7DFFB0]">{money(save)}</span> a month
+                </>
+              ) : (
+                "Booking normally is less at this pace."
+              )}
+            </p>
           </div>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <MemberLink>Become a Member</MemberLink>
