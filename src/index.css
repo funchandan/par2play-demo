@@ -218,6 +218,71 @@ h3,
   display: none;
 }
 
+/* Thumb-sized bay-hours slider. The fill is the value; the thumb is the control. */
+.pace-slider {
+  height: 2.75rem;
+  width: 100%;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.pace-slider:focus {
+  outline: none;
+}
+
+.pace-slider:focus-visible {
+  box-shadow: 0 0 0 2px #0a0f0b, 0 0 0 4px #fff; /* taste-skill-ignore */
+}
+
+.pace-slider::-webkit-slider-runnable-track {
+  height: 0.5rem;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    #14d45e 0 var(--pace, 0%),
+    rgb(10 15 11 / 0.16) var(--pace, 0%) 100%
+  );
+}
+
+.pace-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-top: -0.625rem;
+  border: 2px solid #0a0f0b;
+  border-radius: 999px;
+  background: #fff;
+}
+
+.pace-slider::-moz-range-track {
+  height: 0.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(10 15 11 / 0.16);
+}
+
+.pace-slider::-moz-range-progress {
+  height: 0.5rem;
+  border-radius: 999px;
+  background: #14d45e;
+}
+
+.pace-slider::-moz-range-thumb {
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 2px solid #0a0f0b;
+  border-radius: 999px;
+  background: #fff;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pace-bar {
+    transition: width 0.28s ease; /* taste-skill-ignore */
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .usp-marquee {
     display: none;

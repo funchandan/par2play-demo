@@ -26,125 +26,14 @@ function CheckoutLink({ href, children }: { href: string; children: string }) {
   );
 }
 
-function Price({ amount }: { amount: string }) {
-  return <p className="font-display text-3xl font-semibold tracking-tight text-[#0A0F0B]">{amount}</p>;
-}
-
-const plans = [
-  {
-    name: "Practice Unlimited",
-    price: `$${PRICES.unlimitedMonthly}/mo`,
-    detail: "Up to 1 hour a day.",
-    includes: "The bay is yours for up to an hour each day you come in.",
-    href: OCLOCK.practiceUnlimited,
-    cta: "Become a Member",
-    best: true,
-  },
-  {
-    name: "10 Practice Pack",
-    price: `$${PRICES.tenPack}`,
-    detail: "10 sessions of 60 minutes.",
-    includes: "Ten hour-long visits. They do not expire.",
-    href: OCLOCK.tenPracticePack,
-    cta: "Buy the pack",
-    best: false,
-  },
-  {
-    name: "Single bay session",
-    price: `$${PRICES.baySession}`,
-    detail: "One 60-minute rental.",
-    includes: "One hour in a bay. The slot price is confirmed when you check out.",
-    href: OCLOCK.bayRental,
-    cta: "Reserve a bay",
-    best: false,
-  },
-] as const;
-
 export function MembershipPage() {
   return (
     <PageFrame>
       <article className={pageSpace}>
-        <h1 className="max-w-3xl font-display text-4xl font-semibold leading-tight tracking-tight @5xl:text-6xl">
-          Membership
-        </h1>
-        <p className="mt-4 max-w-2xl text-base leading-relaxed">
-          Pick how long you will come and how often. The totals update as you go.
-        </p>
         <MembershipCalculator />
-        <div className="mt-10 grid gap-4 @3xl:hidden">
-          {plans.map((plan) => (
-            <PlanCard key={plan.name} plan={plan} />
-          ))}
-        </div>
-        <div className="mt-10 hidden overflow-x-auto @3xl:block">
-          <table className="w-full min-w-[40rem] border-collapse text-left text-base">
-            <caption className="sr-only">Membership, ten-visit pack, and a single bay rental</caption>
-            <thead>
-              <tr className="border-b-2 border-[#0A0F0B]">
-                <th scope="col" className="py-3 pr-4 font-semibold">
-                  Offer
-                </th>
-                <th scope="col" className="py-3 pr-4 font-semibold">
-                  Price
-                </th>
-                <th scope="col" className="py-3 pr-4 font-semibold">
-                  What you get
-                </th>
-                <th scope="col" className="py-3 font-semibold">
-                  Checkout
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {plans.map((plan) => (
-                <tr key={plan.name} className={plan.best ? "bg-[#e7f8ee]" : undefined}>
-                  <th scope="row" className="py-4 pr-4 font-semibold">
-                    {plan.name}
-                    {plan.best ? <span className="mt-1 block text-base font-semibold">Best value</span> : null}
-                  </th>
-                  <td className="py-4 pr-4">{plan.price}</td>
-                  <td className="py-4 pr-4">{plan.includes}</td>
-                  <td className="py-4">
-                    <CheckoutLink href={plan.href}>{plan.cta}</CheckoutLink>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <h2 className="mt-16 font-display text-3xl font-semibold tracking-tight">Questions</h2>
-        <dl className="mt-6 grid max-w-2xl gap-6">
-          <div>
-            <dt className="text-base font-semibold">Do pack sessions expire?</dt>
-            <dd className="mt-1 text-base leading-relaxed">
-              The 10 Practice Pack on GolfClock says the ten sessions never expire.
-            </dd>
-          </div>
-          <div>
-            <dt className="text-base font-semibold">Can I cancel membership?</dt>
-            <dd className="mt-1 text-base leading-relaxed">
-              The membership page on par2play.com says you can cancel anytime.
-            </dd>
-          </div>
-        </dl>
       </article>
       <CommunityStrip />
     </PageFrame>
-  );
-}
-
-function PlanCard({ plan }: { plan: (typeof plans)[number] }) {
-  return (
-    <article className={`border-2 p-5 ${plan.best ? "border-[#0A0F0B] bg-[#e7f8ee]" : "border-[#4b5563] bg-white"}`}>
-      {plan.best ? <p className="text-base font-semibold">Best value</p> : null}
-      <h2 className="mt-1 font-display text-2xl font-semibold">{plan.name}</h2>
-      <Price amount={plan.price} />
-      <p className="mt-2 text-base leading-relaxed">{plan.detail}</p>
-      <p className="mt-2 text-base leading-relaxed">{plan.includes}</p>
-      <div className="mt-4">
-        <CheckoutLink href={plan.href}>{plan.cta}</CheckoutLink>
-      </div>
-    </article>
   );
 }
 

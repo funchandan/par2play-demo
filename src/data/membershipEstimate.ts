@@ -97,3 +97,49 @@ export function money(amount: number): string {
 export function monthLabel(months: number): string {
   return months === 1 ? "1 month" : `${months} months`;
 }
+
+/** The comparison slider stops here. It is not a cap on daily play. */
+export const COMPARE_HOURS_MAX = 16;
+
+/**
+ * First hour in a month where pay-as-you-go costs at least as much as Practice Unlimited.
+ * $200 / $70 is 2.86, so that hour is the 3rd.
+ */
+export function breakEvenHour(): number {
+  return Math.ceil(PRICES.unlimitedMonthly / PRICES.baySession);
+}
+
+export type MonthPace = {
+  hours: number;
+  payg: number;
+  pack: number;
+  packs: number;
+  membership: number;
+  /** Pay-as-you-go minus membership. Negative when membership costs more. */
+  saveVsPayg: number;
+  breakEvenHour: number;
+  perHourMembership: number;
+  perHourPack: number;
+  perHourPayg: number;
+};
+
+/** Cost to cover `hours` one-hour visits in a single month. */
+export function estimateMonth(hours: number): MonthPace {
+  const count = Math.min(COMPARE_HOURS_MAX, Math.max(1, Math.round(hours)));
+  const packs = Math.ceil(count / SESSIONS_PER_PACK);
+  const payg = count * PRICES.baySession;
+  const pack = packs * PRICES.tenPack;
+  const membership = PRICES.unlimitedMonthly;
+  return {
+    hours: count,
+    payg,
+    pack,
+    packs,
+    membership,
+    saveVsPayg: payg - membership,
+    breakEvenHour: breakEvenHour(),
+    perHourMembership: membership / count,
+    perHourPack: pack / count,
+    perHourPayg: PRICES.baySession,
+  };
+}
