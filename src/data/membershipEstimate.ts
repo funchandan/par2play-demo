@@ -101,6 +101,17 @@ export function monthLabel(months: number): string {
 /** The comparison slider stops here. It is not a cap on daily play. */
 export const COMPARE_HOURS_MAX = 16;
 
+/** Membership allows up to 1 hour a day, so the week slider stops at 7. */
+export const HOURS_PER_WEEK_MAX = 7;
+
+/**
+ * Fraction off Silver and Gold when billed annually. Null hides the Save chip.
+ * Platinum is already an annual plan and is not discounted again.
+ */
+export const ANNUAL_PLAN_DISCOUNT: number | null = 0.1;
+
+export type BillingPeriod = "month" | "year";
+
 /**
  * First hour in a month where pay-as-you-go costs at least as much as Practice Unlimited.
  * $200 / $70 is 2.86, so that hour is the 3rd.
@@ -122,6 +133,138 @@ export type MonthPace = {
   perHourPack: number;
   perHourPayg: number;
 };
+
+export type WeekPace = MonthPace & {
+  hoursPerWeek: number;
+  /** Pay-as-you-go minus membership, times 12. Same monthly rate, not a separate price. */
+  savePerYear: number;
+};
+
+export type MemberTierId = "silver" | "gold" | "platinum";
+
+export type MemberTier = {
+  id: MemberTierId;
+  name: string;
+  /** What the carousel shows as the price. Platinum is a year. */
+  priceLabel: string;
+  /** Monthly fee used in the pace math. Platinum is $4,500 / 12. */
+  monthlyFee: number;
+  yearlyFee: number | null;
+  includedHours: number;
+  /** Fraction off additional bay hours. 0.3 means 30% off. */
+  bayDiscount: number;
+  perks: readonly string[];
+};
+
+/** Confirmed on par2play.com/membership. Rollover is listed and not used in the math. */
+export const MEMBER_TIERS: readonly MemberTier[] = [
+  {
+    id: "silver",
+    name: "Silver",
+    priceLabel: "$100/month",
+    monthlyFee: 100,
+    yearlyFee: null,
+    includedHours: 2,
+    bayDiscount: 0.3,
+    perks: [
+      "2 one-hour bay rentals every month (rollover)",
+      "1 swing evaluation",
+      "1 club fitting",
+      "30% off bay rental",
+      "10% off all other services and lesson packages",
+    ],
+  },
+  {
+    id: "gold",
+    name: "Gold",
+    priceLabel: "$250/month",
+    monthlyFee: 250,
+    yearlyFee: null,
+    includedHours: 6,
+    bayDiscount: 0.4,
+    perks: [
+      "6 one-hour bay rentals every month (rollover)",
+      "1 swing evaluation",
+      "1 club fitting",
+      "40% off bay rental",
+      "15% off all other services and lesson packages",
+    ],
+  },
+  {
+    id: "platinum",
+    name: "Platinum",
+    priceLabel: "$4,500/year",
+    monthlyFee: 4500 / 12,
+    yearlyFee: 4500,
+    includedHours: 20,
+    bayDiscount: 0.7,
+    perks: [
+      "20 one-hour bay rentals every month",
+      "1 free 3-hour event",
+      "A 5 individual lesson pack",
+      "1 swing evaluation",
+      "1 club fitting",
+      "70% off additional bay rental",
+      "20% off all other services and lesson packages",
+    ],
+  },
+];
+
+export type TierQuote = MemberTier & { total: number };
+
+/** Quoted exactly from the par2play.com/membership carousel. Not used in the bay-hour math. */
+export const JUNIOR_TIER_QUOTE =
+  "Junior Golf Membership ($399 a Month) - Age-group wise sessions providing lessons, training, leagues, tournament, events, practice time, fitting. Place twice a week for 1 hour each.";
+
+export function tierMonthCost(tier: MemberTier, monthHours: number): number {
+  const extra = Math.max(0, monthHours - tier.includedHours);
+  return tier.monthlyFee + extra * PRICES.baySession * (1 - tier.bayDiscount);
+}
+
+/** Monthly fee after the annual discount. Platinum stays on its published year price. */
+export function effectiveMonthlyFee(tier: MemberTier, period: BillingPeriod): number {
+  if (period === "month" || tier.yearlyFee != null || ANNUAL_PLAN_DISCOUNT == null) return tier.monthlyFee;
+  return tier.monthlyFee * (1 - ANNUAL_PLAN_DISCOUNT);
+}
+
+/** What this pace costs on a tier for the selected billing view. */
+export function periodPaceTotal(tier: MemberTier, monthHours: number, period: BillingPeriod): number {
+  const extra = Math.max(0, monthHours - tier.includedHours);
+  const monthly = effectiveMonthlyFee(tier, period) + extra * PRICES.baySession * (1 - tier.bayDiscount);
+  return period === "year" ? monthly * 12 : monthly;
+}
+
+export function quoteWeek(hoursPerWeek: number): WeekPace & { tiers: TierQuote[]; best: TierQuote; normal: number } {
+  const week = estimateWeek(hoursPerWeek);
+  const tiers = MEMBER_TIERS.map((tier) => ({ ...tier, total: tierMonthCost(tier, week.hours) }));
+  const best = tiers.reduce((lowest, tier) => (tier.total < lowest.total ? tier : lowest));
+  return { ...week, tiers, best, normal: week.payg };
+}
+
+/** One hour a week, counted as 4 weeks in the month. */
+export function estimateWeek(hoursPerWeek: number): WeekPace {
+  const perWeek = Math.min(HOURS_PER_WEEK_MAX, Math.max(1, Math.round(hoursPerWeek)));
+  const monthHours = perWeek * WEEKS_PER_MONTH;
+  const packs = Math.ceil(monthHours / SESSIONS_PER_PACK);
+  const payg = monthHours * PRICES.baySession;
+  const pack = packs * PRICES.tenPack;
+  const membership = PRICES.unlimitedMonthly;
+  const saveVsPayg = payg - membership;
+  return {
+    hours: monthHours,
+    hoursPerWeek: perWeek,
+    payg,
+    pack,
+    packs,
+    membership,
+    saveVsPayg,
+    savePerYear: saveVsPayg * 12,
+    breakEvenHour: breakEvenHour(),
+    perHourMembership: membership / monthHours,
+    perHourPack: pack / monthHours,
+    perHourPayg: PRICES.baySession,
+  };
+}
 
 /** Cost to cover `hours` one-hour visits in a single month. */
 export function estimateMonth(hours: number): MonthPace {
