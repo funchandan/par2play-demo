@@ -10,12 +10,14 @@ export function VideoSlot({
   src,
   srcMobile,
   poster,
+  posterAlt = "Par2Play indoor golf",
   className = "",
   pausable = false,
 }: {
   src: string;
   srcMobile?: string;
   poster: string;
+  posterAlt?: string;
   className?: string;
   pausable?: boolean;
 }) {
@@ -68,7 +70,7 @@ export function VideoSlot({
             <source src={src} type="video/mp4" />
           </video>
         ) : (
-          <img src={poster} alt="" className="h-full w-full object-cover" />
+          <img src={poster} alt={posterAlt} className="h-full w-full object-cover" />
         )}
         {pausable && ready ? (
           <button

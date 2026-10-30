@@ -16,6 +16,7 @@ export default defineConfig({
         juniors: resolve(fileURLToPath(new URL(".", import.meta.url)), "juniors/index.html"),
         events: resolve(fileURLToPath(new URL(".", import.meta.url)), "events/index.html"),
         tournament: resolve(fileURLToPath(new URL(".", import.meta.url)), "tournament/index.html"),
+        privacy: resolve(fileURLToPath(new URL(".", import.meta.url)), "privacy-policy/index.html"),
         notfound: resolve(fileURLToPath(new URL(".", import.meta.url)), "404.html"),
       },
     },

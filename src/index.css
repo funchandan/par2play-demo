@@ -1,9 +1,42 @@
 @import "tailwindcss";
 @import "@heroui/styles";
 
+@font-face {
+  font-family: "Barlow";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../public/fonts/barlow-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Barlow";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../public/fonts/barlow-600.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Chakra Petch";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../public/fonts/chakra-petch-600.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Caveat";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../public/fonts/caveat-600.woff2") format("woff2");
+}
+
 @theme {
   --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Chakra Petch", "Barlow", sans-serif;
+  --font-accent: "Caveat", "Barlow", cursive;
 }
 
 :root,
@@ -314,5 +347,7 @@ h3,
 
   .benefit-static {
     display: flex;
+    flex-wrap: nowrap;
+    overflow: hidden;
   }
 }

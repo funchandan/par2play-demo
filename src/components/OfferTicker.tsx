@@ -119,7 +119,7 @@ function Item({ icon, label }: { icon: OfferIcon; label: string }) {
       <span className={badge}>
         <Glyph icon={icon} />
       </span>
-      <span className="text-base font-semibold text-white">{label}</span>
+      <span className="font-accent text-xl font-semibold leading-none text-white">{label}</span>
     </li>
   );
 }

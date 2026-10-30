@@ -104,7 +104,7 @@ export function HeroVideo() {
     return (
       <img
         src={HERO_MEDIA.poster}
-        alt=""
+        alt="Indoor golf at Par2Play in Somerset, NJ"
         width={1920}
         height={1080}
         className="absolute inset-0 h-full w-full object-cover"
@@ -142,7 +142,8 @@ export function HeroVideo() {
         preload="none"
         aria-hidden="true"
       >
-        <source src={HERO_MEDIA.webm} type="video/webm" />
+        <source src={HERO_MEDIA.mp4Mobile} type="video/mp4" media="(max-width: 767px)" />
+        <source src={HERO_MEDIA.webm} type="video/webm" media="(min-width: 768px)" />
         <source src={HERO_MEDIA.mp4} type="video/mp4" />
       </video>
     </>

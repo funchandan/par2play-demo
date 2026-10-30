@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { buttonFocus } from "./Cta";
+import { trackLead } from "../analytics/track";
 import { ENQUIRY, NAP } from "../data/business";
 
 export function TournamentForm() {
@@ -25,7 +26,12 @@ export function TournamentForm() {
           headers: { Accept: "application/json", "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
-        setStatus(response.ok ? "sent" : "error");
+        if (response.ok) {
+          trackLead("tournament");
+          setStatus("sent");
+        } else {
+          setStatus("error");
+        }
       } catch {
         setStatus("error");
       }
@@ -45,7 +51,9 @@ export function TournamentForm() {
   if (status === "sent" || status === "held") {
     return (
       <p className="text-base text-[#0A0F0B]" role="status">
-        {status === "sent" ? "Sent. We’ll reply soon." : "Noted here. Enquiry inbox: TODO. Nothing was sent."}
+        {status === "sent"
+          ? "Sent. We’ll reply soon."
+          : `Thanks! Leagues open soon, so call us on ${NAP.phoneDisplay} to reserve a spot.`}
       </p>
     );
   }
@@ -74,7 +82,7 @@ export function TournamentForm() {
       )}
       {status === "error" && (
         <p className="text-base text-red-700" role="alert">
-          Could not send. Call {NAP.phoneDisplay}.
+          We couldn’t send that from the site. Call {NAP.phoneDisplay} to reserve a spot.
         </p>
       )}
       <button

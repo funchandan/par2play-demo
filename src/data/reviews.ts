@@ -7,7 +7,8 @@
  * Jeric also appears on https://teebly.io/venue/6a180bcb-3e94-438a-b3b4-23ae611e6774
  * Tristan and Kenssy: named reviews on that Teebly page.
  * The 4.9 rating and the 152 count are owner-stated.
- * There is no Maps URL in the repo, so reviews link to a Google Maps search.
+ * Google place link: golfsim.co’s “View on Google Maps” uses this CID for
+ * 695 Hamilton St G, Somerset, NJ.
  */
 
 export const GOOGLE_RATING = 4.9;
@@ -15,8 +16,7 @@ export const GOOGLE_RATING = 4.9;
 /** Owner-stated count. Do not replace this with a scraped number. */
 export const GOOGLE_REVIEW_COUNT = 152;
 
-export const GOOGLE_REVIEWS_URL =
-  "https://www.google.com/maps/search/?api=1&query=Par2Play+Somerset+NJ";
+export const GOOGLE_REVIEWS_URL = "https://maps.google.com/?cid=5382340333318241794";
 
 export type ReviewQuote = {
   id: string;

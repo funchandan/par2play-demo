@@ -11,6 +11,7 @@ const media = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
 export const HERO_MEDIA = {
   mp4: media("media/hero.mp4"),
+  mp4Mobile: media("media/hero-mobile.mp4"),
   webm: media("media/hero.webm"),
   poster: media("media/hero-poster.jpg"),
 } as const;

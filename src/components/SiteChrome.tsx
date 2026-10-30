@@ -3,7 +3,8 @@ import { useState } from "react";
 import { Mark } from "./Chrome";
 import { MembershipLink, buttonFocus } from "./Cta";
 import { SoundToggle } from "./SoundToggle";
-import { NAP, OCLOCK, golfClockBookingReady } from "../data/business";
+import { membershipCheckoutHref, golfClockBookingReady, NAP } from "../data/business";
+import { VisitLine } from "./VisitLine";
 import { SITE_NAV, currentRoute, pageHref } from "../data/routes";
 import { useFlow } from "../state/flow";
 
@@ -35,7 +36,7 @@ export function SiteHeader() {
         <div className="flex items-center gap-2">
           <SoundToggle className="text-[#0A0F0B]" />
           <span className="hidden @3xl:contents">
-            <MembershipLink href={route === "membership" ? OCLOCK.liveMembership : undefined} className="shrink-0">
+            <MembershipLink href={route === "membership" ? membershipCheckoutHref() : undefined} className="shrink-0">
               Become a Member
             </MembershipLink>
           </span>
@@ -50,7 +51,7 @@ export function SiteHeader() {
         </div>
       </div>
       {menu && (
-        <nav className="mt-2 flex flex-col items-start gap-1 @3xl:hidden" aria-label="Page">
+        <nav className="mt-2 flex flex-col items-start gap-1 @3xl:hidden" aria-label="Page" data-cta-location="mobile_menu">
           {SITE_NAV.map((item) => (
             <a
               key={item.slug}
@@ -61,7 +62,7 @@ export function SiteHeader() {
               {item.label}
             </a>
           ))}
-          <MembershipLink href={route === "membership" ? OCLOCK.liveMembership : undefined} className="mt-2 w-fit">
+          <MembershipLink href={route === "membership" ? membershipCheckoutHref() : undefined} className="mt-2 w-fit">
             Become a Member
           </MembershipLink>
         </nav>
@@ -74,14 +75,7 @@ export function SiteFooter() {
   return (
     <footer className="px-6 py-20 @3xl:px-12 @3xl:py-24">
       <div className="grid items-start gap-x-12 gap-y-8 @3xl:grid-cols-2 @5xl:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_auto]">
-        <div className="min-w-0">
-          <p className="font-display text-3xl tracking-tight">Par2Play</p>
-          <address className="mt-3 not-italic text-base leading-relaxed">
-            {NAP.street}
-            <br />
-            {NAP.city}, {NAP.region} {NAP.postalCode}
-          </address>
-        </div>
+        <VisitLine />
         <nav className="flex min-w-0 flex-wrap items-center gap-x-6 gap-y-1" aria-label="Footer">
           {SITE_NAV.map((item) => (
             <a key={item.slug} href={pageHref(item.slug)} className={navClass}>
@@ -89,12 +83,6 @@ export function SiteFooter() {
             </a>
           ))}
         </nav>
-        <a
-          className={`inline-flex min-h-11 w-fit items-center text-base font-semibold text-[#0A0F0B] underline decoration-2 underline-offset-4 ${buttonFocus}`}
-          href={NAP.phoneTel}
-        >
-          {NAP.phoneDisplay}
-        </a>
       </div>
       <p className="mt-10 text-base">© 2026 Par2Play</p>
       {!golfClockBookingReady() && (

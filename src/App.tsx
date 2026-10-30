@@ -1,6 +1,8 @@
 import { Button } from "@heroui/react";
 import { currentRoute } from "./data/routes";
+import { CookieNotice } from "./components/CookieNotice";
 import { Landing } from "./screens/Landing";
+import { PrivacyPage } from "./screens/PrivacyPage";
 import { CoachingPage, EventsPage, JuniorsPage, MembershipPage, NotFoundPage, TournamentPage } from "./screens/SitePages";
 import { Clubhouse } from "./screens/Clubhouse";
 import { JourneyMap } from "./screens/JourneyMap";
@@ -75,6 +77,8 @@ function Routed() {
       return <EventsPage />;
     case "tournament":
       return <TournamentPage />;
+    case "privacy":
+      return <PrivacyPage />;
     case "notfound":
       return <NotFoundPage />;
     default: {
@@ -121,6 +125,7 @@ export default function App() {
   return (
     <FlowProvider>
       <Shell />
+      <CookieNotice />
     </FlowProvider>
   );
 }
