@@ -413,3 +413,9 @@ html.ticker-on .benefit-track {
     overflow: hidden;
   }
 }
+
+/* Keep the location below the display title smaller than the critical h1 fallback. */
+.hero-location {
+  font-family: var(--font-caveat);
+  font-size: clamp(1.125rem, 2cqi, 1.375rem);
+}

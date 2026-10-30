@@ -50,7 +50,8 @@ export function HeroTitle({ concept }: { concept: HeroConcept }) {
     <p className="min-w-0 max-w-full font-display text-[1.35rem] font-semibold leading-[1.05] tracking-tight text-white @3xl:text-[2rem]">
       {"A home for "}
       <span className="font-accent text-[1.45em] leading-none">all golfers.</span>
-      {" All year."}
+      {" "}
+      <span className="mt-2 block @3xl:mt-0 @3xl:inline">All year.</span>
     </p>
   );
 }

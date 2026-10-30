@@ -143,11 +143,13 @@ export function Landing() {
         <div className="hero-top-shade pointer-events-none absolute inset-x-0 top-0" aria-hidden="true" />
         <div data-hero-offer className="relative z-10 flex flex-1 items-end justify-end px-6 pb-4 @3xl:px-12 @3xl:pb-6">
           <div className="hero-panel pointer-events-auto w-full max-w-[32rem] rounded-2xl px-4 py-3">
-            <h1 className="font-display text-xl font-semibold leading-tight tracking-tight text-white @3xl:text-3xl">
-              Indoor golf in Somerset, NJ
-            </h1>
-            <div className="mt-2 flex min-w-0 flex-wrap items-end justify-between gap-3">
-              <HeroTitle concept={concept} />
+            <div className="flex min-w-0 flex-wrap items-end justify-between gap-4">
+              <div className="min-w-0 max-w-full">
+                <HeroTitle concept={concept} />
+                <h1 className="hero-location mt-3 font-semibold leading-tight tracking-wide text-[#7DFFB0]">
+                  Indoor golf in Somerset, NJ
+                </h1>
+              </div>
               <HeroMembershipAction onScrollToPractice={() => jump("membership")} />
             </div>
             <HeroProof />
