@@ -3,14 +3,12 @@ import { trackAnchor } from "../analytics/track";
 import { BenefitTicker } from "./BenefitTicker";
 import { VideoSlot } from "./VideoSlot";
 import { BookLink, CtaPair, PhoneLink, buttonFocus } from "./Cta";
-import { membershipCheckoutHref, NAP, PRICES } from "../data/business";
+import { membershipCheckoutHref, NAP } from "../data/business";
 import { TESTIMONIAL_FILMS } from "../data/films";
 import {
   ANNUAL_PLAN_DISCOUNT,
-  JUNIOR_TIER_QUOTE,
   HOURS_PER_WEEK_MAX,
   effectiveMonthlyFee,
-  flooredMemberTotal,
   money,
   periodPaceTotal,
   quoteWeek,
@@ -111,13 +109,14 @@ function TierCard({
       type="button"
       onClick={onSelect}
       aria-pressed={selected}
-      className={`aa-focus rounded-3xl p-5 text-left ${
+      data-tier={tier.id}
+      className={`aa-focus flex h-full min-w-0 flex-col rounded-3xl border-2 p-5 text-left ${
         best
-          ? "order-first col-span-2 border border-[#14D45E]/50 bg-[#020806] text-white shadow-[0_18px_40px_rgb(10_15_11/0.18)] @3xl:order-none @3xl:col-span-1 @3xl:-translate-y-2"
-          : "border-2 border-[#4b5563] bg-white text-[#0A0F0B] @3xl:order-none"
+          ? "border-[#14D45E] bg-[#020806] text-white shadow-[0_18px_40px_rgb(10_15_11/0.18)]"
+          : "border-[#4b5563] bg-white text-[#0A0F0B]"
       } ${selected && !best ? "ring-2 ring-[#0A0F0B]" : ""}`}
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex min-h-16 flex-wrap items-start justify-between gap-2">
         <h3 className="font-display text-2xl font-semibold tracking-tight">{tier.name}</h3>
         {best ? (
           <span className="rounded-full bg-[#14D45E] px-3 py-1 text-sm font-semibold text-[#0A0F0B]">Best for you</span>
@@ -131,15 +130,11 @@ function TierCard({
       <p className={`mt-1 text-base ${best ? "text-white" : "text-[#0A0F0B]"}`}>
         this {period === "year" ? "year" : "month"} at your pace
       </p>
-      {best ? (
-        <ul className="mt-4 grid gap-1 text-base leading-snug text-white">
-          {tier.perks.map((perk) => (
-            <li key={perk}>{perk}</li>
-          ))}
-        </ul>
-      ) : (
-        <p className="mt-3 text-base leading-snug text-[#0A0F0B]">{tier.perks[0]}</p>
-      )}
+      <ul className="mt-4 grid gap-2 text-base leading-snug">
+        {tier.perks.map((perk) => (
+          <li key={perk}>{perk}</li>
+        ))}
+      </ul>
     </button>
   );
 }
@@ -155,15 +150,12 @@ export function MembershipCalculator() {
   const tiers = pace.tiers.map((tier) => ({ ...tier, total: periodPaceTotal(tier, pace.hours, period) }));
   const best = tiers.reduce((lowest, tier) => (tier.total < lowest.total ? tier : lowest));
   const normal = pace.normal * scale;
-  const memberTotal = flooredMemberTotal(best.total, period);
+  const memberTotal = best.total;
   const save = normal - memberTotal;
   const shownNormal = useAnimatedAmount(normal, reduce);
-  const shownMember = useAnimatedAmount(memberTotal, reduce);
+  const shownMember = memberTotal;
   const shownSave = useAnimatedAmount(Math.max(0, save), reduce);
-  const shownFee = useAnimatedAmount(
-    period === "year" ? (best.yearlyFee ?? effectiveMonthlyFee(best, "year") * 12) : effectiveMonthlyFee(best, "month"),
-    reduce,
-  );
+  const shownFee = shownMember;
   const weekWord = pace.hoursPerWeek === 1 ? "hour" : "hours";
   const pacePhrase = `${pace.hoursPerWeek} ${weekWord} played per week`;
   const setPace = (next: number) => {
@@ -177,7 +169,7 @@ export function MembershipCalculator() {
   const feeSuffix = period === "year" ? "/yr" : "/mo";
   const feeNote =
     period === "year"
-      ? `${money(effectiveMonthlyFee(best, "year"))}/mo`
+      ? `${money(memberTotal / 12)}/mo`
       : best.yearlyFee != null
         ? `${money(best.yearlyFee)}/yr, billed yearly`
         : null;
@@ -268,7 +260,7 @@ export function MembershipCalculator() {
           </div>
           <div className="mt-6">
             <div className="grid min-w-0 grid-cols-2 gap-2 @3xl:gap-3">
-              <div className="min-w-0 rounded-2xl border border-white/25 bg-white/5 p-3 @3xl:p-4">
+              <div className="min-w-0 rounded-2xl border-2 border-white/25 bg-white/5 p-3 @3xl:p-4">
                 <p className="text-xs font-semibold uppercase leading-tight tracking-[0.04em] text-[#E5E7EB] @3xl:text-sm">Booked normally</p>
                 <p className="mt-3 font-display text-2xl font-semibold leading-none text-[#E5E7EB] tabular-nums @3xl:text-4xl">{money(Math.round(shownNormal))}</p>
               </div>
@@ -309,7 +301,7 @@ export function MembershipCalculator() {
         <h2 id="tiers-heading" className="font-display text-3xl font-semibold tracking-tight @5xl:text-4xl">
           Best for you: {best.name}
         </h2>
-        <div className="mt-6 grid grid-cols-2 gap-3 @3xl:grid-cols-3 @3xl:items-start">
+        <div className="mt-6 grid auto-rows-fr grid-cols-1 items-stretch gap-4 @3xl:grid-cols-3">
           {tiers.map((tier) => (
             <TierCard
               key={tier.id}
@@ -321,10 +313,6 @@ export function MembershipCalculator() {
             />
           ))}
         </div>
-        <p className="mt-4 max-w-3xl text-sm leading-snug text-[#374151]">{JUNIOR_TIER_QUOTE}</p>
-        <p className="mt-3 text-sm leading-snug text-[#374151]">
-          A 30-minute bay is ${PRICES.baySession / 2}. Swing evaluation, club fitting, the event, and the lesson pack are included as listed. Estimates for bay hours only.
-        </p>
       </section>
 
       <section className="rounded-3xl bg-[#020806] px-6 py-12 text-center text-white @3xl:px-12" aria-labelledby="join-heading">

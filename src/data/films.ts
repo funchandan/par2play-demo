@@ -51,7 +51,7 @@ export const JUNIORS_FILM = {
   poster: media("media/juniors/juniors-loop-poster.jpg"),
 } as const;
 
-/** Home membership band. Cut from the catalogued Par2Play clips, with a dark lower-third label. */
+/** Home montage: real Par2Play golfers, PING/TaylorMade equipment, zoom and blur cuts. */
 export const MEMBERSHIP_MONTAGE = {
   src: media("media/membership/montage.mp4"),
   srcMobile: media("media/membership/montage-mobile.mp4"),

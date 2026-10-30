@@ -182,18 +182,18 @@ export type MemberTier = {
   perks: readonly string[];
 };
 
-/** Confirmed on par2play.com/membership. Rollover is listed and not used in the math. */
+/** Membership prices and weekly allowances confirmed by Chandan, 30 Oct 2026. */
 export const MEMBER_TIERS: readonly MemberTier[] = [
   {
     id: "silver",
     name: "Silver",
-    priceLabel: "$100/month",
-    monthlyFee: 100,
+    priceLabel: "$200/month",
+    monthlyFee: 200,
     yearlyFee: null,
-    includedHours: 2,
+    includedHours: 4,
     bayDiscount: 0.3,
     perks: [
-      "2 one-hour bay rentals every month (rollover)",
+      "1 hour per week · 4 bay hours every month (rollover)",
       "1 swing evaluation",
       "1 club fitting",
       "30% off bay rental",
@@ -206,10 +206,10 @@ export const MEMBER_TIERS: readonly MemberTier[] = [
     priceLabel: "$250/month",
     monthlyFee: 250,
     yearlyFee: null,
-    includedHours: 6,
+    includedHours: 8,
     bayDiscount: 0.4,
     perks: [
-      "6 one-hour bay rentals every month (rollover)",
+      "2 hours per week · 8 bay hours every month (rollover)",
       "1 swing evaluation",
       "1 club fitting",
       "40% off bay rental",
@@ -225,7 +225,7 @@ export const MEMBER_TIERS: readonly MemberTier[] = [
     includedHours: 20,
     bayDiscount: 0.7,
     perks: [
-      "20 one-hour bay rentals every month",
+      "5 hours per week · 20 bay hours every month",
       "1 free 3-hour event",
       "A 5 individual lesson pack",
       "1 swing evaluation",
@@ -237,10 +237,6 @@ export const MEMBER_TIERS: readonly MemberTier[] = [
 ];
 
 export type TierQuote = MemberTier & { total: number };
-
-/** Quoted exactly from the par2play.com/membership carousel. Not used in the bay-hour math. */
-export const JUNIOR_TIER_QUOTE =
-  "Junior Golf Membership ($399 a Month) - Age-group wise sessions providing lessons, training, leagues, tournament, events, practice time, fitting. Place twice a week for 1 hour each.";
 
 export function tierMonthCost(tier: MemberTier, monthHours: number): number {
   const extra = Math.max(0, monthHours - tier.includedHours);

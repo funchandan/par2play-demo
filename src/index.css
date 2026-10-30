@@ -263,7 +263,7 @@ body:has(#lcp-poster) {
 }
 
 body:has(#lcp-poster) #root .min-h-screen,
-body:has(#lcp-poster) #root .bg-white,
+body:has(#lcp-poster) #root [data-testid="layout"][data-layout="web"],
 body:has(#lcp-poster) #hero {
   background: transparent;
 }

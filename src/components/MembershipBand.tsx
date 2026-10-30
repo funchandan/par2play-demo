@@ -22,20 +22,6 @@ const benefits: readonly { id: MembershipStepId; word: string; line: string }[] 
   },
 ];
 
-function useWideScreen() {
-  const [wide, setWide] = useState(true);
-
-  useEffect(() => {
-    const query = window.matchMedia("(min-width: 768px)");
-    const apply = () => setWide(query.matches);
-    apply();
-    query.addEventListener("change", apply);
-    return () => query.removeEventListener("change", apply);
-  }, []);
-
-  return wide;
-}
-
 function MontageFilm({ paused, reduce }: { paused: boolean; reduce: boolean }) {
   const ref = useRef<HTMLVideoElement>(null);
   const box = useRef<HTMLDivElement>(null);
@@ -44,6 +30,9 @@ function MontageFilm({ paused, reduce }: { paused: boolean; reduce: boolean }) {
     const video = ref.current;
     const node = box.current;
     if (!video || !node || reduce) return;
+    // Hydration does not restore media element properties from prerendered HTML.
+    video.muted = true;
+    video.defaultMuted = true;
     if (paused) {
       video.pause();
       return;
@@ -125,8 +114,8 @@ function Benefits() {
           <li key={benefit.id} className="flex gap-3">
             <MembershipStepIcon id={benefit.id} />
             <div>
-              <h3 className="font-display text-xl font-semibold leading-tight tracking-tight">{benefit.word}</h3>
-              <p className="mt-1 text-base leading-snug">{benefit.line}</p>
+              <h3 className="font-display text-xl font-semibold leading-tight tracking-tight text-[#7DFFB0]">{benefit.word}</h3>
+              <p className="mt-1 text-base leading-relaxed text-white">{benefit.line}</p>
             </div>
           </li>
         ))}
@@ -137,44 +126,28 @@ function Benefits() {
 
 export function MembershipBand() {
   const reduce = usePrefersReducedMotion();
-  const wide = useWideScreen();
   const [paused, setPaused] = useState(false);
   const toggle = () => setPaused((value) => !value);
   const showControl = !reduce;
 
   return (
-    <section id="membership" className="scroll-mt-32">
-      {!wide ? (
-      <div className="bg-[#020806] text-white">
-        <div className="relative aspect-video w-full overflow-hidden">
+    <section id="membership" className="@container scroll-mt-32 bg-[#020806] text-white">
+      <div className="relative overflow-hidden @3xl:min-h-[36rem]">
+        <div className="relative aspect-video w-full overflow-hidden @3xl:absolute @3xl:inset-0 @3xl:aspect-auto @3xl:h-full">
           <MontageFilm paused={paused} reduce={reduce} />
-          <div
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#020806] to-transparent"
-            aria-hidden="true"
-          />
           {showControl ? <FilmToggle paused={paused} onToggle={toggle} /> : null}
         </div>
-        <div className="px-6 pt-2 pb-10">
-          <h2 className="font-display text-4xl font-semibold leading-none tracking-tight">Membership</h2>
-          <Benefits />
-        </div>
-      </div>
-      ) : (
-      <div className="relative min-h-[36rem] overflow-hidden text-white">
-        <MontageFilm paused={paused} reduce={reduce} />
         <div
-          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#020806] from-6% via-[#020806]/92 via-28% to-transparent to-46%"
+          className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-[#020806] via-[#020806]/90 to-transparent @3xl:block"
           aria-hidden="true"
         />
-        {showControl ? <FilmToggle paused={paused} onToggle={toggle} /> : null}
-        <div className="pointer-events-none relative z-20 flex min-h-[36rem] items-center px-12 py-20">
+        <div className="pointer-events-none relative z-20 px-6 pt-6 pb-10 @3xl:flex @3xl:min-h-[36rem] @3xl:items-center @3xl:px-12 @3xl:py-16">
           <div className="pointer-events-auto max-w-lg">
             <h2 className="font-display text-4xl font-semibold leading-none tracking-tight @5xl:text-6xl">Membership</h2>
             <Benefits />
           </div>
         </div>
       </div>
-      )}
     </section>
   );
 }

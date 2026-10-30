@@ -49,7 +49,7 @@ export function CoachingPanel() {
       live={live}
       film={COACHING_FILM}
       benefits={BENEFITS}
-      primary={{ offer: "lesson", label: "Schedule a lesson" }}
+      primary={{ offer: "swing-evaluation", label: "Evaluate my swing" }}
       secondary={{ offer: "bay", label: "Try it out" }}
       selector={
         <div>
