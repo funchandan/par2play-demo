@@ -3,7 +3,6 @@ import { CompareBoxes, PricingHero } from "./PricingHero";
 import { PRICES } from "../data/business";
 import { COACHING_FILM } from "../data/films";
 import { money } from "../data/membershipEstimate";
-import type { OfferBenefit } from "./OfferTicker";
 
 const PACKS = [
   { count: 1, price: PRICES.lessonSingle },
@@ -14,20 +13,11 @@ const PACKS = [
   { count: 50, price: PRICES.lessonPack50 },
 ] as const;
 
-const BENEFITS: readonly OfferBenefit[] = [
-  { id: "swing", label: "Swing evaluation", icon: "ball" },
-  { id: "lessons", label: "Private lessons", icon: "flag" },
-  { id: "expire", label: "Packs never expire", icon: "calendar" },
-  { id: "blackout", label: "No blackout days", icon: "clock" },
-  { id: "cameras", label: "Simulator cameras", icon: "camera" },
-  { id: "coaches", label: "PGA coaches", icon: "trophy" },
-];
-
 type Mode = "lessons" | "evaluation";
 
 export function CoachingPanel() {
   const sliderId = useId();
-  const [mode, setMode] = useState<Mode>("lessons");
+  const [mode, setMode] = useState<Mode>("evaluation");
   const [index, setIndex] = useState(1);
   const pack = PACKS[index] ?? PACKS[1];
   const lessonWord = pack.count === 1 ? "lesson" : "lessons";
@@ -48,17 +38,20 @@ export function CoachingPanel() {
       figure={figure}
       live={live}
       film={COACHING_FILM}
-      benefits={BENEFITS}
+      facts={[
+        { label: "Minutes / session", value: mode === "evaluation" ? "50–60" : String(PRICES.lessonMinutes), icon: "clock" },
+        { label: "Sessions", value: String(mode === "evaluation" ? 1 : pack.count), icon: "sessions" },
+      ]}
       primary={{ offer: "swing-evaluation", label: "Evaluate my swing" }}
       secondary={{ offer: "bay", label: "Try it out" }}
       selector={
         <div>
           <div className="grid grid-cols-1 gap-1 rounded-3xl bg-white/10 p-1 @3xl:grid-cols-2 @3xl:rounded-full" role="group" aria-label="Coaching offer">
-            <ModeButton pressed={mode === "lessons"} onClick={() => setMode("lessons")}>
-              Lessons
-            </ModeButton>
             <ModeButton pressed={mode === "evaluation"} onClick={() => setMode("evaluation")}>
               Swing evaluation
+            </ModeButton>
+            <ModeButton pressed={mode === "lessons"} onClick={() => setMode("lessons")}>
+              Lessons
             </ModeButton>
           </div>
           {mode === "lessons" ? (
@@ -81,9 +74,7 @@ export function CoachingPanel() {
                 onChange={(event) => setIndex(Number(event.target.value))}
               />
             </div>
-          ) : (
-            <p className="mt-4 text-base font-semibold text-white">50–60 minutes with a coach.</p>
-          )}
+          ) : null}
         </div>
       }
       comparison={

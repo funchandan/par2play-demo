@@ -20,7 +20,7 @@ for (const width of [360, 1280]) {
       await expect(comparison.locator("p").last()).toHaveText(`$${amount}`);
       const card = page.locator(`[data-tier="${tier}"]`);
       await expect(card.getByText(`$${amount}`, { exact: true })).toBeVisible();
-      await expect(card.getByText("Best for you", { exact: true })).toBeVisible();
+      await expect(card.getByText("Lowest total", { exact: true })).toBeVisible();
       const cells = await comparison.locator("..").locator(":scope > div").evaluateAll((nodes) => nodes.map((node) => {
         const rect = node.getBoundingClientRect();
         return [rect.width, rect.height];
@@ -76,4 +76,32 @@ test("removed sections and junior paragraph stay absent on their pages", async (
   await page.goto("coaching/");
   await expect(page.locator("#coaching-offer").getByRole("link", { name: "Evaluate my swing" })).toHaveAttribute("data-offer", "swing-evaluation");
   await expect(page.locator("#coaching-offer").getByRole("link", { name: "Try it out" })).toHaveAttribute("data-offer", "bay");
+});
+
+test("membership cards compare only prices and hours", async ({ page }) => {
+  await page.goto("membership/");
+  const cards = page.locator("[data-tier]");
+  for (const [id, weekly, monthly] of [["silver", "1", "4"], ["gold", "2", "8"], ["platinum", "5", "20"]] as const) {
+    const card = page.locator(`[data-tier="${id}"]`);
+    await expect(card.locator("dt")).toHaveText(["Hours / week", "Hours / month"]);
+    await expect(card.locator("dd")).toHaveText([weekly, monthly]);
+    await expect(card.locator("s")).toBeVisible();
+  }
+  for (const card of await cards.all()) {
+    await expect(card).not.toContainText(/free|rollover|club fitting|swing evaluation|lesson pack|services/i);
+  }
+});
+
+test("coaching defaults to evaluation and has no pictures below pricing", async ({ page }) => {
+  await page.goto("coaching/");
+  const panel = page.locator("#coaching-offer");
+  await expect(panel.getByRole("button", { name: "Swing evaluation", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(panel.locator("dd")).toHaveText(["50–60", "1"]);
+  await expect(panel.getByRole("slider")).toHaveCount(0);
+  const imagesOutsidePanel = await page.locator("article img").evaluateAll((nodes) => nodes.filter((node) => !node.closest("#coaching-offer")).length);
+  expect(imagesOutsidePanel).toBe(0);
+  await panel.getByRole("button", { name: "Lessons", exact: true }).click();
+  await expect(panel.locator("dd")).toHaveText(["30", "5"]);
+  await expect(panel.getByRole("slider")).toBeVisible();
+  await expect(page.getByText(/never expire|no blackout|plan for what to change/i)).toHaveCount(0);
 });

@@ -3,20 +3,10 @@ import { PricingHero } from "./PricingHero";
 import { PRICES } from "../data/business";
 import { EVENTS_HERO_FILM } from "../data/films";
 import { formatPrice } from "../data/membershipEstimate";
-import type { OfferBenefit } from "./OfferTicker";
 
 const GUEST_MIN = 6;
 const GUEST_MAX = 40;
 const BAY_CAP = 6;
-
-const BENEFITS: readonly OfferBenefit[] = [
-  { id: "pro", label: "Golf pro hosting", icon: "flag" },
-  { id: "mini", label: "Mini lessons", icon: "ball" },
-  { id: "bays", label: "Reserved bays", icon: "calendar" },
-  { id: "clubs", label: "Complimentary clubs", icon: "club" },
-  { id: "byob", label: "Bring your own drinks", icon: "party" },
-  { id: "karaoke", label: "Karaoke on the TVs", icon: "trophy" },
-];
 
 export function EventsPanel() {
   const sliderId = useId();
@@ -39,7 +29,10 @@ export function EventsPanel() {
       figure={figure}
       live={live}
       film={EVENTS_HERO_FILM}
-      benefits={BENEFITS}
+      facts={[
+        { label: "Duration", value: `${hours} hours`, icon: "clock" },
+        { label: "Package price", value: "On request", icon: "price" },
+      ]}
       primary={{ offer: "group", label: "Check availability" }}
       secondary={{ offer: "bay", label: "Try it out" }}
       selector={
