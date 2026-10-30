@@ -214,7 +214,7 @@ export function MembershipCalculator() {
           <div aria-live="polite" aria-atomic="true" className="mt-4 min-w-0">
             <p className="sr-only">{live}</p>
             <p className="flex max-w-full flex-wrap items-baseline gap-x-3">
-              <span className="max-w-full font-display text-[clamp(2rem,11cqi,6rem)] font-semibold leading-none tracking-tight text-white @3xl:text-8xl">
+              <span className="max-w-full whitespace-nowrap font-display text-[clamp(3.15rem,16cqi,6rem)] font-semibold leading-none tracking-tight text-white @3xl:text-8xl">
                 {money(Math.round(shownFee))}
                 {feeSuffix}
               </span>
@@ -223,7 +223,7 @@ export function MembershipCalculator() {
           </div>
           <div className="mt-6">
             <label htmlFor={sliderId} className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-base font-semibold text-white">
-              <output htmlFor={sliderId} className="font-display text-5xl font-semibold leading-none text-[#7DFFB0] tabular-nums">
+                <output htmlFor={sliderId} className="font-display text-4xl font-semibold leading-none text-[#7DFFB0] tabular-nums @3xl:text-5xl">
                 {pace.hoursPerWeek}
               </output>
               {weekWord} played per week

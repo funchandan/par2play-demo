@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BookLink, CtaPair, MembershipLink } from "./Cta";
-import { FilmCarousel } from "./FilmCarousel";
 import { MembershipStepIcon, type MembershipStepId } from "./MembershipIcons";
-import { TESTIMONIAL_FILMS } from "../data/films";
+import { MEMBERSHIP_MONTAGE } from "../data/films";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 
 const benefits: readonly { id: MembershipStepId; word: string; line: string }[] = [
@@ -35,6 +34,40 @@ function useWideScreen() {
   }, []);
 
   return wide;
+}
+
+function MontageFilm({ paused, reduce }: { paused: boolean; reduce: boolean }) {
+  const ref = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = ref.current;
+    if (!video || reduce) return;
+    if (paused) {
+      video.pause();
+      return;
+    }
+    void video.play().catch(() => undefined);
+  }, [paused, reduce]);
+
+  if (reduce) {
+    return <img src={MEMBERSHIP_MONTAGE.poster} alt="" className="absolute inset-0 h-full w-full object-cover object-center" />;
+  }
+
+  return (
+    <video
+      ref={ref}
+      className="absolute inset-0 h-full w-full object-cover object-center"
+      poster={MEMBERSHIP_MONTAGE.poster}
+      muted
+      playsInline
+      loop
+      autoPlay={!paused}
+      preload="metadata"
+    >
+      <source src={MEMBERSHIP_MONTAGE.srcMobile} type="video/mp4" media="(max-width: 767px)" />
+      <source src={MEMBERSHIP_MONTAGE.src} type="video/mp4" />
+    </video>
+  );
 }
 
 function FilmToggle({ paused, onToggle }: { paused: boolean; onToggle: () => void }) {
@@ -76,23 +109,16 @@ function Benefits() {
 export function MembershipBand() {
   const reduce = usePrefersReducedMotion();
   const wide = useWideScreen();
-  const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
-  const count = TESTIMONIAL_FILMS.length;
-
-  const advance = () => {
-    if (paused || reduce || count < 2) return;
-    setIndex((current) => (current + 1) % count);
-  };
   const toggle = () => setPaused((value) => !value);
-  const showControl = !reduce && count > 1;
+  const showControl = !reduce;
 
   return (
     <section id="membership" className="scroll-mt-32">
       {!wide ? (
       <div className="bg-[#020806] text-white">
         <div className="relative aspect-video w-full overflow-hidden">
-          <FilmCarousel index={index} paused={paused} reduce={reduce} onEnded={advance} />
+          <MontageFilm paused={paused} reduce={reduce} />
           <div
             className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#020806] to-transparent"
             aria-hidden="true"
@@ -106,7 +132,7 @@ export function MembershipBand() {
       </div>
       ) : (
       <div className="relative min-h-[36rem] overflow-hidden text-white">
-        <FilmCarousel index={index} paused={paused} reduce={reduce} onEnded={advance} />
+        <MontageFilm paused={paused} reduce={reduce} />
         <div
           className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#020806] from-6% via-[#020806]/92 via-28% to-transparent to-46%"
           aria-hidden="true"
