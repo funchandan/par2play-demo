@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { trackAnchor } from "../analytics/track";
-import { BenefitTicker } from "./BenefitTicker";
+import { CircleDollarSign } from "lucide-react";
+import { PriceFacts } from "./PriceFacts";
 import { VideoSlot } from "./VideoSlot";
 import { BookLink, CtaPair, PhoneLink, buttonFocus } from "./Cta";
 import { membershipCheckoutHref, NAP } from "../data/business";
@@ -8,6 +9,7 @@ import { TESTIMONIAL_FILMS } from "../data/films";
 import {
   ANNUAL_PLAN_DISCOUNT,
   HOURS_PER_WEEK_MAX,
+  WEEKS_PER_MONTH,
   effectiveMonthlyFee,
   money,
   periodPaceTotal,
@@ -117,9 +119,9 @@ function TierCard({
       } ${selected && !best ? "ring-2 ring-[#0A0F0B]" : ""}`}
     >
       <div className="flex min-h-16 flex-wrap items-start justify-between gap-2">
-        <h3 className="font-display text-2xl font-semibold tracking-tight">{tier.name}</h3>
+        <h3 className="flex items-center gap-2 font-display text-2xl font-semibold tracking-tight"><CircleDollarSign aria-hidden="true" className={`size-6 shrink-0 ${best ? "text-[#7DFFB0]" : "text-[#17743B]"}`} strokeWidth={1.5} />{tier.name}</h3>
         {best ? (
-          <span className="rounded-full bg-[#14D45E] px-3 py-1 text-sm font-semibold text-[#0A0F0B]">Best for you</span>
+          <span className="rounded-full bg-[#14D45E] px-3 py-1 text-sm font-semibold text-[#0A0F0B]">Lowest total</span>
         ) : null}
       </div>
       <p className={`mt-2 font-display text-3xl font-semibold leading-none tracking-tight tabular-nums @3xl:text-4xl ${best ? "text-[#7DFFB0]" : "text-[#0A0F0B]"}`}>{label.price}</p>
@@ -130,11 +132,14 @@ function TierCard({
       <p className={`mt-1 text-sm ${best ? "text-[#C5D2C9]" : "text-[#4B5563]"}`}>
         this {period === "year" ? "year" : "month"} at your pace
       </p>
-      <ul className="mt-4 grid gap-2 text-base leading-snug">
-        {tier.perks.map((perk) => (
-          <li key={perk}>{perk}</li>
-        ))}
-      </ul>
+      <PriceFacts
+        className="mt-auto w-full pt-6"
+        dark={best}
+        items={[
+          { label: "Hours / week", value: String(tier.includedHours / WEEKS_PER_MONTH), icon: "clock" },
+          { label: "Hours / month", value: String(tier.includedHours), icon: "calendar" },
+        ]}
+      />
     </button>
   );
 }
@@ -285,21 +290,20 @@ export function MembershipCalculator() {
               Try it out
             </BookLink>
           </CtaPair>
-          <div className="-mx-5 mt-6 @3xl:hidden">
-            <BenefitTicker />
-          </div>
+          <PriceFacts className="mt-6 mb-8 @3xl:mb-0" dark items={[
+            { label: "Hours / week", value: String(pace.hoursPerWeek), icon: "clock" },
+            { label: "Hours / month", value: String(pace.hours), icon: "calendar" },
+          ]} />
         </div>
         <div className="relative flex min-h-72 w-full min-w-0 flex-col justify-end overflow-hidden @3xl:min-h-full">
           <VideoSlot src={FILM.src} srcMobile={FILM.srcMobile} poster={FILM.poster} className="absolute inset-0 h-full w-full" pausable />
-          <div className="hidden @3xl:block">
-            <BenefitTicker />
-          </div>
+
         </div>
       </section>
 
       <section aria-labelledby="tiers-heading">
         <h2 id="tiers-heading" className="font-display text-3xl font-semibold tracking-tight @5xl:text-4xl">
-          Best for you: {best.name}
+          Compare price & hours
         </h2>
         <div className="mt-6 grid auto-rows-fr grid-cols-1 items-stretch gap-4 @3xl:grid-cols-3">
           {tiers.map((tier) => (

@@ -1,5 +1,4 @@
-import type { LucideIcon } from "lucide-react";
-import { CalendarDays, Flag, Target, Users } from "lucide-react";
+import { Clock3, Layers3 } from "lucide-react";
 import { CoachingPanel } from "../components/CoachingPanel";
 import { EventsPanel } from "../components/EventsPanel";
 import { JuniorsPanel } from "../components/JuniorsPanel";
@@ -10,13 +9,11 @@ import { PageFrame, pageSpace } from "../components/SiteChrome";
 import { trackAnchor } from "../analytics/track";
 import { BookLink, CtaPair, buttonFocus } from "../components/Cta";
 import { TournamentForm } from "../components/TournamentForm";
-import { ValuePoint } from "../components/ValuePoint";
 import { OCLOCK, PRICES } from "../data/business";
 import { formatPrice, money } from "../data/membershipEstimate";
 import { PUBLISHED_COACHES } from "../data/coaches";
-import { EVENT_FACTS, HOLIDAY_FACTS } from "../data/events";
 import { EventTypeList } from "../components/EventTypeList";
-import { COACHING_GALLERY, FITTING_GALLERY, JUNIORS_GALLERY } from "../data/gallery";
+import { JUNIORS_GALLERY } from "../data/gallery";
 import { pageHref } from "../data/routes";
 import { JsonLd } from "../components/JsonLd";
 import { Breadcrumbs } from "../components/Breadcrumbs";
@@ -71,27 +68,14 @@ export function CoachingPage() {
         <Breadcrumbs current="Golf lessons" />
         <CoachingPanel />
         <p className="mt-10 max-w-2xl text-base leading-relaxed">Two PGA professional coaches, Nick Schiavo and Nick Monticello.</p>
-        <StillGrid photos={COACHING_GALLERY} className="@3xl:grid-cols-3" />
-        <ol className="mt-10 grid gap-6 @3xl:grid-cols-3">
-          <JourneyStep icon={Target} step="1" title="Swing evaluation" line="Start with a swing evaluation, then a plan for what to change." />
-          <JourneyStep icon={Flag} step="2" title="Lessons" line="1:1 lessons that follow that plan." />
-          <JourneyStep
-            icon={Users}
-            step="3"
-            title="Golf Improvement Bundle"
-            line={`$${PRICES.golfImprovementBundle}. Lessons, assessments, bay time, and a workshop.`}
-          />
-        </ol>
-        <div className="mt-8">
-          <CheckoutLink href={OCLOCK.golfImprovementBundle}>Buy the bundle</CheckoutLink>
-        </div>
         <h2 className="mt-16 font-display text-3xl font-semibold tracking-tight">Lesson packs</h2>
-        <p className="mt-3 max-w-2xl text-base leading-relaxed">Packages never expire and have no blackout days.</p>
-        <ul className="mt-6 grid gap-3 @3xl:grid-cols-5">
+        <ul aria-label="Lesson pack prices" className="mt-6 grid auto-rows-fr grid-cols-1 gap-4 @xl:grid-cols-2 @5xl:grid-cols-5">
           {lessonTiers.map((tier) => (
-            <li key={tier.count} className="border-2 border-[#4b5563] bg-white p-4">
-              <p className="text-base font-semibold">{tier.count}</p>
-              <p className="mt-2 font-display text-2xl font-semibold">{money(tier.price)}</p>
+            <li key={tier.count} className="rounded-3xl border border-[#0A0F0B]/15 bg-white p-5">
+              <span className="inline-flex size-10 items-center justify-center rounded-xl bg-[#E4F3E8] text-[#17743B]"><Layers3 aria-hidden="true" className="size-5" strokeWidth={1.7} /></span>
+              <p className="mt-5 text-sm font-semibold text-[#4B5563]">{tier.count}</p>
+              <p className="mt-2 font-display text-3xl font-semibold tracking-tight tabular-nums">{money(tier.price)}</p>
+              <p className="mt-5 flex items-center gap-2 border-t border-[#0A0F0B]/10 pt-4 text-sm text-[#4B5563]"><Clock3 aria-hidden="true" className="size-4 shrink-0" />{PRICES.lessonMinutes} min / lesson</p>
             </li>
           ))}
         </ul>
@@ -100,7 +84,6 @@ export function CoachingPage() {
         </div>
         <h2 className="mt-16 font-display text-3xl font-semibold tracking-tight">Club fitting</h2>
         <p className="mt-3 font-display text-4xl font-semibold leading-none tracking-tight">{formatPrice(PRICES.fitting)}</p>
-        <StillGrid photos={FITTING_GALLERY} />
         <ul className="mt-6 grid grid-cols-2 gap-3 @3xl:grid-cols-4">
           {fittingChoices.map((choice) => (
             <li key={choice} className="text-base font-semibold">
@@ -131,27 +114,6 @@ export function CoachingPage() {
   );
 }
 
-function JourneyStep({
-  icon,
-  step,
-  title,
-  line,
-}: {
-  icon: LucideIcon;
-  step: string;
-  title: string;
-  line: string;
-}) {
-  return (
-    <li className="border-2 border-[#0A0F0B] bg-white p-5">
-      <p className="text-base font-semibold">Step {step}</p>
-      <div className="mt-3">
-        <ValuePoint icon={icon} label={title} line={line} />
-      </div>
-    </li>
-  );
-}
-
 export function JuniorsPage() {
   return (
     <PageFrame>
@@ -159,13 +121,8 @@ export function JuniorsPage() {
         <JsonLd data={juniorsGraph()} />
         <Breadcrumbs current="Junior golf" />
         <JuniorsPanel />
-        <p className="mt-10 max-w-xl text-base leading-relaxed">Building the golfers of tomorrow.</p>
         <StillGrid photos={JUNIORS_GALLERY} />
-        <div className="mt-8 grid max-w-xl gap-5">
-          <ValuePoint icon={Users} label="Future pros" line="1:1 coaching with PGA pros Nick Schiavo and Nick Monticello, once or twice a week." />
-          <ValuePoint icon={CalendarDays} label="Supervised care" line="Juniors practise under staff supervision in a safe, friendly bay." />
-          <ValuePoint icon={Target} label="Technology-assisted development" line="Shot data on every swing shows progress week to week." />
-        </div>
+
       </article>
     </PageFrame>
   );
@@ -184,17 +141,7 @@ export function EventsPage() {
         <div className="mt-8">
           <EventGallery />
         </div>
-        <ul className="mt-8 grid max-w-2xl list-disc gap-2 pl-5 text-base leading-relaxed">
-          {EVENT_FACTS.map((fact) => (
-            <li key={fact}>{fact}</li>
-          ))}
-        </ul>
-        <h2 className="mt-12 font-display text-3xl font-semibold tracking-tight">Holiday parties</h2>
-        <ul className="mt-4 grid max-w-2xl list-disc gap-2 pl-5 text-base leading-relaxed">
-          {HOLIDAY_FACTS.map((fact) => (
-            <li key={fact}>{fact}</li>
-          ))}
-        </ul>
+        <p className="mt-8 text-base text-[#4B5563]">2-hour or 3-hour bookings. Package price on request.</p>
         <p className="mt-8">
           <a href={pageHref("")} className={`inline-flex min-h-11 items-center text-base font-semibold underline decoration-2 underline-offset-4 ${buttonFocus}`}>
             Back to the landing page
@@ -212,15 +159,7 @@ export function TournamentPage() {
         <JsonLd data={tournamentGraph()} />
         <Breadcrumbs current="Fall League" />
         <TournamentPanel />
-        <p className="mx-auto mt-10 max-w-xl text-center text-base leading-relaxed">
-          League booking is 18 holes. A League Player tag is required.
-        </p>
-        <p className="mx-auto mt-4 max-w-xl text-center text-base leading-relaxed">
-          The Par2Play Fall League is an indoor golf league on Full Swing simulators at 695 Hamilton Street, Suite G, Somerset, NJ
-          08873. The entry fee is not published yet. The studio has four enclosed bays and is open 10am to 10pm, seven days a week.
-          Complimentary premium golf clubs are included, or bring your own. Call (732) 448-2769 to reserve a spot, or book a bay at
-          par2play.oclock.app while the league list is open. Lessons on the same simulators start at $100 for 30 minutes with Nick Schiavo and Nick Monticello. Silver membership is $200 a month, Gold is $250 a month, and Platinum is $4,500 a year if you want regular bay time before the league starts. No start date or entry fee is published yet.
-        </p>
+        <p className="mx-auto mt-10 max-w-xl text-center text-base text-[#4B5563]">18 holes per round. Entry price on request.</p>
         <div className="mt-10">
           <TournamentForm />
         </div>

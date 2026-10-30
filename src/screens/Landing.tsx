@@ -22,7 +22,6 @@ import { VisitLine } from "../components/VisitLine";
 import { faqGraph, homeGraph } from "../data/schema";
 import { COACHING_FILM, JUNIORS_FILM } from "../data/films";
 import { SITE_NAV, pageHref } from "../data/routes";
-import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { useFlow } from "../state/flow";
 
 const sectionSpace = "scroll-mt-32 px-6 py-20 @3xl:px-12 @3xl:py-24";
@@ -32,7 +31,6 @@ const navButton = `nav-link inline-flex min-h-11 items-center px-1 text-base fon
 
 export function Landing() {
   const flow = useFlow();
-  const reduce = usePrefersReducedMotion();
   const concept = heroConcept();
   const [menu, setMenu] = useState(false);
   const [onFilm, setOnFilm] = useState(true);
@@ -75,10 +73,6 @@ export function Landing() {
     onFilm ? "text-white" : "text-[#0A0F0B]"
   }`;
 
-  const jump = (id: string) => {
-    setMenu(false);
-    document.getElementById(id)?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
-  };
 
   return (
     <div ref={scrollRef} className={`@container page-grid text-base text-[#0A0F0B] ${scroll}`}>
@@ -150,7 +144,7 @@ export function Landing() {
                   Indoor golf in Somerset, NJ
                 </h1>
               </div>
-              <HeroMembershipAction onScrollToPractice={() => jump("membership")} />
+              <HeroMembershipAction />
             </div>
             <HeroProof />
           </div>

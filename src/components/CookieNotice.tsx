@@ -21,11 +21,11 @@ function snapshot() {
 }
 
 export function CookieNotice() {
-  const mode = useSyncExternalStore(subscribe, snapshot, snapshot);
+  // Prerendered HTML always starts with the banner, independent of visitor storage.
+  const mode = useSyncExternalStore(subscribe, snapshot, () => "banner" as const);
   const stored = cookieChoice();
   const [analytics, setAnalytics] = useState(false);
   const [marketing, setMarketing] = useState(false);
-  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     applyStoredConsent();
@@ -47,7 +47,7 @@ export function CookieNotice() {
     setMarketing(choice?.marketing ?? false);
   }, [mode]);
 
-  if (mode === "closed" && !saved) return null;
+  if (mode === "closed") return null;
 
   const commit = (choice: { analytics: boolean; marketing: boolean }, downgrade: boolean) => {
     saveConsent(choice, false);
@@ -57,8 +57,6 @@ export function CookieNotice() {
       window.location.reload();
       return;
     }
-    setSaved(true);
-    window.setTimeout(() => setSaved(false), 4000);
   };
 
   const previous = stored ?? { analytics: false, marketing: false };
@@ -67,11 +65,6 @@ export function CookieNotice() {
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 flex justify-center p-3 @3xl:p-6">
-      {saved ? (
-        <p className="pointer-events-auto rounded-full bg-[#0A0F0B] px-4 py-2 text-sm font-semibold text-white" role="status">
-          Saved. You can change this anytime in Cookie settings.
-        </p>
-      ) : null}
       {mode === "banner" ? (
         <div className="pointer-events-auto w-full max-w-3xl rounded-2xl border border-[#0A0F0B]/15 bg-[#f6f6f4] px-4 py-3 text-[#0A0F0B] shadow-[0_12px_40px_rgb(10_15_11/0.18)]">
           <p className="text-base font-semibold">Cookies at Par2Play</p>

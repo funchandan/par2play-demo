@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { trackAnchor } from "../analytics/track";
-import { bookingHref, golfClockMembershipReady, membershipHref, NAP, type BookingOffer } from "../data/business";
+import { bookingHref, membershipHref, NAP, type BookingOffer } from "../data/business";
 
 /** Near-black inner ring (clears green and white) plus a white outer ring (clears dark grounds). */
 export const buttonFocus = "aa-focus";
@@ -99,30 +99,6 @@ export function PhoneLink({ className, children }: { className: string; children
 /**
  * Home hero. Opens the on-site membership page so the visit sells Silver, Gold, and Platinum.
  */
-export function HeroMembershipAction({
-  onScrollToPractice,
-  className = "",
-}: {
-  onScrollToPractice: () => void;
-  className?: string;
-}) {
-  if (golfClockMembershipReady()) {
-    const href = membershipHref();
-    return (
-      <a
-        href={href}
-        className={`${tones.inverted} ${className}`}
-        {...externalProps(href)}
-        data-membership="true"
-        onClick={(event) => trackAnchor(event.currentTarget)}
-      >
-        Become a Member
-      </a>
-    );
-  }
-  return (
-    <button type="button" className={`${tones.inverted} ${className}`} onClick={onScrollToPractice}>
-      Become a Member
-    </button>
-  );
+export function HeroMembershipAction({ className = "" }: { className?: string }) {
+  return <MembershipLink tone="inverted" className={className}>Become a Member</MembershipLink>;
 }

@@ -3,7 +3,6 @@ import { CompareBoxes, PricingHero } from "./PricingHero";
 import { PRICES } from "../data/business";
 import { JUNIORS_FILM } from "../data/films";
 import { money } from "../data/membershipEstimate";
-import type { OfferBenefit } from "./OfferTicker";
 
 const PLANS = [
   { id: "once", name: "Once a week", price: PRICES.juniorOneLessonWeekly },
@@ -11,14 +10,6 @@ const PLANS = [
 ] as const;
 
 type PlanId = (typeof PLANS)[number]["id"];
-
-const BENEFITS: readonly OfferBenefit[] = [
-  { id: "age", label: "Age-group sessions", icon: "people" },
-  { id: "practice", label: "Practice time", icon: "flag" },
-  { id: "fitting", label: "Club fitting", icon: "club" },
-  { id: "leagues", label: "Leagues and events", icon: "trophy" },
-  { id: "week", label: "Lessons each week", icon: "calendar" },
-];
 
 export function JuniorsPanel() {
   const [planId, setPlanId] = useState<PlanId>("twice");
@@ -34,7 +25,10 @@ export function JuniorsPanel() {
       figure={figure}
       live={live}
       film={JUNIORS_FILM}
-      benefits={BENEFITS}
+      facts={[
+        { label: "Sessions / week", value: planId === "once" ? "1" : "2", icon: "calendar" },
+        { label: "Monthly price", value: money(plan.price), icon: "price" },
+      ]}
       primary={{ offer: "junior", label: "Schedule junior coaching" }}
       secondary={{ offer: "bay", label: "Try it out" }}
       selector={

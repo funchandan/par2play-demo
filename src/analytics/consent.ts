@@ -19,8 +19,11 @@ type Listener = () => void;
 
 const listeners = new Set<Listener>();
 let reopen: "banner" | "settings" | null = null;
+// Remember the current-page choice even when browser storage is unavailable.
+let currentChoice: ConsentChoice | null = null;
 
 function read(): ConsentChoice | null {
+  if (currentChoice) return currentChoice;
   try {
     const raw = localStorage.getItem(CONSENT_STORAGE_KEY);
     if (!raw) return null;
@@ -111,10 +114,11 @@ export function clearTrackingStorage() {
 
 export function saveConsent(choice: { analytics: boolean; marketing: boolean }, reload: boolean) {
   const next: ConsentChoice = { v: CONSENT_VERSION, ...choice, ts: Date.now() };
+  currentChoice = next;
   try {
     localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(next));
   } catch {
-    /* The banner still closes for this paint. A reload will ask again. */
+    /* Keep the choice in memory for this page. A reload may ask again. */
   }
   reopen = null;
   emit();

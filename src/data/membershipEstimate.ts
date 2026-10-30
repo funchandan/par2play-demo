@@ -115,9 +115,9 @@ export function money(amount: number): string {
   });
 }
 
-/** Unknown prices stay the literal "$TBD", in the same place a number would go. */
+/** Do not invent a number when the price is not listed. */
 export function formatPrice(amount: number | null): string {
-  return amount == null ? "$TBD" : money(amount);
+  return amount == null ? "Price on request" : money(amount);
 }
 
 export function monthLabel(months: number): string {
@@ -179,7 +179,6 @@ export type MemberTier = {
   includedHours: number;
   /** Fraction off additional bay hours. 0.3 means 30% off. */
   bayDiscount: number;
-  perks: readonly string[];
 };
 
 /** Membership prices and weekly allowances confirmed by Chandan, 30 Oct 2026. */
@@ -192,13 +191,6 @@ export const MEMBER_TIERS: readonly MemberTier[] = [
     yearlyFee: null,
     includedHours: 4,
     bayDiscount: 0.3,
-    perks: [
-      "1 hour per week · 4 bay hours every month (rollover)",
-      "1 swing evaluation",
-      "1 club fitting",
-      "30% off bay rental",
-      "10% off all other services and lesson packages",
-    ],
   },
   {
     id: "gold",
@@ -208,13 +200,6 @@ export const MEMBER_TIERS: readonly MemberTier[] = [
     yearlyFee: null,
     includedHours: 8,
     bayDiscount: 0.4,
-    perks: [
-      "2 hours per week · 8 bay hours every month (rollover)",
-      "1 swing evaluation",
-      "1 club fitting",
-      "40% off bay rental",
-      "15% off all other services and lesson packages",
-    ],
   },
   {
     id: "platinum",
@@ -224,15 +209,6 @@ export const MEMBER_TIERS: readonly MemberTier[] = [
     yearlyFee: 4500,
     includedHours: 20,
     bayDiscount: 0.7,
-    perks: [
-      "5 hours per week · 20 bay hours every month",
-      "1 free 3-hour event",
-      "A 5 individual lesson pack",
-      "1 swing evaluation",
-      "1 club fitting",
-      "70% off additional bay rental",
-      "20% off all other services and lesson packages",
-    ],
   },
 ];
 
