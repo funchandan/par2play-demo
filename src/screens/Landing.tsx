@@ -10,7 +10,6 @@ import { HeroVideo } from "../components/Media";
 import { SoundToggle } from "../components/SoundToggle";
 import { TournamentForm } from "../components/TournamentForm";
 import { EventTypeList } from "../components/EventTypeList";
-import { CommunityStrip, EventGallery } from "../components/PhotoStrips";
 import { OfferTicker } from "../components/OfferTicker";
 import { VideoSlot } from "../components/VideoSlot";
 import { ValuePoint } from "../components/ValuePoint";
@@ -193,17 +192,15 @@ export function Landing() {
             </div>
             <CtaPair className="mt-8">
               <BookLink className="w-full" offer="swing-evaluation">
-                Analyze my swing
+                Evaluate my swing
               </BookLink>
-              <BookLink className="w-full" offer="lesson" tone="line">
-                Schedule a lesson
+              <BookLink className="w-full" offer="bay" tone="line">
+                Try it out
               </BookLink>
             </CtaPair>
           </div>
         </div>
       </section>
-
-      <CommunityStrip />
 
       <section id="juniors" className={sectionSpace}>
         <div className="grid items-center gap-10 @3xl:grid-cols-2 @3xl:gap-16">
@@ -249,9 +246,6 @@ export function Landing() {
         </p>
         <div className="mt-6">
           <EventTypeList />
-        </div>
-        <div className="mt-8">
-          <EventGallery />
         </div>
         <CtaPair className="mt-8">
           <a

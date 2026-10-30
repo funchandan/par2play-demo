@@ -1,11 +1,16 @@
 import { expect, test } from "@playwright/test";
 
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("p2p_consent", JSON.stringify({ v: 1, analytics: false, marketing: false, ts: Date.now() })));
+});
+
 test("membership montage pauses, resumes, and stays paused off screen", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("./");
   const band = page.locator("#membership");
   const video = band.locator("video");
   await band.scrollIntoViewIfNeeded();
   await expect.poll(() => video.evaluate((node: HTMLVideoElement) => node.paused)).toBe(false);
+  await expect.poll(() => video.evaluate((node: HTMLVideoElement) => node.muted)).toBe(true);
   await band.getByRole("button", { name: "Pause video", exact: true }).click({ position: { x: 20, y: 20 } });
   await expect.poll(() => video.evaluate((node: HTMLVideoElement) => node.paused)).toBe(true);
   await band.getByRole("button", { name: "Play video", exact: true }).click({ position: { x: 20, y: 20 } });
@@ -17,7 +22,7 @@ test("membership montage pauses, resumes, and stays paused off screen", async ({
 
 test("reduced motion uses the membership poster without a video", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
+  await page.goto("./");
   const band = page.locator("#membership");
   await band.scrollIntoViewIfNeeded();
   await expect(band.locator("img")).toBeVisible();
@@ -29,7 +34,7 @@ for (const width of [320, 360, 390, 430, 1280]) {
   test(`membership fee fits and exceeds the hours count at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.goto("/membership/");
+    await page.goto("membership/");
     const panel = page.locator("#why-membership");
     for (const period of ["Monthly", "Annual"]) {
       await panel.getByRole("button", { name: period }).click();

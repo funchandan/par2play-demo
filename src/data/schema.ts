@@ -48,7 +48,7 @@ export const FAQS = [
   {
     question: "How does Par2Play membership work?",
     answer:
-      "Silver membership is $100 a month, Gold is $250 a month, and Platinum is $4,500 a year. A single bay rental is the way to try Par2Play first.",
+      "Silver membership is $200 a month, Gold is $250 a month, and Platinum is $4,500 a year. A single bay rental is the way to try Par2Play first.",
   },
   {
     question: "Can I host a party or company event at Par2Play?",
@@ -240,7 +240,7 @@ export function membershipGraph() {
         name: "Indoor golf membership in Somerset, NJ",
         provider: { "@id": id("/#location") },
         offers: [
-          offer("Silver membership", 100, OCLOCK.memberships, "MONTH"),
+          offer("Silver membership", 200, OCLOCK.memberships, "MONTH"),
           offer("Gold membership", 250, OCLOCK.memberships, "MONTH"),
           offer("Platinum membership", 4500, OCLOCK.memberships, "YEAR"),
         ],

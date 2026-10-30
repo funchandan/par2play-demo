@@ -5,7 +5,7 @@ import { EventsPanel } from "../components/EventsPanel";
 import { JuniorsPanel } from "../components/JuniorsPanel";
 import { MembershipCalculator } from "../components/MembershipCalculator";
 import { TournamentPanel } from "../components/TournamentPanel";
-import { CommunityStrip, EventGallery, StillGrid } from "../components/PhotoStrips";
+import { EventGallery, StillGrid } from "../components/PhotoStrips";
 import { PageFrame, pageSpace } from "../components/SiteChrome";
 import { trackAnchor } from "../analytics/track";
 import { BookLink, CtaPair, buttonFocus } from "../components/Cta";
@@ -49,7 +49,6 @@ export function MembershipPage() {
           </a>
         </p>
       </article>
-      <CommunityStrip />
     </PageFrame>
   );
 }
@@ -161,12 +160,6 @@ export function JuniorsPage() {
         <Breadcrumbs current="Junior golf" />
         <JuniorsPanel />
         <p className="mt-10 max-w-xl text-base leading-relaxed">Building the golfers of tomorrow.</p>
-        <p className="mt-4 max-w-xl text-base leading-relaxed">
-          Junior golf in Somerset is age-group coaching on Full Swing simulators in four enclosed bays. Once a week is $249 a month.
-          Twice a week is $399 a month, one hour each, with lessons, training, leagues, tournaments, practice time, and club fitting.
-          PGA professionals Nick Schiavo and Nick Monticello teach the sessions. Par2Play is at 695 Hamilton Street, Suite G, and is
-          open 10am to 10pm daily. Complimentary premium golf clubs are included, or bring your own. Staff supervise every junior session in the bay. Call (732) 448-2769 or book at par2play.oclock.app.
-        </p>
         <StillGrid photos={JUNIORS_GALLERY} />
         <div className="mt-8 grid max-w-xl gap-5">
           <ValuePoint icon={Users} label="Future pros" line="1:1 coaching with PGA pros Nick Schiavo and Nick Monticello, once or twice a week." />
@@ -226,7 +219,7 @@ export function TournamentPage() {
           The Par2Play Fall League is an indoor golf league on Full Swing simulators at 695 Hamilton Street, Suite G, Somerset, NJ
           08873. The entry fee is not published yet. The studio has four enclosed bays and is open 10am to 10pm, seven days a week.
           Complimentary premium golf clubs are included, or bring your own. Call (732) 448-2769 to reserve a spot, or book a bay at
-          par2play.oclock.app while the league list is open. Lessons on the same simulators start at $100 for 30 minutes with Nick Schiavo and Nick Monticello. Silver membership is $100 a month, Gold is $250 a month, and Platinum is $4,500 a year if you want regular bay time before the league starts. No start date or entry fee is published yet.
+          par2play.oclock.app while the league list is open. Lessons on the same simulators start at $100 for 30 minutes with Nick Schiavo and Nick Monticello. Silver membership is $200 a month, Gold is $250 a month, and Platinum is $4,500 a year if you want regular bay time before the league starts. No start date or entry fee is published yet.
         </p>
         <div className="mt-10">
           <TournamentForm />

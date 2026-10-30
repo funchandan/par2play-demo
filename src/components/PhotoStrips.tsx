@@ -1,5 +1,5 @@
 import { VideoSlot } from "./VideoSlot";
-import { COMMUNITY_GALLERY, EVENT_GALLERY, type GalleryPhoto } from "../data/gallery";
+import { EVENT_GALLERY, type GalleryPhoto } from "../data/gallery";
 import { EVENTS_HERO_FILM } from "../data/films";
 
 function Photo({ photo, eager = false, sizes }: { photo: GalleryPhoto; eager?: boolean; sizes: string }) {
@@ -64,22 +64,5 @@ export function StillGrid({ photos, className = "" }: { photos: readonly Gallery
         </li>
       ))}
     </ul>
-  );
-}
-
-export function CommunityStrip() {
-  return (
-    <section aria-labelledby="community-heading" className="px-6 py-16 @3xl:px-12 @3xl:py-20">
-      <h2 id="community-heading" className="font-display text-3xl font-semibold tracking-tight @5xl:text-5xl">
-        Around the club
-      </h2>
-      <ul className="mt-6 grid grid-cols-2 gap-2 @3xl:grid-cols-4 @3xl:gap-3">
-        {COMMUNITY_GALLERY.map((photo) => (
-          <li key={photo.id} className="aspect-[3/2] overflow-hidden">
-            <Photo photo={photo} sizes="(min-width: 48rem) 22vw, 46vw" />
-          </li>
-        ))}
-      </ul>
-    </section>
   );
 }
