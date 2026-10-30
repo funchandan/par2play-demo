@@ -12,7 +12,10 @@ const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
 for (const route of ROUTES) {
   await page.goto(`http://127.0.0.1:${port}/${route}`, { waitUntil: "networkidle" });
   await page.locator("h1").first().waitFor();
-  const html = "<!doctype html>\n" + (await page.content());
+  await page.evaluate(() => {
+    document.documentElement.classList.remove("media-on", "ticker-on");
+  });
+  const html = ("<!doctype html>\n" + (await page.content())).replace(/react-aria\d+-/g, "react-aria-");
   const file = route === "" ? resolve("dist/index.html") : resolve("dist", route, "index.html");
   await writeFile(file, html);
   const words = html

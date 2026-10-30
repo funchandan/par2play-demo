@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Activity, Shield, Target, UserRound } from "lucide-react";
 import { bindHeroWatch } from "../audio/soundtrack";
 import { Mark } from "../components/Chrome";
@@ -29,24 +29,43 @@ const sectionSpace = "scroll-mt-32 px-6 py-20 @3xl:px-12 @3xl:py-24";
 
 const navButton = `nav-link inline-flex min-h-11 items-center px-1 text-base font-semibold text-[#0A0F0B] ${buttonFocus}`;
 
-function Headline({ text, className }: { text: string; className: string }) {
-  const words = text.split(" ");
+type HeroConcept = "a" | "b" | "c" | "d";
+
+function heroConcept(): HeroConcept {
+  const value = new URLSearchParams(window.location.search).get("hero");
+  if (value === "b" || value === "c" || value === "d") return value;
+  return "a";
+}
+
+const accentWord = "font-accent text-[1.45em] leading-none text-white";
+
+function Tagline({ concept }: { concept: HeroConcept }) {
+  const line = "max-w-[16rem] font-display text-[1.35rem] font-semibold leading-[1.05] tracking-tight text-white @3xl:max-w-none @3xl:text-[2rem]";
+  if (concept === "b") {
+    return (
+      <p className={line}>
+        {"A home for all golfers. "}
+        <span className={accentWord}>All year.</span>
+      </p>
+    );
+  }
+  if (concept === "c") {
+    return (
+      <p className={line}>
+        {"A home for "}
+        <span className={accentWord}>all golfers.</span>{" "}
+        <span className={accentWord}>All year.</span>
+      </p>
+    );
+  }
+  if (concept === "d") {
+    return <p className={line}>A home for all golfers. All year.</p>;
+  }
   return (
-    <p className={className}>
-      <span className="sr-only">{text}</span>
-      <span aria-hidden="true">
-        {words.map((word, index) => (
-          <Fragment key={`${word}-${index}`}>
-            <span className="inline-block overflow-hidden align-bottom">
-              <span className="word-in inline-block" style={{ animationDelay: `${index * 70}ms` }}>
-                {word}
-                {index < words.length - 1 && !word.endsWith(".") ? "\u00a0" : ""}
-              </span>
-            </span>
-            {word.endsWith(".") && index < words.length - 1 ? <br /> : null}
-          </Fragment>
-        ))}
-      </span>
+    <p className={line}>
+      {"A home for "}
+      <span className={accentWord}>all golfers.</span>
+      {" All year."}
     </p>
   );
 }
@@ -54,6 +73,7 @@ function Headline({ text, className }: { text: string; className: string }) {
 export function Landing() {
   const flow = useFlow();
   const reduce = usePrefersReducedMotion();
+  const concept = heroConcept();
   const [menu, setMenu] = useState(false);
   const [onFilm, setOnFilm] = useState(true);
   const [active, setActive] = useState<string | null>(null);
@@ -164,13 +184,18 @@ export function Landing() {
         <div data-hero-offer className="relative z-10 flex flex-1 items-end justify-end px-6 pb-4 @3xl:px-12 @3xl:pb-6">
           <div className="hero-panel pointer-events-auto w-full max-w-[32rem] rounded-2xl px-4 py-3">
             <h1 className="font-display text-xl font-semibold leading-tight tracking-tight text-white @3xl:text-3xl">
-              Indoor golf in <span className="font-accent text-[1.15em] font-semibold">Somerset</span>, NJ
+              {concept === "d" ? (
+                <>
+                  {"Indoor golf in "}
+                  <span className={accentWord}>Somerset</span>
+                  {", NJ"}
+                </>
+              ) : (
+                "Indoor golf in Somerset, NJ"
+              )}
             </h1>
             <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
-              <Headline
-                text="A home for all golfers. All year."
-                className="max-w-[16rem] font-display text-[1.35rem] font-semibold leading-[1.05] tracking-tight text-white @3xl:max-w-none @3xl:text-[2rem]"
-              />
+              <Tagline concept={concept} />
               <HeroMembershipAction onScrollToPractice={() => jump("membership")} />
             </div>
             <HeroProof />
@@ -196,11 +221,11 @@ export function Landing() {
           <div>
             <h2 className="font-display text-3xl font-semibold leading-none tracking-tight @5xl:text-5xl">Coaching</h2>
             <p className="mt-8 max-w-md font-display text-2xl font-semibold leading-tight tracking-tight">
-              Two PGA professional coaches,{" "}
+              {"Two PGA professional coaches, "}
               <a className="underline decoration-2 underline-offset-4" href={`${pageHref("coaching")}#nick-schiavo`}>
                 Nick Schiavo
-              </a>{" "}
-              and{" "}
+              </a>
+              {" and "}
               <a className="underline decoration-2 underline-offset-4" href={`${pageHref("coaching")}#nick-monticello`}>
                 Nick Monticello
               </a>

@@ -131,7 +131,7 @@ export function PrivacyPage() {
         <JsonLd data={privacyGraph()} />
         <Breadcrumbs current="Privacy policy" />
         <p className="mb-6 rounded-xl border border-[#b45309] bg-[#fff7ed] px-4 py-3 text-base leading-relaxed text-[#0A0F0B]">
-          Draft. Not reviewed by a lawyer. {signOffs} items marked TBD still need Atul and Chandan to sign off. Nothing here is legal advice.
+          {`Draft. Not reviewed by a lawyer. ${signOffs} items marked TBD still need Atul and Chandan to sign off. Nothing here is legal advice.`}
         </p>
         {blocks().map((block, index) => {
           if (block.kind === "h") {

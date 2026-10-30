@@ -14,6 +14,8 @@ export const HERO_MEDIA = {
   mp4Mobile: media("media/hero-mobile.mp4"),
   webm: media("media/hero.webm"),
   poster: media("media/hero-poster.jpg"),
+  posterMobileAvif: media("media/hero-poster-mobile.avif"),
+  posterMobileWebp: media("media/hero-poster-mobile.webp"),
 } as const;
 
 /**

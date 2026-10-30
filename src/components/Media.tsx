@@ -67,8 +67,8 @@ export function HeroVideo() {
       return;
     }
     const video = ref.current;
-    registerHeroVideo(video);
     if (!video) return;
+    registerHeroVideo(video);
     const frame = video.parentElement;
     const syncFit = () => {
       const onCard = video.currentTime >= END_CARD_AT;
@@ -82,16 +82,30 @@ export function HeroVideo() {
     };
     const onVis = () => {
       if (document.hidden) video.pause();
-      else void video.play().catch(() => undefined);
+      else if (document.documentElement.classList.contains("media-on")) void video.play().catch(() => undefined);
     };
+    let cancel = false;
+    const start = () => {
+      if (cancel) return;
+      document.documentElement.classList.add("media-on");
+      video.addEventListener("timeupdate", syncFit);
+      video.addEventListener("seeked", syncFit);
+      void video.play().catch(() => undefined);
+    };
+    const idle = () => {
+      const schedule = window.requestIdleCallback?.bind(window);
+      if (schedule) schedule(start, { timeout: 1500 });
+      else window.setTimeout(start, 1);
+    };
+    if (document.readyState === "complete") idle();
+    else window.addEventListener("load", idle, { once: true });
     document.addEventListener("visibilitychange", onVis);
-    video.addEventListener("timeupdate", syncFit);
-    video.addEventListener("seeked", syncFit);
     const observer = new ResizeObserver(syncFit);
     if (frame) observer.observe(frame);
-    syncFit();
     return () => {
+      cancel = true;
       document.removeEventListener("visibilitychange", onVis);
+      window.removeEventListener("load", idle);
       video.removeEventListener("timeupdate", syncFit);
       video.removeEventListener("seeked", syncFit);
       observer.disconnect();
@@ -114,16 +128,30 @@ export function HeroVideo() {
 
   return (
     <>
+      <picture className="absolute inset-0 block h-full w-full">
+        <source media="(max-width: 767px)" srcSet={HERO_MEDIA.posterMobileAvif} type="image/avif" />
+        <source media="(max-width: 767px)" srcSet={HERO_MEDIA.posterMobileWebp} type="image/webp" />
+        <img
+          src={HERO_MEDIA.poster}
+          alt="Indoor golf at Par2Play in Somerset, NJ"
+          width={780}
+          height={439}
+          fetchPriority="high"
+          decoding="async"
+          className="h-full w-full object-cover"
+        />
+      </picture>
       <div
         aria-hidden="true"
         className={`pointer-events-none absolute inset-0 bg-black ${fit ? "opacity-100" : "opacity-0"}`}
       />
+      {!reduce ? (
       <video
         ref={ref}
         className={
           fit
-            ? "absolute max-w-none bg-black object-fill"
-            : "absolute inset-0 h-full w-full object-cover"
+            ? "hero-video absolute max-w-none bg-black object-fill opacity-0"
+            : "hero-video absolute inset-0 h-full w-full object-cover opacity-0"
         }
         style={
           fit
@@ -136,16 +164,17 @@ export function HeroVideo() {
               }
             : undefined
         }
-        poster={HERO_MEDIA.poster}
         loop
         playsInline
         preload="none"
+        muted
         aria-hidden="true"
       >
         <source src={HERO_MEDIA.mp4Mobile} type="video/mp4" media="(max-width: 767px)" />
         <source src={HERO_MEDIA.webm} type="video/webm" media="(min-width: 768px)" />
         <source src={HERO_MEDIA.mp4} type="video/mp4" />
       </video>
+      ) : null}
     </>
   );
 }

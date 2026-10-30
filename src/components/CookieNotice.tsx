@@ -21,7 +21,7 @@ function snapshot() {
 }
 
 export function CookieNotice() {
-  const mode = useSyncExternalStore(subscribe, snapshot, () => "closed");
+  const mode = useSyncExternalStore(subscribe, snapshot, snapshot);
   const stored = cookieChoice();
   const [analytics, setAnalytics] = useState(false);
   const [marketing, setMarketing] = useState(false);
@@ -76,9 +76,7 @@ export function CookieNotice() {
         <div className="pointer-events-auto w-full max-w-3xl rounded-2xl border border-[#0A0F0B]/15 bg-[#f6f6f4] px-4 py-3 text-[#0A0F0B] shadow-[0_12px_40px_rgb(10_15_11/0.18)]">
           <p className="text-base font-semibold">Cookies at Par2Play</p>
           <p className="mt-1 text-sm leading-snug">
-            We use cookies to keep this site working. With your OK, we’d also like to use analytics cookies to see how the site is used, and
-            marketing cookies to measure our ads on Google, Facebook and Instagram. Non-essential cookies stay off unless you turn them on.
-            You can change your mind anytime in “Cookie settings” at the bottom of the page.{" "}
+            {`We use cookies to keep this site working. With your OK, we’d also like to use analytics cookies to see how the site is used, and marketing cookies to measure our ads on Google, Facebook and Instagram. Non-essential cookies stay off unless you turn them on. You can change your mind anytime in “Cookie settings” at the bottom of the page. `}
             <a className={`underline decoration-2 underline-offset-4 ${buttonFocus}`} href={pageHref("privacy-policy")}>
               Privacy Policy
             </a>

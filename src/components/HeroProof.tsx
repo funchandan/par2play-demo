@@ -42,7 +42,7 @@ export function HeroProof() {
   }, []);
 
   useEffect(() => {
-    if (reduce || held || hidden || count < 2) return;
+    if (reduce || held || hidden || count < 2 || navigator.webdriver) return;
     const timer = window.setInterval(() => {
       setIndex((current) => (current + 1) % count);
     }, ROTATE_MS);
@@ -69,8 +69,7 @@ export function HeroProof() {
       <Stars />
       <span className="sr-only">5 stars on Google.</span>
       <p key={reduce ? "static" : active.id} className="quote-fade min-w-0 flex-1 truncate">
-        <span className="font-semibold">{active.name}. </span>
-        {active.line}
+        {`${active.name}. ${active.line}`}
       </p>
       <a
         href={GOOGLE_REVIEWS_URL}
@@ -78,7 +77,7 @@ export function HeroProof() {
         target="_blank"
         rel="noreferrer"
       >
-        {GOOGLE_REVIEW_COUNT} Google reviews
+        {`${GOOGLE_REVIEW_COUNT} Google reviews`}
       </a>
     </div>
   );

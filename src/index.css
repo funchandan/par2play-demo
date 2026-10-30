@@ -26,17 +26,17 @@
 }
 
 @font-face {
-  font-family: "Caveat";
+  font-family: "Kaushan Script";
   font-style: normal;
-  font-weight: 600;
+  font-weight: 400;
   font-display: swap;
-  src: url("../public/fonts/caveat-600.woff2") format("woff2");
+  src: url("../public/fonts/kaushan-script-400.woff2") format("woff2");
 }
 
 @theme {
   --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Chakra Petch", "Barlow", sans-serif;
-  --font-accent: "Caveat", "Barlow", cursive;
+  --font-accent: "Kaushan Script", "Barlow", cursive;
 }
 
 :root,
@@ -238,7 +238,41 @@ h3,
   }
 }
 
-.usp-track {
+#lcp-poster {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100svh;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+body:has(#lcp-poster) {
+  background: #fff;
+}
+
+body:has(#lcp-poster) #root .min-h-screen,
+body:has(#lcp-poster) #root .bg-white,
+body:has(#lcp-poster) #hero {
+  background: transparent;
+}
+
+.hero-video {
+  opacity: 0;
+}
+
+html.media-on .hero-video {
+  opacity: 1;
+}
+
+.usp-track,
+.benefit-track {
+  animation: none;
+}
+
+html.ticker-on .usp-track {
   animation: usp-marquee 42s linear infinite;
 }
 
@@ -249,7 +283,7 @@ h3,
   animation-play-state: paused;
 }
 
-.benefit-track {
+html.ticker-on .benefit-track {
   animation: usp-marquee 36s linear infinite;
 }
 

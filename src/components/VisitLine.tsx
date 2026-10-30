@@ -11,14 +11,15 @@ export function VisitLine() {
   return (
     <div>
       <p className="text-base leading-relaxed">
-        {NAP.name} · {NAP.street}, {NAP.city}, {NAP.region} {NAP.postalCode} ·{" "}
-        <PhoneLink className={link}>{NAP.phoneDisplay}</PhoneLink> ·{" "}
+        {`${NAP.name} · ${NAP.street}, ${NAP.city}, ${NAP.region} ${NAP.postalCode} · `}
+        <PhoneLink className={link}>{NAP.phoneDisplay}</PhoneLink>
+        {` · `}
         <a className={link} href={`mailto:${NAP.email}`}>
           {NAP.email}
         </a>
       </p>
       <p className="mt-2 text-base">
-        Open {HOURS_LABEL}.{" "}
+        {`Open ${HOURS_LABEL}. `}
         <a className={link} href={MAPS_URL}>
           Directions
         </a>

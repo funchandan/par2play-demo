@@ -69,7 +69,10 @@ export function applyStoredConsent() {
     const script = document.createElement("script");
     script.async = true;
     script.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_CONTAINER_ID}`;
-    document.head.appendChild(script);
+    const append = () => document.head.appendChild(script);
+    const idle = window.requestIdleCallback?.bind(window);
+    if (idle) idle(append, { timeout: 3000 });
+    else window.addEventListener("load", append, { once: true });
   }
   if (choice.marketing && typeof window.fbq !== "function") {
     const loader = document.createElement("script");

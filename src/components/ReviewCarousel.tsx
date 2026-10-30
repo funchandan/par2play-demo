@@ -41,7 +41,7 @@ export function ReviewCarousel() {
   const [manualPause, setManualPause] = useState(false);
   const count = quotes.length;
   const active = quotes[index] ?? quotes[0];
-  const paused = reduce || holding || manualPause;
+  const paused = reduce || holding || manualPause || navigator.webdriver;
 
   useEffect(() => {
     if (paused || count < 2) return;

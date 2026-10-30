@@ -25,7 +25,9 @@ export function FaqSection() {
                   <span aria-hidden="true">{shown ? "–" : "+"}</span>
                 </button>
               </h3>
-              <p className={`pb-4 text-base leading-relaxed ${shown ? "" : "sr-only"}`}>{item.answer}</p>
+              <p className={`pb-4 text-base leading-relaxed${shown ? "" : " sr-only"}`} suppressHydrationWarning>
+                {item.answer}
+              </p>
             </div>
           );
         })}

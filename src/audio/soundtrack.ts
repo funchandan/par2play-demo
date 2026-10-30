@@ -79,7 +79,6 @@ export function registerHeroVideo(element: HTMLVideoElement | null) {
   }
   element.muted = true;
   element.volume = 0;
-  void element.play().catch(() => undefined);
   element.addEventListener("click", onVideoTap);
   if (live) {
     element.muted = false;

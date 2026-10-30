@@ -4,29 +4,11 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('consent', 'default', {
-        ad_storage: 'denied',
-        ad_user_data: 'denied',
-        ad_personalization: 'denied',
-        analytics_storage: 'denied',
-        functionality_storage: 'denied',
-        personalization_storage: 'denied',
-        security_storage: 'granted',
-        wait_for_update: 500
-      });
-      gtag('set', 'ads_data_redaction', true);
-      gtag('set', 'url_passthrough', false);
-    </script>
     <meta name="google-site-verification" content="SVSAswdfSTzqPRciWqf77ANCHuDDCbzeVF89P6ECFzM" />
     <link rel="icon" type="image/png" sizes="32x32" href="%BASE_URL%favicon-32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="%BASE_URL%favicon-16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="%BASE_URL%apple-touch-icon.png" />
     <link rel="manifest" href="%BASE_URL%site.webmanifest" />
-    <link rel="preload" href="%BASE_URL%fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="%BASE_URL%fonts/barlow-600.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="%BASE_URL%fonts/chakra-petch-600.woff2" as="font" type="font/woff2" crossorigin />
     <title>Junior Golf Lessons in Somerset, NJ | Par2Play</title>
     <meta name="description" content="Junior golf coaching in Somerset, NJ with PGA professionals. Once a week is $249 a month. Twice a week is $399 a month." />
@@ -48,6 +30,29 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      window.addEventListener("load", function () {
+        var start = function () { document.documentElement.classList.add("media-on", "ticker-on"); };
+        if (window.requestIdleCallback) requestIdleCallback(start, { timeout: 1500 });
+        else setTimeout(start, 1);
+      });
+    </script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        functionality_storage: 'denied',
+        personalization_storage: 'denied',
+        security_storage: 'granted',
+        wait_for_update: 500
+      });
+      gtag('set', 'ads_data_redaction', true);
+      gtag('set', 'url_passthrough', false);
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

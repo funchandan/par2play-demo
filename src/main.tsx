@@ -1,12 +1,22 @@
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import { createRoot, hydrateRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 
-// The prerendered HTML is what non-JS crawlers read. createRoot replaces that
-// snapshot on load. hydrateRoot fights the hero animation and the cookie banner.
-createRoot(document.getElementById('root')!).render(
+const root = document.getElementById('root')!
+const app = (
   <StrictMode>
     <App />
-  </StrictMode>,
+  </StrictMode>
 )
+
+// Keep the prerendered poster and text. createRoot would wipe them and push LCP
+// until the bundle finishes.
+if (root.childElementCount > 0) {
+  hydrateRoot(root, app, {
+    onRecoverableError(error, info) {
+      const message = error instanceof Error ? error.message : String(error)
+      console.error("HYDRATE", message, info.componentStack?.slice(0, 400) ?? "")
+    },
+  })
+} else createRoot(root).render(app)
