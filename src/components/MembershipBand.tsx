@@ -44,25 +44,33 @@ function MontageFilm({ paused, reduce }: { paused: boolean; reduce: boolean }) {
     const video = ref.current;
     const node = box.current;
     if (!video || !node || reduce) return;
-    let seen = false;
+    if (paused) {
+      video.pause();
+      return;
+    }
+    let visible = false;
     const start = () => {
-      if (!seen || paused) return;
+      if (!visible) return;
       void video.play().catch(() => undefined);
     };
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry?.isIntersecting) {
+        visible = Boolean(entry?.isIntersecting);
+        if (!visible) {
           video.pause();
           return;
         }
-        seen = true;
         if (document.readyState === "complete") start();
         else window.addEventListener("load", start, { once: true });
       },
       { rootMargin: "0px" },
     );
     observer.observe(node);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("load", start);
+      video.pause();
+    };
   }, [paused, reduce]);
 
   return (
