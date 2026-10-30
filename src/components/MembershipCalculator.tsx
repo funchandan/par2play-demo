@@ -122,12 +122,12 @@ function TierCard({
           <span className="rounded-full bg-[#14D45E] px-3 py-1 text-sm font-semibold text-[#0A0F0B]">Best for you</span>
         ) : null}
       </div>
-      <p className={`mt-2 text-base font-semibold ${best ? "text-[#7DFFB0]" : "text-[#0A0F0B]"}`}>{label.price}</p>
+      <p className={`mt-2 font-display text-3xl font-semibold leading-none tracking-tight tabular-nums @3xl:text-4xl ${best ? "text-[#7DFFB0]" : "text-[#0A0F0B]"}`}>{label.price}</p>
       {label.note ? (
         <p className={`mt-1 text-base leading-snug ${best ? "text-white" : "text-[#0A0F0B]"}`}>{label.note}</p>
       ) : null}
-      <p className="mt-3 font-display text-3xl font-semibold leading-none tabular-nums">{money(tier.total)}</p>
-      <p className={`mt-1 text-base ${best ? "text-white" : "text-[#0A0F0B]"}`}>
+      <p className={`mt-4 text-lg leading-none tabular-nums ${best ? "text-[#C5D2C9]" : "text-[#4B5563]"}`}><s className="decoration-2">{money(tier.total)}</s></p>
+      <p className={`mt-1 text-sm ${best ? "text-[#C5D2C9]" : "text-[#4B5563]"}`}>
         this {period === "year" ? "year" : "month"} at your pace
       </p>
       <ul className="mt-4 grid gap-2 text-base leading-snug">
