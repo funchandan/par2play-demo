@@ -5,6 +5,7 @@ export type SiteRoute =
   | "juniors"
   | "events"
   | "tournament"
+  | "privacy"
   | "notfound";
 
 export const SITE_NAV = [
@@ -43,6 +44,8 @@ export function currentRoute(): SiteRoute {
       return "events";
     case "tournament":
       return "tournament";
+    case "privacy-policy":
+      return "privacy";
     case "404.html":
       return "notfound";
     default:

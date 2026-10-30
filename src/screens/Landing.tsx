@@ -1,7 +1,8 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Activity, Shield, Target, UserRound } from "lucide-react";
 import { bindHeroWatch } from "../audio/soundtrack";
 import { Mark } from "../components/Chrome";
+import { trackAnchor } from "../analytics/track";
 import { BookLink, CtaPair, HeroMembershipAction, MembershipLink, buttonFocus } from "../components/Cta";
 import { HeroProof } from "../components/HeroProof";
 import { MembershipBand } from "../components/MembershipBand";
@@ -10,10 +11,16 @@ import { SoundToggle } from "../components/SoundToggle";
 import { TournamentForm } from "../components/TournamentForm";
 import { EventTypeList } from "../components/EventTypeList";
 import { CommunityStrip, EventGallery } from "../components/PhotoStrips";
-import { UspTicker } from "../components/UspTicker";
+import { OfferTicker } from "../components/OfferTicker";
 import { VideoSlot } from "../components/VideoSlot";
 import { ValuePoint } from "../components/ValuePoint";
 import { NAP, OCLOCK, golfClockBookingReady } from "../data/business";
+import { HERO_TICKER } from "../data/heroTicker";
+import { HeroTitle, heroConcept } from "../components/HeroTitle";
+import { JsonLd } from "../components/JsonLd";
+import { FaqSection } from "../components/FaqSection";
+import { VisitLine } from "../components/VisitLine";
+import { faqGraph, homeGraph } from "../data/schema";
 import { COACHING_FILM, JUNIORS_FILM } from "../data/films";
 import { SITE_NAV, pageHref } from "../data/routes";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
@@ -23,31 +30,11 @@ const sectionSpace = "scroll-mt-32 px-6 py-20 @3xl:px-12 @3xl:py-24";
 
 const navButton = `nav-link inline-flex min-h-11 items-center px-1 text-base font-semibold text-[#0A0F0B] ${buttonFocus}`;
 
-function Headline({ text, className }: { text: string; className: string }) {
-  const words = text.split(" ");
-  return (
-    <h1 className={className}>
-      <span className="sr-only">{text}</span>
-      <span aria-hidden="true">
-        {words.map((word, index) => (
-          <Fragment key={`${word}-${index}`}>
-            <span className="inline-block overflow-hidden align-bottom">
-              <span className="word-in inline-block" style={{ animationDelay: `${index * 70}ms` }}>
-                {word}
-                {index < words.length - 1 && !word.endsWith(".") ? "\u00a0" : ""}
-              </span>
-            </span>
-            {word.endsWith(".") && index < words.length - 1 ? <br /> : null}
-          </Fragment>
-        ))}
-      </span>
-    </h1>
-  );
-}
 
 export function Landing() {
   const flow = useFlow();
   const reduce = usePrefersReducedMotion();
+  const concept = heroConcept();
   const [menu, setMenu] = useState(false);
   const [onFilm, setOnFilm] = useState(true);
   const [active, setActive] = useState<string | null>(null);
@@ -96,6 +83,8 @@ export function Landing() {
 
   return (
     <div ref={scrollRef} className={`@container page-grid text-base text-[#0A0F0B] ${scroll}`}>
+      <JsonLd data={homeGraph()} />
+      <JsonLd data={faqGraph()} />
       <header
         className={`sticky z-30 px-6 py-3 @5xl:px-12 ${mobile ? "top-0" : "top-[4.25rem]"} ${onFilm ? "" : "header-bar"}`}
       >
@@ -149,28 +138,27 @@ export function Landing() {
       </header>
       <section
         id="hero"
-        className={`relative -mt-[4.5rem] overflow-hidden bg-[#06210f] ${mobile ? "h-full" : "h-[calc(100svh-4.25rem)]"}`}
+        className={`relative -mt-[4.5rem] flex flex-col overflow-hidden bg-[#06210f] ${mobile ? "h-full" : "h-[calc(100svh-5rem)]"}`}
       >
         <HeroVideo />
         <div className="hero-top-shade pointer-events-none absolute inset-x-0 top-0" aria-hidden="true" />
-        <div
-          data-hero-offer
-          className="pointer-events-none absolute inset-0 z-10 flex items-end justify-end px-6 pb-8 @3xl:px-12 @3xl:pb-12"
-        >
+        <div data-hero-offer className="relative z-10 flex flex-1 items-end justify-end px-6 pb-4 @3xl:px-12 @3xl:pb-6">
           <div className="hero-panel pointer-events-auto w-full max-w-[32rem] rounded-2xl px-4 py-3">
-            <div className="flex flex-wrap items-end justify-between gap-3">
-              <Headline
-                text="A home for all golfers. All year."
-                className="max-w-[16rem] font-display text-[1.35rem] font-semibold leading-[1.05] tracking-tight text-white @3xl:max-w-none @3xl:text-[2rem]"
-              />
+            <h1 className="font-display text-xl font-semibold leading-tight tracking-tight text-white @3xl:text-3xl">
+              Indoor golf in Somerset, NJ
+            </h1>
+            <div className="mt-2 flex min-w-0 flex-wrap items-end justify-between gap-3">
+              <HeroTitle concept={concept} />
               <HeroMembershipAction onScrollToPractice={() => jump("membership")} />
             </div>
             <HeroProof />
           </div>
         </div>
+        <div className="relative z-20 shrink-0">
+          <OfferTicker items={HERO_TICKER} />
+        </div>
       </section>
 
-      <UspTicker />
       <MembershipBand />
 
       <section id="coaching" className={sectionSpace}>
@@ -179,13 +167,21 @@ export function Landing() {
             src={COACHING_FILM.src}
             srcMobile={COACHING_FILM.srcMobile}
             poster={COACHING_FILM.poster}
+            posterAlt="A golfer hitting a shot in a Par2Play simulator bay"
             className="aspect-video"
             pausable
           />
           <div>
             <h2 className="font-display text-3xl font-semibold leading-none tracking-tight @5xl:text-5xl">Coaching</h2>
             <p className="mt-8 max-w-md font-display text-2xl font-semibold leading-tight tracking-tight">
-              Two PGA professional coaches, Nick and Sean
+              {"Two PGA professional coaches, "}
+              <a className="underline decoration-2 underline-offset-4" href={`${pageHref("coaching")}#nick-schiavo`}>
+                Nick Schiavo
+              </a>
+              {" and "}
+              <a className="underline decoration-2 underline-offset-4" href={`${pageHref("coaching")}#nick-monticello`}>
+                Nick Monticello
+              </a>
             </p>
             <div className="mt-8 grid gap-5">
               <ValuePoint icon={Target} label="1:1 lessons" line="A plan you can track month to month." />
@@ -218,7 +214,7 @@ export function Landing() {
               <ValuePoint
                 icon={UserRound}
                 label="Future pros"
-                line="1:1 coaching with PGA pros Nick and Sean, once or twice a week."
+                line="1:1 coaching with PGA pros Nick Schiavo and Nick Monticello, once or twice a week."
               />
               <ValuePoint
                 icon={Shield}
@@ -239,6 +235,7 @@ export function Landing() {
             src={JUNIORS_FILM.src}
             srcMobile={JUNIORS_FILM.srcMobile}
             poster={JUNIORS_FILM.poster}
+            posterAlt="A junior golfer swinging in a Par2Play simulator bay"
             className="aspect-video @3xl:order-1"
             pausable
           />
@@ -267,6 +264,8 @@ export function Landing() {
             href={OCLOCK.events}
             target="_blank"
             rel="noopener noreferrer"
+            data-offer="group"
+            onClick={(event) => trackAnchor(event.currentTarget)}
             className={`inline-flex min-h-11 w-full items-center justify-center rounded-full border-2 border-[#0A0F0B] bg-white px-5 text-base font-semibold text-[#0A0F0B] hover:bg-[#f3f6f1] ${buttonFocus}`}
           >
             Check availability
@@ -283,16 +282,32 @@ export function Landing() {
         </div>
       </section>
 
+      <nav aria-label="Services" className="px-6 pb-4 text-base leading-relaxed @3xl:px-12">
+        <a className={`underline decoration-2 underline-offset-4 ${buttonFocus}`} href={pageHref("coaching")}>
+          Golf lessons in Somerset
+        </a>
+        {" · "}
+        <a className={`underline decoration-2 underline-offset-4 ${buttonFocus}`} href={pageHref("membership")}>
+          Indoor golf membership
+        </a>
+        {" · "}
+        <a className={`underline decoration-2 underline-offset-4 ${buttonFocus}`} href={pageHref("juniors")}>
+          Junior golf
+        </a>
+        {" · "}
+        <a className={`underline decoration-2 underline-offset-4 ${buttonFocus}`} href={pageHref("events")}>
+          Golf simulator parties
+        </a>
+        {" · "}
+        <a className={`underline decoration-2 underline-offset-4 ${buttonFocus}`} href={pageHref("tournament")}>
+          Fall League
+        </a>
+      </nav>
+      <FaqSection />
+
       <footer className="px-6 py-20 @3xl:px-12 @3xl:py-24">
         <div className="grid items-start gap-x-12 gap-y-8 @3xl:grid-cols-2 @5xl:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_auto]">
-          <div className="min-w-0">
-            <p className="font-display text-3xl tracking-tight">Par2Play</p>
-            <address className="mt-3 not-italic text-base leading-relaxed">
-              {NAP.street}
-              <br />
-              {NAP.city}, {NAP.region} {NAP.postalCode}
-            </address>
-          </div>
+          <VisitLine />
           <nav className="flex min-w-0 flex-wrap items-center gap-x-6 gap-y-1" aria-label="Footer">
             {SITE_NAV.map((item) => (
               <a key={item.slug} href={pageHref(item.slug)} className={navButton}>
@@ -300,12 +315,6 @@ export function Landing() {
               </a>
             ))}
           </nav>
-          <a
-            className={`inline-flex min-h-11 w-fit items-center text-base font-semibold text-[#0A0F0B] underline decoration-2 underline-offset-4 ${buttonFocus}`}
-            href={NAP.phoneTel}
-          >
-            {NAP.phoneDisplay}
-          </a>
         </div>
         <p className="mt-10 text-base">© 2026 Par2Play</p>
         {!golfClockBookingReady() && (

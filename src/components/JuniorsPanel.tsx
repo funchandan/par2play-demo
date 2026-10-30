@@ -29,6 +29,7 @@ export function JuniorsPanel() {
   return (
     <PricingHero
       id="juniors-offer"
+      pageTitle="Junior golf in Somerset, NJ"
       heading={plan.name}
       figure={figure}
       live={live}

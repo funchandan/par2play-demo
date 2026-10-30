@@ -10,6 +10,7 @@ const figureClass =
 export function PricingHero({
   id,
   heading,
+  pageTitle,
   figure,
   live,
   selector,
@@ -21,6 +22,7 @@ export function PricingHero({
 }: {
   id: string;
   heading: string;
+  pageTitle: string;
   figure: string;
   live: string;
   selector?: ReactNode;
@@ -33,9 +35,12 @@ export function PricingHero({
   return (
     <section id={id} aria-labelledby={`${id}-heading`} className="@container min-w-0 overflow-hidden rounded-3xl bg-[#020806] @3xl:grid @3xl:grid-cols-2">
       <div className="flex min-w-0 flex-col justify-center bg-[radial-gradient(120%_80%_at_0%_0%,rgb(20_212_94/0.16),transparent_52%)] px-5 pt-8 @3xl:px-12 @3xl:py-14">
-        <h1 id={`${id}-heading`} className="font-display text-2xl font-semibold tracking-tight text-[#7DFFB0]">
-          {heading}
+        <h1 id={`${id}-heading`} className="font-display text-2xl font-semibold tracking-tight text-white @3xl:text-3xl">
+          {pageTitle}
         </h1>
+        <p className="mt-2 font-display text-lg font-semibold tracking-tight text-[#7DFFB0]">
+          {heading}
+        </p>
         <div aria-live="polite" aria-atomic="true" className="mt-2">
           <p className="sr-only">{live}</p>
           <p className={figureClass}>{figure}</p>

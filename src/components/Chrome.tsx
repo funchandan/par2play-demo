@@ -1,7 +1,15 @@
 import { Button } from "@heroui/react";
 import { useState, type ReactNode } from "react";
 import { MembershipLink, buttonFocus } from "./Cta";
+import { PHOTOS } from "../data/photos";
 import { useFlow } from "../state/flow";
+
+function altForPhoto(src: string): string {
+  for (const photo of Object.values(PHOTOS)) {
+    if (src === photo.jpg || src === photo.webp || src === photo.avif) return photo.alt;
+  }
+  return "Par2Play indoor golf in Somerset, NJ";
+}
 
 export function Mark({ light = false }: { light?: boolean }) {
   return (
@@ -83,7 +91,7 @@ export function ScreenFrame({
       <div className="flex h-full flex-col bg-white">
         <ClubHeader />
         <div className="flex-1 overflow-y-auto">
-          {photo && <img src={photo} alt="" className="h-36 w-full object-cover object-center" />}
+          {photo && <img src={photo} alt={altForPhoto(photo)} className="h-36 w-full object-cover object-center" />}
           <div className="px-5 py-6">{children}</div>
         </div>
         {footer && <div className="px-5 py-4">{footer}</div>}
@@ -98,7 +106,7 @@ export function ScreenFrame({
           <div className="flex-1">{children}</div>
           {footer && <div className="pt-8">{footer}</div>}
         </div>
-        {photo && <img src={photo} alt="" className="h-full min-h-[720px] w-full object-cover object-center" />}
+        {photo && <img src={photo} alt={altForPhoto(photo)} className="h-full min-h-[720px] w-full object-cover object-center" />}
       </div>
     </div>
   );

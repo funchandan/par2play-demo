@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { bookingHref, golfClockMembershipReady, membershipHref, type BookingOffer } from "../data/business";
+import { trackAnchor } from "../analytics/track";
+import { bookingHref, golfClockMembershipReady, membershipHref, NAP, type BookingOffer } from "../data/business";
 
 /** Near-black inner ring (clears green and white) plus a white outer ring (clears dark grounds). */
 export const buttonFocus = "aa-focus";
@@ -47,7 +48,13 @@ export function BookLink({
 }) {
   const href = bookingHref(offer);
   return (
-    <a href={href} className={`${tones[tone]} ${className}`} {...externalProps(href)}>
+    <a
+      href={href}
+      className={`${tones[tone]} ${className}`}
+      {...externalProps(href)}
+      data-offer={offer}
+      onClick={(event) => trackAnchor(event.currentTarget)}
+    >
       {children}
     </a>
   );
@@ -58,24 +65,39 @@ export function MembershipLink({
   tone = "brand",
   className = "",
   href,
+  tier,
 }: {
   children: ReactNode;
   tone?: Tone;
   className?: string;
-  /** Overrides the Practice Unlimited product. The membership page passes the live carousel. */
+  /** Overrides the on-site membership page. The membership page passes GolfClock. */
   href?: string;
+  tier?: string;
 }) {
   const target = href ?? membershipHref();
   return (
-    <a href={target} className={`${tones[tone]} ${className}`} {...externalProps(target)}>
+    <a
+      href={target}
+      className={`${tones[tone]} ${className}`}
+      {...externalProps(target)}
+      data-membership="true"
+      onClick={(event) => trackAnchor(event.currentTarget, tier ? { membership_tier: tier as "silver" | "gold" | "platinum" } : {})}
+    >
+      {children}
+    </a>
+  );
+}
+
+export function PhoneLink({ className, children }: { className: string; children: ReactNode }) {
+  return (
+    <a className={className} href={NAP.phoneTel} onClick={(event) => trackAnchor(event.currentTarget)}>
       {children}
     </a>
   );
 }
 
 /**
- * Hero membership action. Opens the GolfClock membership URL when one is
- * configured, and otherwise scrolls to the practice section.
+ * Home hero. Opens the on-site membership page so the visit sells Silver, Gold, and Platinum.
  */
 export function HeroMembershipAction({
   onScrollToPractice,
@@ -87,7 +109,13 @@ export function HeroMembershipAction({
   if (golfClockMembershipReady()) {
     const href = membershipHref();
     return (
-      <a href={href} className={`${tones.inverted} ${className}`} {...externalProps(href)}>
+      <a
+        href={href}
+        className={`${tones.inverted} ${className}`}
+        {...externalProps(href)}
+        data-membership="true"
+        onClick={(event) => trackAnchor(event.currentTarget)}
+      >
         Become a Member
       </a>
     );

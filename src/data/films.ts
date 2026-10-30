@@ -51,6 +51,13 @@ export const JUNIORS_FILM = {
   poster: media("media/juniors/juniors-loop-poster.jpg"),
 } as const;
 
+/** Home membership band. Cut from the catalogued Par2Play clips, with a dark lower-third label. */
+export const MEMBERSHIP_MONTAGE = {
+  src: media("media/membership/montage.mp4"),
+  srcMobile: media("media/membership/montage-mobile.mp4"),
+  poster: media("media/membership/montage-poster.jpg"),
+} as const;
+
 export const EVENTS_HERO_FILM = {
   src: media("media/events/events-hero.mp4"),
   srcMobile: media("media/events/events-hero-mobile.mp4"),

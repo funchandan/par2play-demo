@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BookLink, CtaPair, MembershipLink } from "./Cta";
-import { FilmCarousel } from "./FilmCarousel";
 import { MembershipStepIcon, type MembershipStepId } from "./MembershipIcons";
-import { TESTIMONIAL_FILMS } from "../data/films";
+import { MEMBERSHIP_MONTAGE } from "../data/films";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 
 const benefits: readonly { id: MembershipStepId; word: string; line: string }[] = [
@@ -24,7 +23,7 @@ const benefits: readonly { id: MembershipStepId; word: string; line: string }[] 
 ];
 
 function useWideScreen() {
-  const [wide, setWide] = useState(() => window.matchMedia("(min-width: 768px)").matches);
+  const [wide, setWide] = useState(true);
 
   useEffect(() => {
     const query = window.matchMedia("(min-width: 768px)");
@@ -35,6 +34,61 @@ function useWideScreen() {
   }, []);
 
   return wide;
+}
+
+function MontageFilm({ paused, reduce }: { paused: boolean; reduce: boolean }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const box = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const video = ref.current;
+    const node = box.current;
+    if (!video || !node || reduce) return;
+    let seen = false;
+    const start = () => {
+      if (!seen || paused) return;
+      void video.play().catch(() => undefined);
+    };
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) {
+          video.pause();
+          return;
+        }
+        seen = true;
+        if (document.readyState === "complete") start();
+        else window.addEventListener("load", start, { once: true });
+      },
+      { rootMargin: "0px" },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [paused, reduce]);
+
+  return (
+    <div ref={box} className="absolute inset-0">
+      <img
+        src={MEMBERSHIP_MONTAGE.poster}
+        alt="Golfers on a simulator at Par2Play"
+        loading="lazy"
+        decoding="async"
+        className="absolute inset-0 h-full w-full object-cover object-center"
+      />
+      {reduce ? null : (
+    <video
+      ref={ref}
+      className="hero-video absolute inset-0 h-full w-full object-cover object-center"
+      muted
+      playsInline
+      loop
+      preload="none"
+    >
+      <source src={MEMBERSHIP_MONTAGE.srcMobile} type="video/mp4" media="(max-width: 767px)" />
+      <source src={MEMBERSHIP_MONTAGE.src} type="video/mp4" />
+    </video>
+      )}
+    </div>
+  );
 }
 
 function FilmToggle({ paused, onToggle }: { paused: boolean; onToggle: () => void }) {
@@ -76,23 +130,16 @@ function Benefits() {
 export function MembershipBand() {
   const reduce = usePrefersReducedMotion();
   const wide = useWideScreen();
-  const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
-  const count = TESTIMONIAL_FILMS.length;
-
-  const advance = () => {
-    if (paused || reduce || count < 2) return;
-    setIndex((current) => (current + 1) % count);
-  };
   const toggle = () => setPaused((value) => !value);
-  const showControl = !reduce && count > 1;
+  const showControl = !reduce;
 
   return (
     <section id="membership" className="scroll-mt-32">
       {!wide ? (
       <div className="bg-[#020806] text-white">
         <div className="relative aspect-video w-full overflow-hidden">
-          <FilmCarousel index={index} paused={paused} reduce={reduce} onEnded={advance} />
+          <MontageFilm paused={paused} reduce={reduce} />
           <div
             className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#020806] to-transparent"
             aria-hidden="true"
@@ -106,7 +153,7 @@ export function MembershipBand() {
       </div>
       ) : (
       <div className="relative min-h-[36rem] overflow-hidden text-white">
-        <FilmCarousel index={index} paused={paused} reduce={reduce} onEnded={advance} />
+        <MontageFilm paused={paused} reduce={reduce} />
         <div
           className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#020806] from-6% via-[#020806]/92 via-28% to-transparent to-46%"
           aria-hidden="true"

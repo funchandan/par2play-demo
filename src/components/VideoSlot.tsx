@@ -10,67 +10,70 @@ export function VideoSlot({
   src,
   srcMobile,
   poster,
+  posterAlt = "Par2Play indoor golf",
   className = "",
   pausable = false,
 }: {
   src: string;
   srcMobile?: string;
   poster: string;
+  posterAlt?: string;
   className?: string;
   pausable?: boolean;
 }) {
   const reduce = usePrefersReducedMotion();
   const box = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [near, setNear] = useState(false);
   const [paused, setPaused] = useState(false);
-  const ready = src.trim().length > 0 && !reduce && near;
+  const playable = src.trim().length > 0 && !reduce;
 
   useEffect(() => {
     const node = box.current;
-    if (!node || reduce) return;
+    const video = videoRef.current;
+    if (!node || !video || !playable) return;
+    let seen = false;
+    const start = () => {
+      if (!seen || paused) return;
+      void video.play().catch(() => undefined);
+    };
+    const whenReady = () => {
+      if (document.readyState === "complete") start();
+      else window.addEventListener("load", start, { once: true });
+    };
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry?.isIntersecting) setNear(true);
+        if (!entry?.isIntersecting) {
+          video.pause();
+          return;
+        }
+        seen = true;
+        whenReady();
       },
       { rootMargin: "240px" },
     );
     observer.observe(node);
     return () => observer.disconnect();
-  }, [reduce]);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video || !ready) return;
-    if (paused) {
-      video.pause();
-      return;
-    }
-    void video.play().catch(() => undefined);
-  }, [paused, ready]);
+  }, [paused, playable]);
 
   return (
     <div ref={box} className={`overflow-hidden bg-[#020806] ${className}`}>
       <div className="relative h-full w-full">
-        {ready ? (
+        <img src={poster} alt={posterAlt} decoding="async" className="h-full w-full object-cover" />
+        {playable ? (
           <video
             ref={videoRef}
-            className="h-full w-full object-cover"
-            poster={poster}
+            className="hero-video absolute inset-0 h-full w-full object-cover"
             muted
             playsInline
             loop
-            autoPlay={!paused}
             preload="none"
             aria-hidden="true"
           >
             {srcMobile ? <source src={srcMobile} type="video/mp4" media="(max-width: 767px)" /> : null}
             <source src={src} type="video/mp4" />
           </video>
-        ) : (
-          <img src={poster} alt="" className="h-full w-full object-cover" />
-        )}
-        {pausable && ready ? (
+        ) : null}
+        {pausable ? (
           <button
             type="button"
             className="absolute inset-0 z-10 cursor-default bg-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-white"
