@@ -43,7 +43,7 @@ export function Clubhouse() {
   return (
     <div className={flow.layout === "mobile" ? "h-full overflow-y-auto bg-white" : "bg-white"}>
       <section className={`relative flex flex-col overflow-hidden bg-slate-900 text-white ${flow.layout === "web" ? "min-h-[760px]" : "min-h-[640px]"}`}>
-        <img src={IMAGES.clubhouse} alt="" className="absolute inset-0 h-full w-full object-cover object-center" />
+        <img src={IMAGES.clubhouse} alt="A group of players and coaches posing in front of a Par2Play simulator" className="absolute inset-0 h-full w-full object-cover object-center" />
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute inset-x-0 bottom-0 h-96 bg-gradient-to-t from-black/90 via-black/45 to-transparent" />
         <div className="relative z-10 flex items-center justify-between bg-[#0A0F0B] px-5 py-4 lg:px-12">

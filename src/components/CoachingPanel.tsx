@@ -43,6 +43,7 @@ export function CoachingPanel() {
   return (
     <PricingHero
       id="coaching-offer"
+      pageTitle="Golf lessons in Somerset, NJ"
       heading={heading}
       figure={figure}
       live={live}

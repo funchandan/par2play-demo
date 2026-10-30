@@ -4,67 +4,74 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Par2Play | Indoor Golf Simulators in Somerset, NJ</title>
+    <link rel="preload" as="image" href="%BASE_URL%media/hero-poster-mobile.avif" type="image/avif" media="(max-width: 767px)" fetchpriority="high" />
+    <meta name="google-site-verification" content="SVSAswdfSTzqPRciWqf77ANCHuDDCbzeVF89P6ECFzM" />
+    <link rel="icon" type="image/png" sizes="32x32" href="%BASE_URL%favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="%BASE_URL%favicon-16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="%BASE_URL%apple-touch-icon.png" />
+    <link rel="manifest" href="%BASE_URL%site.webmanifest" />
+    <link rel="preload" href="%BASE_URL%fonts/chakra-petch-600.woff2" as="font" type="font/woff2" crossorigin />
+    <title>Indoor Golf in Somerset, NJ – Simulators & Lessons | Par2Play</title>
     <meta
       name="description"
-      content="Indoor golf in Somerset, NJ. Simulator bays at 695 Hamilton Street, Suite G. Membership, coaching with PGA professionals Nick and Sean, juniors, and events. Call 732-448-2769."
+      content="Indoor golf in Somerset, NJ: four Full Swing simulator bays, PGA lessons with Nick Schiavo and Nick Monticello, memberships and events. 695 Hamilton St, Suite G. (732) 448-2769."
     />
-    <link rel="canonical" href="https://lumenhaus-hq.github.io/par2play-demo/" />
+    <link rel="canonical" href="https://par2play.com/" />
     <meta name="theme-color" content="#06210f" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Par2Play" />
-    <meta property="og:title" content="Par2Play | Indoor Golf Simulators in Somerset, NJ" />
+    <meta property="og:title" content="Indoor Golf in Somerset, NJ – Simulators & Lessons | Par2Play" />
     <meta
       property="og:description"
-      content="Simulator bays, membership, and coaching with PGA professionals Nick and Sean. 695 Hamilton Street, Suite G, Somerset, NJ."
+      content="Indoor golf in Somerset, NJ: four Full Swing simulator bays, PGA lessons with Nick Schiavo and Nick Monticello, memberships and events. 695 Hamilton St, Suite G. (732) 448-2769."
     />
-    <meta property="og:url" content="https://lumenhaus-hq.github.io/par2play-demo/" />
-    <meta property="og:image" content="https://lumenhaus-hq.github.io/par2play-demo/media/hero-poster.jpg" />
+    <meta property="og:url" content="https://par2play.com/" />
+    <meta property="og:image" content="https://par2play.com/media/hero-poster.jpg" />
     <meta property="og:image:alt" content="Par2Play storefront in Somerset, New Jersey" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Par2Play | Indoor Golf Simulators in Somerset, NJ" />
+    <meta name="twitter:title" content="Indoor Golf in Somerset, NJ – Simulators & Lessons | Par2Play" />
     <meta
       name="twitter:description"
-      content="Simulator bays, membership, and coaching with PGA professionals Nick and Sean in Somerset, NJ."
+      content="Indoor golf in Somerset, NJ: four Full Swing simulator bays, PGA lessons with Nick Schiavo and Nick Monticello, memberships and events."
     />
-    <meta name="twitter:url" content="https://lumenhaus-hq.github.io/par2play-demo/" />
-    <meta name="twitter:image" content="https://lumenhaus-hq.github.io/par2play-demo/media/hero-poster.jpg" />
+    <meta name="twitter:url" content="https://par2play.com/" />
+    <meta name="twitter:image" content="https://par2play.com/media/hero-poster.jpg" />
     <meta name="twitter:image:alt" content="Par2Play storefront in Somerset, New Jersey" />
-    <link rel="preload" as="image" href="%BASE_URL%media/hero-poster.jpg" />
-    <!-- openingHours omitted: TODO. Sources conflict, so the schedule is not published. -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": ["SportsActivityLocation", "LocalBusiness"],
-        "name": "Par2Play",
-        "description": "Indoor golf simulators, membership, coaching, and events in Somerset, New Jersey.",
-        "url": "https://lumenhaus-hq.github.io/par2play-demo/",
-        "image": "https://lumenhaus-hq.github.io/par2play-demo/media/hero-poster.jpg",
-        "telephone": "+1-732-448-2769",
-        "sport": "Golf",
-        "address": {
-          "@type": "PostalAddress",
-          "streetAddress": "695 Hamilton Street, Suite G",
-          "addressLocality": "Somerset",
-          "addressRegion": "NJ",
-          "postalCode": "08873",
-          "addressCountry": "US"
-        },
-        "founder": {
-          "@type": "Person",
-          "name": "Atul Kakar"
-        }
-      }
-    </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Chakra+Petch:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
   </head>
   <body>
+    <img
+      id="lcp-poster"
+      alt="Indoor golf at Par2Play in Somerset, NJ"
+      width="780"
+      height="439"
+      fetchpriority="high"
+      decoding="async"
+      src="%BASE_URL%media/hero-poster-mobile.avif"
+    />
     <div id="root"></div>
+    <script>
+      window.addEventListener("load", function () {
+        var start = function () { document.documentElement.classList.add("media-on", "ticker-on"); };
+        if (window.requestIdleCallback) requestIdleCallback(start, { timeout: 1500 });
+        else setTimeout(start, 1);
+      });
+    </script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        functionality_storage: 'denied',
+        personalization_storage: 'denied',
+        security_storage: 'granted',
+        wait_for_update: 500
+      });
+      gtag('set', 'ads_data_redaction', true);
+      gtag('set', 'url_passthrough', false);
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -34,6 +34,7 @@ export function EventsPanel() {
   return (
     <PricingHero
       id="events-offer"
+      pageTitle="Golf simulator parties and events in Somerset, NJ"
       heading="Event package"
       figure={figure}
       live={live}

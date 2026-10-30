@@ -1,8 +1,9 @@
 import { useEffect, useId, useRef, useState } from "react";
+import { trackAnchor } from "../analytics/track";
 import { BenefitTicker } from "./BenefitTicker";
 import { VideoSlot } from "./VideoSlot";
-import { BookLink, CtaPair, buttonFocus } from "./Cta";
-import { NAP, OCLOCK, PRICES } from "../data/business";
+import { BookLink, CtaPair, PhoneLink, buttonFocus } from "./Cta";
+import { membershipCheckoutHref, NAP, PRICES } from "../data/business";
 import { TESTIMONIAL_FILMS } from "../data/films";
 import {
   ANNUAL_PLAN_DISCOUNT,
@@ -63,12 +64,15 @@ function periodWord(period: BillingPeriod): string {
   }
 }
 
-function MemberLink({ children, className = "" }: { children: string; className?: string }) {
+function MemberLink({ children, className = "", tier }: { children: string; className?: string; tier: "silver" | "gold" | "platinum" }) {
+  const href = membershipCheckoutHref(tier);
   return (
     <a
-      href={OCLOCK.liveMembership}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
+      data-membership="true"
+      onClick={(event) => trackAnchor(event.currentTarget, { membership_tier: tier })}
       className={`inline-flex min-h-11 items-center justify-center rounded-full bg-[#14D45E] px-5 text-center text-base font-semibold text-[#0A0F0B] hover:bg-[#3dff7c] active:bg-[#0fb852] ${buttonFocus} ${className}`}
     >
       {children}
@@ -183,10 +187,13 @@ export function MembershipCalculator() {
     <div className="grid gap-16 @3xl:gap-24">
       <section id="why-membership" aria-labelledby="why-membership-heading" className="@container min-w-0 overflow-hidden rounded-3xl bg-[#020806] @3xl:grid @3xl:grid-cols-2">
         <div className="flex min-w-0 flex-col justify-center bg-[radial-gradient(120%_80%_at_0%_0%,rgb(20_212_94/0.16),transparent_52%)] px-5 pt-8 @3xl:px-12 @3xl:py-14">
-          <div className="flex min-w-0 flex-col items-stretch gap-3 @3xl:flex-row @3xl:items-center @3xl:justify-between">
-            <h1 id="why-membership-heading" className="font-display text-2xl font-semibold tracking-tight text-[#7DFFB0]">
+          <h1 id="why-membership-heading" className="font-display text-2xl font-semibold tracking-tight text-white @3xl:text-3xl">
+            Indoor golf membership in Somerset, NJ
+          </h1>
+          <div className="mt-3 flex min-w-0 flex-col items-stretch gap-3 @3xl:flex-row @3xl:items-center @3xl:justify-between">
+            <p className="font-display text-lg font-semibold tracking-tight text-[#7DFFB0]">
               {best.name}
-            </h1>
+            </p>
             <div className="grid w-full min-w-0 grid-cols-2 gap-1 rounded-full bg-white/10 p-1 @3xl:flex @3xl:w-auto" role="group" aria-label="Billing period">
               <button
                 type="button"
@@ -281,7 +288,7 @@ export function MembershipCalculator() {
             </p>
           </div>
           <CtaPair className="mt-6">
-            <MemberLink className="w-full">Become a Member</MemberLink>
+            <MemberLink className="w-full" tier={best.id}>Become a Member</MemberLink>
             <BookLink className="w-full" offer="bay" tone="inverted">
               Try it out
             </BookLink>
@@ -325,16 +332,14 @@ export function MembershipCalculator() {
           See the memberships
         </h2>
         <div className="mt-6 flex justify-center">
-          <MemberLink>Become a Member</MemberLink>
+          <MemberLink tier={best.id}>Become a Member</MemberLink>
         </div>
         <p className="mt-6 text-base leading-snug">
           {NAP.street}
           <br />
           {NAP.city}, {NAP.region} {NAP.postalCode}
           <br />
-          <a className="aa-focus-ink underline decoration-2 underline-offset-4" href={NAP.phoneTel}>
-            {NAP.phoneDisplay}
-          </a>
+          <PhoneLink className="aa-focus-ink underline decoration-2 underline-offset-4">{NAP.phoneDisplay}</PhoneLink>
         </p>
       </section>
     </div>

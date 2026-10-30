@@ -23,7 +23,7 @@ const benefits: readonly { id: MembershipStepId; word: string; line: string }[] 
 ];
 
 function useWideScreen() {
-  const [wide, setWide] = useState(() => window.matchMedia("(min-width: 768px)").matches);
+  const [wide, setWide] = useState(true);
 
   useEffect(() => {
     const query = window.matchMedia("(min-width: 768px)");
@@ -38,35 +38,64 @@ function useWideScreen() {
 
 function MontageFilm({ paused, reduce }: { paused: boolean; reduce: boolean }) {
   const ref = useRef<HTMLVideoElement>(null);
+  const box = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const video = ref.current;
-    if (!video || reduce) return;
+    const node = box.current;
+    if (!video || !node || reduce) return;
     if (paused) {
       video.pause();
       return;
     }
-    void video.play().catch(() => undefined);
+    let visible = false;
+    const start = () => {
+      if (!visible) return;
+      void video.play().catch(() => undefined);
+    };
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        visible = Boolean(entry?.isIntersecting);
+        if (!visible) {
+          video.pause();
+          return;
+        }
+        if (document.readyState === "complete") start();
+        else window.addEventListener("load", start, { once: true });
+      },
+      { rootMargin: "0px" },
+    );
+    observer.observe(node);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("load", start);
+      video.pause();
+    };
   }, [paused, reduce]);
 
-  if (reduce) {
-    return <img src={MEMBERSHIP_MONTAGE.poster} alt="" className="absolute inset-0 h-full w-full object-cover object-center" />;
-  }
-
   return (
+    <div ref={box} className="absolute inset-0">
+      <img
+        src={MEMBERSHIP_MONTAGE.poster}
+        alt="Golfers on a simulator at Par2Play"
+        loading="lazy"
+        decoding="async"
+        className="absolute inset-0 h-full w-full object-cover object-center"
+      />
+      {reduce ? null : (
     <video
       ref={ref}
-      className="absolute inset-0 h-full w-full object-cover object-center"
-      poster={MEMBERSHIP_MONTAGE.poster}
+      className="hero-video absolute inset-0 h-full w-full object-cover object-center"
       muted
       playsInline
       loop
-      autoPlay={!paused}
-      preload="metadata"
+      preload="none"
     >
       <source src={MEMBERSHIP_MONTAGE.srcMobile} type="video/mp4" media="(max-width: 767px)" />
       <source src={MEMBERSHIP_MONTAGE.src} type="video/mp4" />
     </video>
+      )}
+    </div>
   );
 }
 

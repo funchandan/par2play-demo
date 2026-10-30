@@ -1,9 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://lumenhaus-hq.github.io/par2play-demo/</loc></url>
-  <url><loc>https://lumenhaus-hq.github.io/par2play-demo/membership/</loc></url>
-  <url><loc>https://lumenhaus-hq.github.io/par2play-demo/coaching/</loc></url>
-  <url><loc>https://lumenhaus-hq.github.io/par2play-demo/juniors/</loc></url>
-  <url><loc>https://lumenhaus-hq.github.io/par2play-demo/events/</loc></url>
-  <url><loc>https://lumenhaus-hq.github.io/par2play-demo/tournament/</loc></url>
+  <url>
+    <loc>https://par2play.com/</loc>
+    <lastmod>2026-10-30</lastmod>
+  </url>
+  <url>
+    <loc>https://par2play.com/membership/</loc>
+    <lastmod>2026-10-30</lastmod>
+  </url>
+  <url>
+    <loc>https://par2play.com/coaching/</loc>
+    <lastmod>2026-10-30</lastmod>
+  </url>
+  <url>
+    <loc>https://par2play.com/juniors/</loc>
+    <lastmod>2026-10-30</lastmod>
+  </url>
+  <url>
+    <loc>https://par2play.com/events/</loc>
+    <lastmod>2026-10-30</lastmod>
+  </url>
+  <url>
+    <loc>https://par2play.com/tournament/</loc>
+    <lastmod>2026-10-30</lastmod>
+  </url>
+  <url>
+    <loc>https://par2play.com/privacy-policy/</loc>
+    <lastmod>2026-10-30</lastmod>
+  </url>
 </urlset>

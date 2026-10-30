@@ -14,6 +14,7 @@ export function TournamentPanel() {
   return (
     <PricingHero
       id="tournament-offer"
+      pageTitle="Par2Play Fall League"
       heading="Fall league"
       figure={formatPrice(PRICES.leagueEntry)}
       live={`${formatPrice(PRICES.leagueEntry)}. League booking is 18 holes. A League Player tag is required.`}

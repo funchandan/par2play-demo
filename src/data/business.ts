@@ -1,4 +1,5 @@
 import type { Answers } from "./catalog";
+import { pageHref } from "./routes";
 
 /**
  * Verified Par2Play facts for the public site.
@@ -15,29 +16,28 @@ export const NAP = {
   phoneDisplay: "(732) 448-2769",
   phoneTel: "tel:+17324482769",
   phoneE164: "+1-732-448-2769",
+  email: "info@par2play.com",
   founder: "Atul Kakar",
 } as const;
 
 export const ADDRESS_LINE = `${NAP.street}, ${NAP.city}, ${NAP.region} ${NAP.postalCode}`;
 
-/** GitHub Pages origin for this repo. Used by canonical, Open Graph, and the sitemap. */
-export const SITE_URL = "https://lumenhaus-hq.github.io/par2play-demo/";
+export { HOURS_LABEL, SITE_URL } from "./site";
 
 export const COACHES = [
-  { id: "nick", name: "Nick" },
-  { id: "sean", name: "Sean" },
+  { id: "nick-schiavo", name: "Nick Schiavo" },
+  { id: "nick-monticello", name: "Nick Monticello" },
 ] as const;
 
-export const COACH_LINE = "Nick and Sean, PGA professionals";
+export const COACH_LINE = "Nick Schiavo and Nick Monticello, PGA professionals";
 
 /**
- * TODO(hours): Opening hours conflict between sources, including the door
- * decal in the storefront footage. Do not publish a schedule until confirmed.
- * Null on purpose so JSON-LD and the page cannot invent a timetable.
+ * Full Swing course library. The live bay-rental page says "more than 100
+ * available courses". Raise this only if Chandan confirms a higher number.
  */
-export const OPENING_HOURS: string | null = null;
+export const SIMULATOR_COURSE_COUNT = 100;
 
-export const HOURS_PLACEHOLDER = "Hours: TODO — not published until the schedule is confirmed.";
+/** Chandan confirmed 10am–10pm every day. JSON-LD uses the same window. */
 
 /** Demand windows. Not a price split, and not a published hours table. */
 export const BAY_WINDOWS = {
@@ -125,7 +125,7 @@ export const OCLOCK = {
   fitting: "https://par2play.oclock.app/book?flow=flow_bf_fitting",
   league: "https://par2play.oclock.app/book?flow=flow_bf_league",
   practiceUnlimited: "https://par2play.oclock.app/store/prod_practice_unlimited",
-  /** Public membership carousel. Per-tier GolfClock products are not in the store yet. */
+  /** Public membership carousel on par2play.com. The membership page now checks out on GolfClock. */
   liveMembership: "https://par2play.com/membership",
   tenPracticePack: "https://par2play.oclock.app/store/prod_10_practice_pack",
   lessonPacks: "https://par2play.oclock.app/store/prod_lesson_packs",
@@ -137,9 +137,26 @@ export const OCLOCK = {
   events: "https://par2play.oclock.app/events",
 } as const;
 
+/**
+ * Per-tier GolfClock product URLs. Empty until those products exist.
+ * membershipCheckoutHref falls back to the Memberships category.
+ */
+export const TIER_CHECKOUT = {
+  silver: "",
+  gold: "",
+  platinum: "",
+} as const;
+
+export type MemberTierCheckoutId = keyof typeof TIER_CHECKOUT;
+
+export function membershipCheckoutHref(tier?: MemberTierCheckoutId): string {
+  if (tier && TIER_CHECKOUT[tier]) return TIER_CHECKOUT[tier];
+  return OCLOCK.memberships;
+}
+
 export const GOLF_CLOCK = {
   bookingUrl: OCLOCK.book,
-  membershipUrl: OCLOCK.practiceUnlimited,
+  membershipUrl: OCLOCK.memberships,
 } as const;
 
 export function golfClockBookingReady(): boolean {
@@ -176,7 +193,7 @@ export function bookingHref(offer: BookingOffer): string {
 }
 
 export function membershipHref(): string {
-  return OCLOCK.practiceUnlimited;
+  return pageHref("membership");
 }
 
 /**
