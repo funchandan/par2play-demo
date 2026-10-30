@@ -63,22 +63,40 @@ export const PRICES = {
   unlimitedMonthly: 200,
   swingEvaluationMinutes: 50,
   swingEvaluation: 100,
-  /** TODO(pricing): single 30-minute lesson price was not in the repo or the strategy sheet. */
-  lessonSingle: null as number | null,
+  /**
+   * 30-minute private lesson.
+   * Source: https://par2play.com/golf-lessions/ “Single lesson session - $100”.
+   */
+  lessonSingle: 100,
   lessonMinutes: 30,
   lessonPack3Count: 3,
+  /** In the repo only. The public lessons page does not list a 3-pack. */
   lessonPack3: 240,
-  /** Confirmed pack ends. 10, 20, and 30 are not listed on par2play.com, so they stay null and the page says they are shown at checkout. */
+  /**
+   * Lesson packs. Source: https://par2play.com/golf-lessions/
+   * Pack 5 $400, Pack 10 $750, Pack 20 $1400, Pack 30 $2000, Pack 50 $3000.
+   */
   lessonPack5: 400,
-  lessonPack10: null as number | null,
-  lessonPack20: null as number | null,
-  lessonPack30: null as number | null,
+  lessonPack10: 750,
+  lessonPack20: 1400,
+  lessonPack30: 2000,
   lessonPack50: 3000,
-  /** Lessons, assessments, practice time, and a workshop. */
+  /** Standalone club fitting fee is not published on par2play.com. */
+  fitting: null as number | null,
+  /** Event packages are not priced on par2play.com/events or the holiday page. */
+  eventPackage: null as number | null,
+  /** Fall league entry fee is not published. */
+  leagueEntry: null as number | null,
+  /**
+   * Source: https://par2play.oclock.app/store/prod_golf_improvement_bundle ($599.00).
+   * Includes a swing evaluation, a TPI assessment, five 30-minute lessons, a 2-hour practice session, a workout routine, workshop access, and coach check-ins.
+   */
   golfImprovementBundle: 599,
-  /** Once-a-week 1:1 lesson plus unlimited facility access. */
+  /** Once-a-week plan. In the repo only; the public membership carousel does not list it. */
   juniorOneLessonWeekly: 249,
-  /** Twice-a-week lessons plus unlimited facility access. */
+  /**
+   * Source: https://par2play.com/membership/ “Junior Golf Membership ($399 a Month)”, twice a week for 1 hour.
+   */
   juniorTwoLessonsWeekly: 399,
   swingLabMember: 40,
   /**

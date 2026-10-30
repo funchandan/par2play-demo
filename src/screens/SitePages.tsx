@@ -1,12 +1,17 @@
 import type { LucideIcon } from "lucide-react";
 import { CalendarDays, Flag, Target, Users } from "lucide-react";
+import { CoachingPanel } from "../components/CoachingPanel";
+import { EventsPanel } from "../components/EventsPanel";
+import { JuniorsPanel } from "../components/JuniorsPanel";
 import { MembershipCalculator } from "../components/MembershipCalculator";
-import { CommunityStrip, EventGallery, EventHero, StillGrid } from "../components/PhotoStrips";
+import { TournamentPanel } from "../components/TournamentPanel";
+import { CommunityStrip, EventGallery, StillGrid } from "../components/PhotoStrips";
 import { PageFrame, pageSpace } from "../components/SiteChrome";
-import { BookLink, buttonFocus } from "../components/Cta";
+import { BookLink, CtaPair, buttonFocus } from "../components/Cta";
 import { TournamentForm } from "../components/TournamentForm";
 import { ValuePoint } from "../components/ValuePoint";
 import { OCLOCK, PRICES } from "../data/business";
+import { formatPrice, money } from "../data/membershipEstimate";
 import { PUBLISHED_COACHES } from "../data/coaches";
 import { EVENT_FACTS, HOLIDAY_FACTS } from "../data/events";
 import { EventTypeList } from "../components/EventTypeList";
@@ -38,11 +43,11 @@ export function MembershipPage() {
 }
 
 const lessonTiers = [
-  { count: "5 lessons", price: `$${PRICES.lessonPack5}`, href: OCLOCK.lessonPacks },
-  { count: "10 lessons", price: "Shown at checkout", href: OCLOCK.lessonPacks },
-  { count: "20 lessons", price: "Shown at checkout", href: OCLOCK.lessonPacks },
-  { count: "30 lessons", price: "Shown at checkout", href: OCLOCK.lessonPacks },
-  { count: "50 lessons", price: `$${PRICES.lessonPack50}`, href: OCLOCK.lessonPacks },
+  { count: "5 lessons", price: PRICES.lessonPack5 },
+  { count: "10 lessons", price: PRICES.lessonPack10 },
+  { count: "20 lessons", price: PRICES.lessonPack20 },
+  { count: "30 lessons", price: PRICES.lessonPack30 },
+  { count: "50 lessons", price: PRICES.lessonPack50 },
 ] as const;
 
 const fittingChoices = ["Driver", "Irons", "Wedges", "Full bag"] as const;
@@ -51,10 +56,8 @@ export function CoachingPage() {
   return (
     <PageFrame>
       <article className={pageSpace}>
-        <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight @5xl:text-6xl">Coaching</h1>
-        <p className="mt-4 max-w-2xl font-display text-2xl font-semibold leading-tight">
-          Two PGA professional coaches, Nick and Sean
-        </p>
+        <CoachingPanel />
+        <p className="mt-10 max-w-2xl text-base leading-relaxed">Two PGA professional coaches, Nick and Sean.</p>
         <StillGrid photos={COACHING_GALLERY} className="@3xl:grid-cols-3" />
         <ol className="mt-10 grid gap-6 @3xl:grid-cols-3">
           <JourneyStep icon={Target} step="1" title="Swing evaluation" line="Start with a swing evaluation, then a plan for what to change." />
@@ -66,22 +69,16 @@ export function CoachingPage() {
             line={`$${PRICES.golfImprovementBundle}. Lessons, assessments, bay time, and a workshop.`}
           />
         </ol>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <BookLink offer="swing-evaluation">Analyze my swing</BookLink>
-          <BookLink offer="lesson" tone="line">
-            Schedule a lesson
-          </BookLink>
+        <div className="mt-8">
           <CheckoutLink href={OCLOCK.golfImprovementBundle}>Buy the bundle</CheckoutLink>
         </div>
         <h2 className="mt-16 font-display text-3xl font-semibold tracking-tight">Lesson packs</h2>
-        <p className="mt-3 max-w-2xl text-base leading-relaxed">
-          Five lessons are $400. Fifty lessons are $3,000. The prices between those two are shown at checkout.
-        </p>
+        <p className="mt-3 max-w-2xl text-base leading-relaxed">Packages never expire and have no blackout days.</p>
         <ul className="mt-6 grid gap-3 @3xl:grid-cols-5">
           {lessonTiers.map((tier) => (
             <li key={tier.count} className="border-2 border-[#4b5563] bg-white p-4">
               <p className="text-base font-semibold">{tier.count}</p>
-              <p className="mt-2 font-display text-2xl font-semibold">{tier.price}</p>
+              <p className="mt-2 font-display text-2xl font-semibold">{money(tier.price)}</p>
             </li>
           ))}
         </ul>
@@ -89,6 +86,7 @@ export function CoachingPage() {
           <CheckoutLink href={OCLOCK.lessonPacks}>See lesson packs</CheckoutLink>
         </div>
         <h2 className="mt-16 font-display text-3xl font-semibold tracking-tight">Club fitting</h2>
+        <p className="mt-3 font-display text-4xl font-semibold leading-none tracking-tight">{formatPrice(PRICES.fitting)}</p>
         <StillGrid photos={FITTING_GALLERY} />
         <ul className="mt-6 grid grid-cols-2 gap-3 @3xl:grid-cols-4">
           {fittingChoices.map((choice) => (
@@ -142,16 +140,13 @@ export function JuniorsPage() {
   return (
     <PageFrame>
       <article className={pageSpace}>
-        <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight @5xl:text-6xl">Junior coaching.</h1>
-        <p className="mt-4 max-w-xl text-base leading-relaxed">Building the golfers of tomorrow.</p>
+        <JuniorsPanel />
+        <p className="mt-10 max-w-xl text-base leading-relaxed">Building the golfers of tomorrow.</p>
         <StillGrid photos={JUNIORS_GALLERY} />
         <div className="mt-8 grid max-w-xl gap-5">
           <ValuePoint icon={Users} label="Future pros" line="1:1 coaching with PGA pros Nick and Sean, once or twice a week." />
           <ValuePoint icon={CalendarDays} label="Supervised care" line="Juniors practise under staff supervision in a safe, friendly bay." />
           <ValuePoint icon={Target} label="Technology-assisted development" line="Shot data on every swing shows progress week to week." />
-        </div>
-        <div className="mt-8">
-          <BookLink offer="junior">Schedule junior coaching</BookLink>
         </div>
       </article>
     </PageFrame>
@@ -161,9 +156,11 @@ export function JuniorsPage() {
 export function EventsPage() {
   return (
     <PageFrame>
-      <EventHero />
       <article className={pageSpace}>
-        <EventTypeList />
+        <EventsPanel />
+        <div className="mt-16">
+          <EventTypeList />
+        </div>
         <div className="mt-8">
           <EventGallery />
         </div>
@@ -178,12 +175,11 @@ export function EventsPage() {
             <li key={fact}>{fact}</li>
           ))}
         </ul>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <BookLink offer="group">Check availability</BookLink>
+        <p className="mt-8">
           <a href={pageHref("")} className={`inline-flex min-h-11 items-center text-base font-semibold underline decoration-2 underline-offset-4 ${buttonFocus}`}>
             Back to the landing page
           </a>
-        </div>
+        </p>
       </article>
     </PageFrame>
   );
@@ -192,16 +188,11 @@ export function EventsPage() {
 export function TournamentPage() {
   return (
     <PageFrame>
-      <article className={`${pageSpace} text-center`}>
-        <h1 className="mx-auto max-w-xl font-display text-4xl font-semibold leading-tight tracking-tight @5xl:text-5xl">
-          Par2Play Fall League Coming Soon!
-        </h1>
-        <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed">
+      <article className={pageSpace}>
+        <TournamentPanel />
+        <p className="mx-auto mt-10 max-w-xl text-center text-base leading-relaxed">
           League booking is 18 holes. A League Player tag is required.
         </p>
-        <div className="mt-8">
-          <BookLink offer="tournament">Join the league</BookLink>
-        </div>
         <div className="mt-10">
           <TournamentForm />
         </div>
@@ -216,17 +207,20 @@ export function NotFoundPage() {
       <article className={pageSpace}>
         <h1 className="font-display text-4xl font-semibold tracking-tight">That page is not here.</h1>
         <p className="mt-4 max-w-xl text-base leading-relaxed">Try the membership page, or go back to the start.</p>
-        <div className="mt-8 flex flex-wrap gap-3">
+        <CtaPair className="mt-8">
           <a
             href={pageHref("membership")}
-            className={`inline-flex min-h-11 items-center rounded-full bg-[#14D45E] px-5 text-base font-semibold text-[#0A0F0B] ${buttonFocus}`}
+            className={`inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#14D45E] px-5 text-base font-semibold text-[#0A0F0B] ${buttonFocus}`}
           >
             Membership
           </a>
-          <a href={pageHref("")} className={`inline-flex min-h-11 items-center underline decoration-2 underline-offset-4 text-base font-semibold ${buttonFocus}`}>
+          <a
+            href={pageHref("")}
+            className={`inline-flex min-h-11 w-full items-center justify-center rounded-full border-2 border-[#0A0F0B] bg-white px-5 text-base font-semibold text-[#0A0F0B] ${buttonFocus}`}
+          >
             Home
           </a>
-        </div>
+        </CtaPair>
       </article>
     </PageFrame>
   );

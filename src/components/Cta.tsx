@@ -25,6 +25,15 @@ function externalProps(href: string) {
   return { target: "_blank", rel: "noopener noreferrer" } as const;
 }
 
+/** Equal-width pair. Stacked full width in a narrow container, side by side once the container is wide. */
+export function CtaPair({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return (
+    <div className={`@container w-full max-w-full ${className}`}>
+      <div className="grid w-full grid-cols-1 gap-3 @3xl:w-fit @3xl:max-w-full @3xl:grid-cols-2">{children}</div>
+    </div>
+  );
+}
+
 export function BookLink({
   offer,
   children,

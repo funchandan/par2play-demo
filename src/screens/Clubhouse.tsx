@@ -1,6 +1,6 @@
 import { Button, Card, Chip } from "@heroui/react";
 import { useState, type FormEvent } from "react";
-import { BookLink, buttonFocus, buttonFocusOnInk } from "../components/Cta";
+import { BookLink, CtaPair, buttonFocus, buttonFocusOnInk } from "../components/Cta";
 import { Mark } from "../components/Chrome";
 import { IMAGES } from "../data/catalog";
 import { useFlow } from "../state/flow";
@@ -86,17 +86,17 @@ export function Clubhouse() {
           <p className="mt-4 max-w-md text-sm leading-relaxed text-white/90">
             Format, dates, and price are not set. The board below is an example of a night, not a live roster and not an open signup.
           </p>
-          <div className="mt-6 flex flex-wrap gap-3">
+          <CtaPair className="mt-6">
             <a
               href="#seat"
-              className={`inline-flex min-h-11 items-center rounded-full bg-white px-5 text-base font-semibold text-[#0A0F0B] ${buttonFocus}`}
+              className={`inline-flex min-h-11 w-full items-center justify-center rounded-full bg-white px-5 text-base font-semibold text-[#0A0F0B] ${buttonFocus}`}
             >
               Claim a seat
             </a>
-            <BookLink offer="bay" tone="line">
+            <BookLink className="w-full" offer="bay" tone="line">
               Reserve a bay
             </BookLink>
-          </div>
+          </CtaPair>
         </div>
       </section>
 

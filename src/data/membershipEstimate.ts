@@ -83,6 +83,27 @@ export function estimateMembership(months: PeriodMonths, visitsPerWeek: VisitsPe
   };
 }
 
+/** Members price never displays below this monthly amount. Annual floor is this times 12. */
+export const MIN_MEMBER_MONTHLY = 200;
+
+export function memberPriceFloor(period: BillingPeriod): number {
+  switch (period) {
+    case "month":
+      return MIN_MEMBER_MONTHLY;
+    case "year":
+      return MIN_MEMBER_MONTHLY * 12;
+    default: {
+      const exhaustive: never = period;
+      return exhaustive;
+    }
+  }
+}
+
+/** Comparison-box total. Does not change which tier is recommended. */
+export function flooredMemberTotal(total: number, period: BillingPeriod): number {
+  return Math.max(memberPriceFloor(period), total);
+}
+
 export function money(amount: number): string {
   const rounded = Math.round(amount * 100) / 100;
   const whole = Math.abs(rounded - Math.round(rounded)) < 0.001;
@@ -92,6 +113,11 @@ export function money(amount: number): string {
     minimumFractionDigits: whole ? 0 : 2,
     maximumFractionDigits: whole ? 0 : 2,
   });
+}
+
+/** Unknown prices stay the literal "$TBD", in the same place a number would go. */
+export function formatPrice(amount: number | null): string {
+  return amount == null ? "$TBD" : money(amount);
 }
 
 export function monthLabel(months: number): string {
