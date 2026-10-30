@@ -16,6 +16,7 @@ import { VideoSlot } from "../components/VideoSlot";
 import { ValuePoint } from "../components/ValuePoint";
 import { NAP, OCLOCK, golfClockBookingReady } from "../data/business";
 import { HERO_TICKER } from "../data/heroTicker";
+import { HeroTitle, heroConcept } from "../components/HeroTitle";
 import { JsonLd } from "../components/JsonLd";
 import { FaqSection } from "../components/FaqSection";
 import { VisitLine } from "../components/VisitLine";
@@ -29,46 +30,6 @@ const sectionSpace = "scroll-mt-32 px-6 py-20 @3xl:px-12 @3xl:py-24";
 
 const navButton = `nav-link inline-flex min-h-11 items-center px-1 text-base font-semibold text-[#0A0F0B] ${buttonFocus}`;
 
-type HeroConcept = "a" | "b" | "c" | "d";
-
-function heroConcept(): HeroConcept {
-  const value = new URLSearchParams(window.location.search).get("hero");
-  if (value === "b" || value === "c" || value === "d") return value;
-  return "a";
-}
-
-const accentWord = "font-accent text-[1.45em] leading-none text-white";
-
-function Tagline({ concept }: { concept: HeroConcept }) {
-  const line = "max-w-[16rem] font-display text-[1.35rem] font-semibold leading-[1.05] tracking-tight text-white @3xl:max-w-none @3xl:text-[2rem]";
-  if (concept === "b") {
-    return (
-      <p className={line}>
-        {"A home for all golfers. "}
-        <span className={accentWord}>All year.</span>
-      </p>
-    );
-  }
-  if (concept === "c") {
-    return (
-      <p className={line}>
-        {"A home for "}
-        <span className={accentWord}>all golfers.</span>{" "}
-        <span className={accentWord}>All year.</span>
-      </p>
-    );
-  }
-  if (concept === "d") {
-    return <p className={line}>A home for all golfers. All year.</p>;
-  }
-  return (
-    <p className={line}>
-      {"A home for "}
-      <span className={accentWord}>all golfers.</span>
-      {" All year."}
-    </p>
-  );
-}
 
 export function Landing() {
   const flow = useFlow();
@@ -184,18 +145,10 @@ export function Landing() {
         <div data-hero-offer className="relative z-10 flex flex-1 items-end justify-end px-6 pb-4 @3xl:px-12 @3xl:pb-6">
           <div className="hero-panel pointer-events-auto w-full max-w-[32rem] rounded-2xl px-4 py-3">
             <h1 className="font-display text-xl font-semibold leading-tight tracking-tight text-white @3xl:text-3xl">
-              {concept === "d" ? (
-                <>
-                  {"Indoor golf in "}
-                  <span className={accentWord}>Somerset</span>
-                  {", NJ"}
-                </>
-              ) : (
-                "Indoor golf in Somerset, NJ"
-              )}
+              Indoor golf in Somerset, NJ
             </h1>
-            <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
-              <Tagline concept={concept} />
+            <div className="mt-2 flex min-w-0 flex-wrap items-end justify-between gap-3">
+              <HeroTitle concept={concept} />
               <HeroMembershipAction onScrollToPractice={() => jump("membership")} />
             </div>
             <HeroProof />

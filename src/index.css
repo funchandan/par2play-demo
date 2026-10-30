@@ -33,10 +33,19 @@
   src: url("../public/fonts/kaushan-script-400.woff2") format("woff2");
 }
 
+@font-face {
+  font-family: "Caveat";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../public/fonts/caveat-600.woff2") format("woff2");
+}
+
 @theme {
   --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Chakra Petch", "Barlow", sans-serif;
   --font-accent: "Kaushan Script", "Barlow", cursive;
+  --font-caveat: "Caveat", "Barlow", cursive;
 }
 
 :root,
@@ -363,13 +372,32 @@ html.ticker-on .benefit-track {
   background: rgb(255 255 255 / 0.28);
 }
 
+.draw-stroke {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .pace-bar {
     transition: width 0.28s ease; /* taste-skill-ignore */
   }
+
+  .draw-stroke {
+    animation: draw-stroke 0.9s ease forwards;
+  }
+}
+
+@keyframes draw-stroke {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .draw-stroke {
+    stroke-dashoffset: 0;
+  }
+
   .usp-marquee,
   .benefit-marquee {
     display: none;

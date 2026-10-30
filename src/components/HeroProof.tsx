@@ -59,13 +59,13 @@ export function HeroProof() {
 
   return (
     <div
-      className="mt-2 flex items-center gap-2 text-sm text-white"
+      className="mt-2 flex w-full min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-sm text-white"
       onMouseEnter={() => setHeld(true)}
       onMouseLeave={() => setHeld(false)}
       onFocus={() => setHeld(true)}
       onBlur={release}
     >
-      <p className="font-display text-lg font-semibold leading-none">{GOOGLE_RATING}</p>
+      <p className="shrink-0 font-display text-lg font-semibold leading-none">{GOOGLE_RATING}</p>
       <Stars />
       <span className="sr-only">5 stars on Google.</span>
       <p key={reduce ? "static" : active.id} className="quote-fade min-w-0 flex-1 truncate">
@@ -73,7 +73,7 @@ export function HeroProof() {
       </p>
       <a
         href={GOOGLE_REVIEWS_URL}
-        className={`inline-flex min-h-11 shrink-0 items-center text-base font-semibold text-white underline decoration-2 underline-offset-4 ${buttonFocus}`}
+        className={`inline-flex min-h-11 shrink-0 items-center text-sm font-semibold text-white underline decoration-2 underline-offset-4 @3xl:text-base ${buttonFocus}`}
         target="_blank"
         rel="noreferrer"
       >
